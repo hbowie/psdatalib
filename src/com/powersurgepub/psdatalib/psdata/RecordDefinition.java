@@ -1,0 +1,437 @@
+package com.powersurgepub.psdatalib.psdata;
+
+  import java.util.*;
+  import com.powersurgepub.psutils.*;
+  
+/**
+   A definition of the fields stored in a particular record. Each field is
+   associated internally with a particular column number. <p>
+   
+   This code is copyright (c) 1999-2000 by Herb Bowie of PowerSurge Publishing. 
+   All rights reserved. <p>
+   
+   Version History: <ul><li>
+     2000/12/13 - Changed columns to use new Column class, which will maintain
+                  statistics about field sizes.
+     2000/11/21 - Added method to return field names as a vector. <li>
+     2000/11/05 - Added method to return number of fields in each record. <li>
+     2000/05/07 - Modified to be consistent with "The Elements of Java Style".
+      </ul>
+  
+   @author Herb Bowie (<a href="mailto:herb@powersurgepub.com">
+           herb@powersurgepub.com</a>)<br>
+           of PowerSurge Publishing (<A href="http://www.powersurgepub.com/software/">
+           www.powersurgepub.com/software</a>)
+  
+   @version 2002/08/28 - Added merge method to allow a second RecordDefinition
+                         to have its field definitions merged into this one.
+                         Added standard iterator.
+ */
+
+public class RecordDefinition {
+
+  /** 
+     The Data Dictionary that contains the DataFieldDefinition objects for all
+     the fields within this record definition.
+   */
+  private   DataDictionary  dict;
+  
+  /** 
+     A collection of Column objects, each of which points to a
+     particular DataFieldDefinition in the DataDictionary. 
+   */
+  private   Vector          columns;
+  
+  /**
+     A collection of Strings containing the names of all the
+     fields in the record.
+   */
+  private   Vector          names;
+  
+  /** An index to an entry in the columns collection. */
+  private   int             columnNumber;
+  
+  /**
+     The no-arg constructor will instantiate a new DataDictionary.
+   */
+  public RecordDefinition () {
+
+    this (new DataDictionary ());
+  }
+  
+  /**
+     Accepts a DataDictionary that has already been built,
+     and uses that.
+    
+     @param dict A data dictionary that has already been created.
+   */
+  public RecordDefinition (DataDictionary dict) {
+  
+    this.dict = dict;
+    columns = new Vector ();
+    names = new Vector ();
+  }
+  
+  /**
+     Accepts an existing RecordDefinition, and uses the same 
+     DataDictionary already used by that RecordDefinition.
+    
+     @param inRec An existing record definition with a dictionary
+                  that is to be shared with this record definition.
+   */
+  public RecordDefinition (RecordDefinition inRec) {
+    this (inRec.getDict());
+  }
+  
+  /**
+     Merges a second RecordDefinition into this one, combining the 
+     fields of both.
+    
+     @param inRec 2nd RecordDefinition
+   */
+  public void merge (RecordDefinition inRec) {
+    int inColumnIndex = 0;
+    Column inColumn;
+    int dictIndex;
+    DataFieldDefinition inDef;
+    int columnIndex;
+    Column column;
+    resetMergedColumns();
+    DataDictionary inDict = inRec.getDict();
+    Iterator inColumns = inRec.iterator();
+    while (inColumns.hasNext()) {
+      inColumn = (Column)inColumns.next();
+      dictIndex = inColumn.getDataFieldDefNumber();
+      inDef = inDict.getDef(dictIndex);
+      columnIndex = putColumn (inDef);
+      column = (Column) columns.elementAt (columnIndex);
+      column.setMergedColumn (inColumnIndex++);
+    }
+  }  
+  
+  /**
+     Resets all mergedColumn fields in all columns to -1, to indicate
+     no merge.
+   */
+  private void resetMergedColumns () {
+    Column work;
+    for (int i = 0; i < columns.size(); i++) {
+      work = (Column) columns.elementAt (i); 
+      work.resetMergedColumn();
+    }
+  }
+  
+  /**
+     Returns the data dictionary being used by this record definition,
+     typically so that it can be shared.
+    
+     @return Data dictionary being used by this object.
+   */
+  public DataDictionary getDict () {
+    return dict;
+  }
+  
+  /**
+     Returns the column number assigned to a particular field,
+     as identified by its name.
+    
+     @return Column number for the given field, or a -1 if not found.
+    
+     @param  inName The name of the desired field, which will be converted
+                    to its common form.
+   */
+  public int getColumnNumber (String inName) {
+    CommonName common = new CommonName (inName);
+    return getColumnNumber (common);
+  }
+  
+  /**
+     Returns the column number assigned to a particular field,
+     as identified by the name passed within a data field definition.
+    
+     @return Column number for the given field, or a -1 if not found.
+    
+     @param  inDef  A data field definition for the desired field.
+   */
+  public int getColumnNumber (DataFieldDefinition inDef) {
+    return getColumnNumber (inDef.getCommonName());
+  }
+  
+  /**
+     Returns the column number assigned to a particular field,
+     as identified by its common name.
+    
+     @return Column number for the given field, or a -1 if not found.
+    
+     @param  inCommon The name of the desired field, assumed to
+                      already be converted to its common form.
+   */
+  public int getColumnNumber (CommonName inCommon) {
+    CommonName common = dict.getAliasOriginal (inCommon);
+    int i = 0;
+    while ((i < columns.size()) 
+      && (!(common.equals(dict.getDef(getDefNum(i)).getCommonName())))) {
+      i++;
+    }
+    if (i < columns.size()) {
+      return i;
+    } else {
+      return GlobalConstants.NOT_FOUND;
+    }
+  }
+  
+  /** 
+     Returns the index to a particular DataFieldDefinition in
+     the DataDictionary, stored in a particular column number.
+    
+     @return Index to a data dictionary entry, or -1 if the column number
+             passed is out of bounds.
+    
+     @param  columnNumber Index to a particular column in the record definition.
+   */
+  public int getDefNum (int columnNumber) {
+    if ((columnNumber < 0) || (columnNumber >= columns.size())) {
+      return -1;
+    } else {
+      Column column = (Column)columns.elementAt(columnNumber);
+      return column.getDataFieldDefNumber();
+    }
+  }
+  
+  /**
+     Adds the given data field definition to this record definition,
+     if it does not already exist within the record definition.
+     either under its original name or a known alias.
+    
+     @return Column number of the existing data field definition, if
+             it was already part of this record, or the column
+             number of the new entry, if it was added.
+    
+     @param  inDef The data field definition to be added.
+   */
+  public int putColumn (DataFieldDefinition inDef) {
+    int i;
+    i = getColumnNumber (inDef);
+    if (i == GlobalConstants.NOT_FOUND) {
+      i = addColumn (inDef);
+    } 
+    return i;
+  }
+  
+  /**
+     Adds the given data field definition to this record definition,
+     whether it already exists within the record definition or not.
+     Also adds the data field definition to the data dictionary, if it
+     is not already there. 
+    
+     @return Column number of the new entry.
+    
+     @param  inName The name of a data field to be added.
+   */
+  public int addColumn (String inName) {
+    DataFieldDefinition def = new DataFieldDefinition (inName);
+    return addColumn (def);
+  }
+  
+  /**
+     Adds the given data field definition to this record definition,
+     whether it already exists within the record definition or not.
+     Also adds the data field definition to the data dictionary, if it
+     is not already there. 
+    
+     @return Column number of the new entry.
+    
+     @param  inName The data field definition to be added.
+   */
+  public int addColumn (DataFieldDefinition inDef) {
+    int j = dict.putDef (inDef);
+    Column column = new Column (j);
+    int i = columns.size();
+    columns.addElement (column);
+    names.addElement (inDef.getProperName());
+    return i;
+  }
+  
+  /** 
+     Uses actual field values to maintain field length statistics. If field
+     length statistics (average length, maximum length) are required for a
+     particular application, then this method should be called once for each 
+     actual field value that is part of a particular record collection. 
+    
+     @param  data One String value for this field.
+    
+     @param  columnNumber Index to a particular column.
+   */
+  public void anotherField (String data, int columnNumber) {
+    if ((columnNumber >= 0) && (columnNumber < columns.size())) {
+      Column column = (Column)columns.elementAt (columnNumber);
+      column.anotherField (data);
+    }
+  }
+
+  
+  /**
+     Returns a Vector containing the names of all the fields
+     in the record definition.
+    
+     @return Proper names of all the fields.
+   */
+  public Vector getNames () {
+    return names;
+  }
+  
+  public Column getColumn (int c) {
+    if (c >= 0 && c < columns.size()) {
+      return (Column)columns.elementAt (c);
+    } else {
+      return null;
+    }
+  }
+  
+  /**
+     Returns a data field definition stored in a particular
+     column of this record.
+    
+     @return Data field definition for the given column.
+    
+     @param  column Column number for which the definition
+                    is desired.
+   */
+  public DataFieldDefinition getDef (int columnNumber) {
+    int i;
+    i = getDefNum (columnNumber);
+    return dict.getDef (i);
+  }
+  
+  /**
+     Return the number of fields in each record.
+    
+     @return Number of fields stored in each record.
+   */
+   
+  public int getNumberOfFields () {
+    return columns.size();
+  }
+  
+  /**
+     Gets the maximum length of any data String for the indicated column number.
+    
+     @return Maximum length of field.
+    
+     @param columnNumber Index to one field in the record definition.
+   */
+  public int getMaximumLength (int columnNumber) { 
+    Column column = (Column)columns.elementAt (columnNumber);
+    return column.getMaximumLength();
+  }
+  
+  /**
+     Gets the average length of all data Strings for the indicated column number.
+    
+     @return Average length (in characters) of all data Strings for this column.
+    
+     @param columnNumber Index to one field in the record definition.
+   */
+  public int getAverageLength (int columnNumber) {
+    Column column = (Column)columns.elementAt (columnNumber);
+    return column.getAverageLength();
+  }
+
+  
+  /**
+     Return this object as some kind of string.
+    
+     @return Concatenation of all the data field definitions
+             in this record definition.
+   */
+  public String toString () {
+    StringBuffer recordBuf = new StringBuffer ();
+    for (int i = 0; i < columns.size (); i++) {
+      if (i > 0) {
+        recordBuf.append ("; ");
+      }
+      recordBuf.append (getDef(i).toString());
+    }
+    return recordBuf.toString ();
+  }
+  
+  /**
+     Indicates whether more definitions are left to return
+     from the record definition.
+    
+     @return True if there are more definitions to return.
+   */
+  public boolean hasMoreDefs () {
+    return (columnNumber < columns.size());
+  }
+  
+  /**
+     Returns the first definition in the table, and 
+     preps the internal index to return subsequent entries
+     with nextDef.
+    
+     @return First data field definition in the record definition.
+   */
+  public DataFieldDefinition firstDef () {
+    resetColumnNumber ();
+    return nextDef ();
+  }
+  
+  /**
+     Sets the internal index to return the first column
+     with the next call to nextDef.
+   */
+  public void resetColumnNumber () {
+    columnNumber = 0;
+  }
+  
+  /**
+     Returns the next Column in the record
+     definition, using an internal pointer to keep track
+     of a position within the collection.
+    
+     @return Next Column in the record definition.
+   */
+  public DataFieldDefinition nextDef () {
+    return getDef (columnNumber++);
+  }
+  
+  /**
+     Returns an Iterator that can be used to retrieve all
+     DataFieldDefinition objects in the collection, one at
+     a time. 
+    
+     @return Iterator.
+   */
+  public Iterator iterator () {
+    return new ColumnIterator();
+  }
+  
+  class ColumnIterator 
+      implements Iterator {
+  
+    private int index;
+    
+    ColumnIterator () {
+      index = 0;
+    }
+    
+    public void remove() {
+      throw new UnsupportedOperationException();
+    }
+    
+    public boolean hasNext() {
+      return (index < getNumberOfFields());
+    }
+    
+    public Object next() {
+      if (hasNext()) {
+        return columns.elementAt (index++);
+      }
+      else {
+        throw new NoSuchElementException();
+      }
+    }
+  }
+  
+}

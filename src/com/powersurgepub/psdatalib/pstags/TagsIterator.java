@@ -1,0 +1,94 @@
+package com.powersurgepub.psdatalib.pstags;
+
+/**
+
+ A class that can iterate through a Tags object in a number of useful ways.
+
+ */
+public class TagsIterator {
+
+  private Tags tags;
+
+  /** Work fields. */
+  private int       tagIndex     = 0;
+  private int       lastTagIndex = 0;
+  private int       lastTagEnd   = 0;
+  private boolean   endOfTag    = false;
+
+  public TagsIterator (Tags tags) {
+    this.tags = tags;
+  }
+
+  public void reset () {
+    tagIndex = 0;
+    lastTagIndex = 0;
+    lastTagEnd = 0;
+    endOfTag = false;
+  }
+
+  /**
+   Return next word, terminated by any kind of separator.
+
+   @return Next word, or empty string if no more words.
+   */
+  public String nextWord () {
+    if (hasNextWord()) {
+      int start = Tags.indexOfNextWordStart (tags.getTags(), tagIndex);
+      int end   = Tags.indexOfNextSeparator (tags.getTags(), start, true, true);
+      tagIndex = end + 1;
+      endOfTag = (end >= tags.length() || Tags.isTagSeparator (tags.charAt(end)));
+      return (tags.substring (start, end));
+    } else {
+      endOfTag = true;
+      return "";
+    }
+  }
+
+  /**
+   Indicate whether the last word returned represented the last level
+   in a single tag.
+
+   @return True if last word was the end of a tag, false otherwise.
+   */
+  public boolean isEndOfTag () {
+    return endOfTag;
+  }
+
+  /**
+   Return the next complete tag (1 or more levels) within the tags string.
+
+   @return The next complete tag.
+   */
+  public String nextTag () {
+    if (hasNextTag()) {
+      lastTagIndex 
+          = Tags.indexOfNextWordStart (tags.getTags(), tagIndex);
+      lastTagEnd 
+          = Tags.indexOfNextSeparator (tags.getTags(), lastTagIndex, false, true);
+      // lastTagIndex = tagIndex;
+      tagIndex = lastTagEnd + 1;
+      return (tags.substring (lastTagIndex, lastTagEnd));
+    } else {
+      return "";
+    }
+  }
+
+  /**
+   Remove the last tag returned via nextTag, depending on lastTagIndex and
+   lastTagEnd.
+   */
+  public void removeTag () {
+    tags.removeTag (lastTagIndex, lastTagEnd);
+    tagIndex = lastTagIndex;
+    lastTagEnd = lastTagIndex;
+  }
+
+  public boolean hasNextWord () {
+    return (tagIndex < tags.length() && tagIndex >= 0);
+  }
+
+  public boolean hasNextTag () {
+    return (tagIndex < tags.length() && tagIndex >= 0);
+  }
+
+}
