@@ -84,11 +84,19 @@ public class TagsIterator {
   }
 
   public boolean hasNextWord () {
-    return (tagIndex < tags.length() && tagIndex >= 0);
+    if (tags == null) {
+      return false;
+    } else {
+      return (tagIndex < tags.length() && tagIndex >= 0);
+    }
   }
 
   public boolean hasNextTag () {
-    return (tagIndex < tags.length() && tagIndex >= 0);
+    if (tags == null) {
+      return false;
+    } else {
+      return (tagIndex < tags.length() && tagIndex >= 0);
+    }
   }
 
 }
