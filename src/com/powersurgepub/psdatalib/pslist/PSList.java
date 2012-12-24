@@ -85,6 +85,13 @@ public interface PSList {
      @param inputFilter Desired output filter. 
    */
   public void setInputFilter (PSItemFilter inputFilter);
+  
+  /**
+   Set the comparator to be used for sorting the proxy list. 
+  
+   @param comparator The comparator to be used to sort the list. 
+  */
+  public void setComparator (Comparator comparator);
 
   
 }

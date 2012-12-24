@@ -33,15 +33,15 @@ public class TextMergeFilter {
   private     JButton             filterSetButton     = new JButton();
   private     JLabel              filterTextLabel     = new JLabel();
   private     JScrollPane         filterTextScrollPane;
-  private     JTextArea           filterText = new JTextArea("");;
+  private     JTextArea           filterText = new JTextArea("");
   
 	private     GridBagger          gb = new GridBagger();
   
   // Fields using for filtering
   private     boolean             filterTabBuilt      = false;
   private     TextMergeFilter     textMergeFilter;
-	private     PSFieldFilter         fieldFilter;
-	private     PSItemFilter      itemFilter;
+	private     PSFieldFilter       fieldFilter;
+	private     PSItemFilter        itemFilter;
 	private     String              currentFilterField;
 	private     int                 currentFilterColumn;
 	private     String              currentFilterOperand;

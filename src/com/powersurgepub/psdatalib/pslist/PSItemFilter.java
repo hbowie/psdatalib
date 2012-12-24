@@ -15,7 +15,7 @@ public class PSItemFilter {
   /** Does and logic apply? (If not, then "or" logic.) */
   private    boolean                  andLogic = false;
 
-  /** The collection of field fieldFilters that make up this item filter. */
+  /** The collection of field filters that make up this item filter. */
   private    ArrayList<PSFieldFilter> fieldFilters;
 
   /** 
