@@ -3,6 +3,7 @@ package com.powersurgepub.psdatalib.ui;
   import com.powersurgepub.psutils.*;
   import java.io.*;
   import java.net.*;
+  import java.util.*;
   import javax.swing.*;
 
 /**
@@ -19,7 +20,13 @@ public class PSComboBox
    A constructor with no arguments. 
   */
   public PSComboBox() {
-    
+    super();
+    list = new ResourceList(this);
+  }
+  
+  public PSComboBox (Object[] items) {
+    super(items);
+    list = new ResourceList(this);
   }
   
   /**
@@ -79,6 +86,30 @@ public class PSComboBox
     }
     return ok;
   }
+
+  /**
+   Load a list of items into the combo box list, reading the list of items
+   from a provided list. 
+  
+   @param list The list from which to populate the combo box. 
+  
+   @param startFromScratch If true, then the combo box will be purged of any
+                           existing items before the provided list is loaded. 
+  
+   @return True to indicate everything went ok, for consistency with other 
+           load methods. 
+  */
+  public boolean load (List list, boolean startFromScratch) {
+    boolean ok = true;
+    if (getItemCount() > 0 && startFromScratch) {
+      removeAllItems();
+    }
+    for (int i = 0; i < list.size(); i++) {
+      addItem(list.get(i).toString());
+    }
+    return ok;
+  } // end comboBoxLoad method
+  
   /**
    Make sure the passed string is an item in the list, and make it the 
    selected item. 
