@@ -22,7 +22,6 @@ public class TextMergeSort {
   private     boolean             combineAllowed = true;
   
   // Fields used for the User Interface
-  private			JFrame							mainFrame;
   private     Border              raisedBevel;
   private     Border              etched;
   

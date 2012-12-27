@@ -23,6 +23,7 @@ public class ScriptConstants {
   public  static final String CLEAR_ACTION        = "clear";
   public  static final String GENERATE_ACTION     = "generate";
   public  static final String URL_MODIFIER        = "url";
+  public  static final String TEXT_MODIFIER       = "text";
   public  static final String NO_MODIFIER         = "";
   public  static final String MERGE_OBJECT        = "merge";
   public  static final String MERGE_SAME_OBJECT   = "same";
