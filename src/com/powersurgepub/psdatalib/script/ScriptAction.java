@@ -1,9 +1,6 @@
 package com.powersurgepub.psdatalib.script;
 
-  import com.powersurgepub.psdatalib.psdata.RecordDefinition;
-import com.powersurgepub.psdatalib.psdata.DataField;
-import com.powersurgepub.psdatalib.psdata.DataFieldDefinition;
-import com.powersurgepub.psdatalib.psdata.DataRecord;
+  import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psutils.*;
   
 /**

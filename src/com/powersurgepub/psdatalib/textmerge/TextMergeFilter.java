@@ -1,7 +1,6 @@
 package com.powersurgepub.psdatalib.textmerge;
 
   import com.powersurgepub.psdatalib.script.*;
-  // import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psdatalib.pslist.*;
   import com.powersurgepub.psdatalib.ui.*;
   import com.powersurgepub.psutils.*;
@@ -16,7 +15,9 @@ package com.powersurgepub.psdatalib.textmerge;
 public class TextMergeFilter {
   
   private     PSList              psList = null;
-  private     ScriptRecorder      scriptRecorder = null;
+  private     TextMergeScript     scriptRecorder = null;
+  private     JTabbedPane         tabs = null;
+  private     JMenuBar            menus = null;
   
   // Filter panel objects    
   private     JPanel              filterPanel;
@@ -48,7 +49,7 @@ public class TextMergeFilter {
 	private     String              currentFilterValue = " ";
 	private     boolean             currentAndLogic = true;
   
-  public TextMergeFilter(PSList psList, ScriptRecorder scriptRecorder) {
+  public TextMergeFilter(PSList psList, TextMergeScript scriptRecorder) {
     this.psList = psList;
     this.scriptRecorder = scriptRecorder;
     initItemFilter();
@@ -58,8 +59,9 @@ public class TextMergeFilter {
     this.psList = psList;
   }
   
-  public JPanel getPanel() {
+  public void setTabs(JTabbedPane tabs) {
 
+    this.tabs = tabs;
 		filterPanel = new JPanel();
 		
 		// General Instructions for use of the Filter Tab
@@ -212,7 +214,53 @@ public class TextMergeFilter {
 		gb.setWidth (3);
 		gb.setRowWeight (1.0);
 		gb.add (filterTextScrollPane);
-    return filterPanel;
+    tabs.add("Filter", filterPanel);
+  }
+  
+  /**
+   Select the tab for this panel. 
+  */
+  public void selectTab() {
+    if (tabs != null) {
+      tabs.setSelectedComponent (filterPanel);
+    }
+  }
+  
+  /**
+     Play one recorded action in the Filter module.
+   */
+  public void playFilterModule (
+      String inActionAction,
+      String inActionModifier,
+      String inActionObject,
+      String inActionValue) {
+    
+    if ((inActionAction.equals (ScriptConstants.SET_ACTION)) 
+      && (inActionObject.equals (ScriptConstants.AND_OR_OBJECT))) {
+      filterAndOr (Boolean.valueOf(inActionValue).booleanValue());
+    }
+    else
+    if (inActionAction.equals (ScriptConstants.ADD_ACTION)) {
+      currentFilterOperand = inActionModifier;
+      currentFilterField = inActionObject;
+      currentFilterValue = inActionValue;
+      filterAdd();
+    }
+    else
+    if (inActionAction.equals (ScriptConstants.CLEAR_ACTION)) {
+      filterClear();
+    }
+    else
+    if ((inActionAction.equals (ScriptConstants.SET_ACTION))
+      && (inActionObject.equals (ScriptConstants.PARAMS_OBJECT))) {
+      filterSetParams ();
+    } // end valid actions
+    else {
+      Logger.getShared().recordEvent (LogEvent.MEDIUM, 
+        inActionAction + " " + inActionObject +
+        " is not a valid Scripting Action for the Filter Module",
+        true);
+    } // end Action selector
   }
   
   /** 

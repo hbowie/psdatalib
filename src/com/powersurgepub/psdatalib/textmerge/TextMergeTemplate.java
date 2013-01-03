@@ -5,6 +5,7 @@ package com.powersurgepub.psdatalib.textmerge;
   import com.powersurgepub.psdatalib.script.*;
   import com.powersurgepub.psdatalib.template.*;
   import com.powersurgepub.psdatalib.ui.*;
+  import com.powersurgepub.psfiles.*;
   import com.powersurgepub.psutils.*;
   import java.awt.*;
   import java.awt.event.*;
@@ -20,7 +21,11 @@ package com.powersurgepub.psdatalib.textmerge;
 public class TextMergeTemplate {
   
   private     PSList              psList = null;
-  private     ScriptRecorder      scriptRecorder = null;
+  private     TextMergeScript     scriptRecorder = null;
+  private     JTabbedPane         tabs = null;
+  private     JMenuBar            menus = null;
+  private     boolean             tabSet = false;
+  private     boolean             menuSet = false;
   
   // Fields used for the User Interface
   private     Border              raisedBevel;
@@ -70,13 +75,42 @@ public class TextMergeTemplate {
   private static final String     TEMPLATE_LIBRARY_KEY = "templatelib";
   private     File                templateLibrary = null;
   
-  public TextMergeTemplate (PSList psList, ScriptRecorder scriptRecorder) {
+  public TextMergeTemplate (PSList psList, TextMergeScript scriptRecorder) {
     this.psList = psList;
     this.scriptRecorder = scriptRecorder;
+    setListOptions();
   }
   
   public void setPSList (PSList psList) {
     this.psList = psList;
+    setListOptions();
+  }
+  
+  private void setListOptions() {
+    
+    templateLibrary = null;
+    
+    if (psList != null) {
+      FileSpec source = psList.getSource();
+      
+      // Set template library
+      String templateLibraryPath = null;
+      if (source != null) {
+        templateLibraryPath = source.getTemplatesFolder();
+      }
+      if (templateLibraryPath != null
+          && templateLibraryPath.length() > 0) {
+        templateLibrary = new File (templateLibraryPath);
+        if (! templateLibrary.exists()) {
+          templateLibrary = null;
+        }
+      } 
+    }
+    if (templateLibrary == null) {
+      templateLibrary = new File (
+          Home.getShared().getAppFolder().getPath(),  
+          "templates");
+    }
   }
   
   public void setTemplateLibrary (File templateLibrary) {
@@ -91,7 +125,11 @@ public class TextMergeTemplate {
     return psList != null;
   }
   
-  public JMenu getMenu() {
+  public void setMenus (JMenuBar menus) {
+    
+    menuSet = true;
+    
+    this.menus = menus;
     templateMenu = new JMenu("Template");
     
     // Equivalent Menu Item for Template Open
@@ -136,11 +174,14 @@ public class TextMergeTemplate {
     
     templateGenerate.setEnabled (false);
     
-    return templateMenu;
+    menus.add(templateMenu);
   }
   
-  public JPanel getPanel(boolean combineAllowed) {
+  public void setTabs(JTabbedPane tabs) {
     
+    tabSet = true;
+    
+    this.tabs = tabs;
 		templatePanel = new JPanel();
 		
     // Create Open Button for Template File
@@ -276,9 +317,50 @@ public class TextMergeTemplate {
     gb.setRowWeight (1.0);
     gb.add (templateText);
     
-    return templatePanel;
+    tabs.add("Template", templatePanel);
   
   }
+  
+  /**
+   Select the tab for this panel. 
+  */
+  public void selectTab() {
+    if (tabs != null) {
+      tabs.setSelectedComponent (templatePanel);
+    }
+  }
+  
+  /**
+     Play one recorded action in the Template module.
+   */
+  public void playTemplateModule (
+      String inActionAction,
+      String inActionModifier,
+      String inActionObject,
+      String inActionValue) {
+
+    if (inActionAction.equals (ScriptConstants.OPEN_ACTION)) {
+      templateFile = new File (inActionValue);
+      if (templateFile == null) {
+        Logger.getShared().recordEvent (LogEvent.MEDIUM, 
+          inActionValue + " is not a valid " + inActionModifier 
+          + " for a Template Open Action", true);
+      }
+      else {
+        templateOpen();
+      } // end file existence selector
+    }
+    else 
+    if (inActionAction.equals (ScriptConstants.GENERATE_ACTION)) {
+      checkTemplateRepeat();
+      templateGenerate();
+    } // end valid action
+    else {
+      Logger.getShared().recordEvent (LogEvent.MEDIUM, 
+        inActionAction + " is not a valid Scripting Action for the Template Module",
+        true);
+    } // end Action selector
+  } // end playTemplateModule method
   
   /**
      Open a Template File
@@ -287,9 +369,9 @@ public class TextMergeTemplate {
     templateFileOK = false;
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-    if (psList.getSource() != null) {
-      fileChooser.setCurrentDirectory (psList.getSource());
-    } 
+    if (templateLibrary != null) {
+      fileChooser.setCurrentDirectory(templateLibrary);
+    }
     int fileChooserReturn 
       = fileChooser.showOpenDialog (openTemplateButton);
     if (fileChooserReturn 
@@ -324,6 +406,7 @@ public class TextMergeTemplate {
           ScriptConstants.TEXT_MODIFIER, 
           ScriptConstants.NO_OBJECT, 
           templateFile.getAbsolutePath());
+      setTemplateDirectoryFromFile (templateFile);
     } else {
       Logger.getShared().recordEvent (LogEvent.MEDIUM, 
         templateFileName + " could not be opened as a valid Template File",
@@ -333,11 +416,19 @@ public class TextMergeTemplate {
     // Set appropriate value for Generate Button
     if (generateOutputButton != null) {
       if (templateFileOK && fileAvailable() && templateCreated) {
-        generateOutputButton.setEnabled (true);
-        templateGenerate.setEnabled (true);
+        if (tabSet) {
+          generateOutputButton.setEnabled (true);
+        }
+        if (menuSet) {
+          templateGenerate.setEnabled (true);
+        }
       } else {
-        generateOutputButton.setEnabled (false);
-        templateGenerate.setEnabled (false);
+        if (tabSet) {
+          generateOutputButton.setEnabled (false);
+        }
+        if (menuSet) {
+          templateGenerate.setEnabled (false);
+        }
       }
     }
   } // end method templateOpen()
@@ -490,5 +581,24 @@ public class TextMergeTemplate {
         true);
     }
   } // end method templateGenerate
+  
+  private void setTemplateDirectoryFromFile (File inFile) {
+    templateLibrary = new File(inFile.getParent());
+    saveTemplateDirectory();
+  }
+  
+  private void setTemplateDirectoryFromDir (File inFile) {
+    templateLibrary = inFile;
+    saveTemplateDirectory();
+  }
+  
+  private void saveTemplateDirectory() {
+    if (psList != null) {
+      FileSpec source = psList.getSource();
+      if (source != null) {
+        source.setTemplatesFolder(templateLibrary);
+      }
+    }
+  }
 
 }

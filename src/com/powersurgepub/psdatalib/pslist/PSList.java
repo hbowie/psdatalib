@@ -1,6 +1,7 @@
 package com.powersurgepub.psdatalib.pslist;
 
   import com.powersurgepub.psdatalib.psdata.*;
+  import com.powersurgepub.psfiles.*;
   import java.io.*;
   import java.util.*;
 
@@ -17,14 +18,14 @@ public interface PSList {
  
    @param source The file or folder from which the data is taken.
   */
-  public void setSource (File source);
+  public void setSource (FileSpec source);
  
   /**
    Get the data source.
  
    @return The file or folder from which the data is taken.
   */
-  public File getSource ();
+  public FileSpec getSource ();
   
   /**
    Returns the size of the list.

@@ -18,8 +18,10 @@ package com.powersurgepub.psdatalib.textmerge;
 public class TextMergeSort {
   
   private     PSList              psList = null;
-  private     ScriptRecorder      scriptRecorder = null;
+  private     TextMergeScript     scriptRecorder = null;
   private     boolean             combineAllowed = true;
+  private     JTabbedPane         tabs = null;
+  private     JMenuBar            menus = null;
   
   // Fields used for the User Interface
   private     Border              raisedBevel;
@@ -82,7 +84,7 @@ public class TextMergeSort {
   private			int									minNoLoss = 0;
   private			int									totalCombinations = -1;
   
-  public TextMergeSort (PSList psList, ScriptRecorder scriptRecorder) {
+  public TextMergeSort (PSList psList, TextMergeScript scriptRecorder) {
     this.psList = psList;
     this.scriptRecorder = scriptRecorder;
     initSortSpec();
@@ -92,8 +94,9 @@ public class TextMergeSort {
     this.psList = psList;
   }
   
-  public JPanel getPanel(boolean combineAllowed) {
+  public void setTabs (JTabbedPane tabs, boolean combineAllowed) {
     
+    this.tabs = tabs;
     this.combineAllowed = combineAllowed;
     
 		sortPanel = new JPanel();
@@ -352,9 +355,112 @@ public class TextMergeSort {
 		gb.setRowWeight (1.0);
 		gb.add (sortTextScrollPane);
     
-    return sortPanel;
+    tabs.add("Sort", sortPanel);
     
   }
+  
+  /**
+   Select the tab for this panel. 
+  */
+  public void selectTab() {
+    if (tabs != null) {
+      tabs.setSelectedComponent (sortPanel);
+    }
+  }
+  
+  public boolean isCombineAllowed() {
+    return combineAllowed;
+  }
+  
+  /**
+     Play one recorded action in the Sort module.
+   */
+  public void playSortModule (
+      String inActionAction,
+      String inActionModifier,
+      String inActionObject) {
+    
+    if (inActionAction.equals (ScriptConstants.ADD_ACTION)) {
+      currentSortDirection = inActionModifier;
+      currentSortField = inActionObject;
+      sortAdd();
+    }
+    else
+    if (inActionAction.equals (ScriptConstants.CLEAR_ACTION)) {
+      sortClear();
+    }
+    else
+    if ((inActionAction.equals (ScriptConstants.SET_ACTION))
+      && (inActionObject.equals (ScriptConstants.PARAMS_OBJECT))) {
+      sortSetParams ();
+    } // end valid actions
+    else {
+      Logger.getShared().recordEvent (LogEvent.MEDIUM, 
+        inActionAction + " " + inActionObject +
+        " is not a valid Scripting Action for the Sort Module",
+        true);
+    } // end Action selector
+  } // end playSortModule method
+  
+  /**
+     Play one recorded action in the Combine module.
+   */
+  public void playCombineModule (
+      String inActionAction,
+      String inActionModifier,
+      String inActionObject,
+      String inActionValue,
+      int    inActionValueAsInt,
+      boolean inActionValueValidInt) {
+    if (inActionAction.equals (ScriptConstants.ADD_ACTION)) {
+      if (inActionObject.equals (ScriptConstants.DATA_LOSS_OBJECT)) {
+        dataLossTolerance = inActionValueAsInt;
+        if (! inActionValueValidInt) {
+          Logger.getShared().recordEvent (LogEvent.MEDIUM, 
+            inActionValue +
+            " is not a valid Combine Data Loss Tolerance Value",
+            true);
+        } // end if invalid int
+      } // end if data loss value
+      else
+      if (inActionObject.equals (ScriptConstants.PRECEDENCE_OBJECT)) {
+        precedence = inActionValueAsInt;
+        if (! inActionValueValidInt) {
+          Logger.getShared().recordEvent (LogEvent.MEDIUM, 
+            inActionValue +
+            " is not a valid Combine Precedence Value",
+            true);
+        } // end if invalid int
+      } // end if precedence value
+      else
+      if (inActionObject.equals (ScriptConstants.MIN_NO_LOSS_OBJECT)) {
+        minNoLoss = inActionValueAsInt;
+        if (! inActionValueValidInt) {
+          Logger.getShared().recordEvent (LogEvent.MEDIUM, 
+            inActionValue +
+            " is not a valid Combine Minimum Records with No Loss Value",
+            true);
+        } // end if invalid int
+      } // end if Minimum No Loss value
+      else {
+        Logger.getShared().recordEvent (LogEvent.MEDIUM, 
+          inActionObject +
+          " is not a valid Combine Parameter",
+          true);
+      } // end no known combine object
+    } // end if add action
+    else
+    if ((inActionAction.equals (ScriptConstants.SET_ACTION))
+      && (inActionObject.equals (ScriptConstants.PARAMS_OBJECT))) {
+      combineSet ();
+    } // end valid actions
+    else {
+      Logger.getShared().recordEvent (LogEvent.MEDIUM, 
+        inActionAction + " " + inActionObject +
+        " is not a valid Scripting Action for the Combine Module",
+        true);
+    } // end Action selector
+  } // end playCombineModule method
   
   /**
      Load potential sort fields into the JComboBox.
