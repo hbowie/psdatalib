@@ -17,10 +17,13 @@ package com.powersurgepub.psdatalib.textmerge;
 
   @author Herb Bowie
  */
-public class TextMergeScript {
+public class TextMergeScript 
+    implements PSFileOpener {
   
   /** Default file extension for script files. */
-  public		static	final String  SCRIPT_EXT = "tcz";
+  public		static	final String  SCRIPT_EXT       = "tcz";
+  
+  public    static  final String  AUTOPLAY         = "autoplay";
   
   private     boolean             quietMode = true;
   private     boolean             tabSet = false;
@@ -30,6 +33,7 @@ public class TextMergeScript {
   
   private     File                templateLibrary = null;
   
+  private     TextMergeInput      inputModule = null;
   private     TextMergeFilter     filterModule = null;
   private     TextMergeSort       sortModule = null;
   private     TextMergeTemplate   templateModule = null;
@@ -55,7 +59,7 @@ public class TextMergeScript {
   private     JButton             scriptEasyPlayButton = new JButton();
   private     JLabel							scriptPlaceHolder;
   private     JScrollPane         scriptTextScrollPane;
-  private     JTextArea           scriptText = new JTextArea();
+  private     JTextArea           scriptText = new JTextArea("");
   
 	private     boolean             scriptRecording = false;
   
@@ -92,7 +96,8 @@ public class TextMergeScript {
   private			boolean							inActionValueValidInt;
   private			String							inputObject = "";
 	private     boolean             scriptPlaying = false; 
-  private     PSFileList          recentScripts;   
+  private     PSFileList          recentScripts = null; 
+  private     boolean             autoplayAllowed = true;
   private     String              autoPlay = "";
   private     String              easyPlay = "";
   private     File                easyPlayFile = null;
@@ -102,9 +107,40 @@ public class TextMergeScript {
     setListOptions();
   }
   
+  public void allowAutoplay (boolean autoplayAllowed) {
+    this.autoplayAllowed = autoplayAllowed;
+  }
+  
+  /**
+   If the user has specified a script file to play at startup, then play it
+   when requested. 
+  
+   @return True if a script was automatically played, false otherwise. 
+  */
+  public boolean checkAutoPlay() {
+    boolean played = false;
+    if (autoplayAllowed) {
+      autoPlay = UserPrefs.getShared().getPref(AUTOPLAY, "");
+      if (autoPlay.length() > 0) {
+        File autoPlayFile = new File (autoPlay);
+        if (autoPlayFile.exists() && autoPlayFile.canRead()) {
+          inScriptFile = autoPlayFile;
+          inScript = new ScriptFile (inScriptFile, templateLibrary.toString());
+          playScript();
+          played = true;
+        } // end if input script file is available
+      } // end if autoplay was specified
+    }
+    return played;
+  }
+  
   public void setPSList (PSList psList) {
     this.psList = psList;
     setListOptions();
+  }
+  
+  public void setInputModule (TextMergeInput inputModule) {
+    this.inputModule = inputModule;
   }
   
   public void setFilterModule (TextMergeFilter filterModule) {
@@ -117,6 +153,26 @@ public class TextMergeScript {
   
   public void setTemplateModule (TextMergeTemplate templateModule) {
     this.templateModule = templateModule;
+  }
+  
+  public void setCurrentDirectory (File currentDirectory) {
+    this.currentDirectory = currentDirectory;
+  }
+  
+  public boolean hasCurrentDirectory() {
+    return (currentDirectory != null);
+  }
+  
+  public File getCurrentDirectory () {
+    return currentDirectory;
+  }
+  
+  public void setNormalizerPath (String normalizerPath) {
+    this.normalizerPath = normalizerPath;
+  }
+  
+  public String getNormalizerPath() {
+    return normalizerPath;
   }
   
   public void setMenus(JMenuBar menus) {
@@ -186,19 +242,21 @@ public class TextMergeScript {
     );
     
     // Equivalent Menu Item to AutoPlay a Script
-    if (autoPlay.length() == 0) {
-      scriptAutoPlay = new JMenuItem ("Turn Autoplay On");
-    } else {
-      scriptAutoPlay = new JMenuItem("Turn Autoplay Off");
+    if (autoplayAllowed) {
+      if (autoPlay.length() == 0) {
+        scriptAutoPlay = new JMenuItem ("Turn Autoplay On");
+      } else {
+        scriptAutoPlay = new JMenuItem("Turn Autoplay Off");
+      }
+      scriptMenu.add (scriptAutoPlay);
+      scriptAutoPlay.addActionListener (new ActionListener() 
+        {
+          public void actionPerformed (ActionEvent event) {
+            toggleAutoPlay();		    
+          } // end ActionPerformed method
+        } // end action listener
+      );
     }
-    scriptMenu.add (scriptAutoPlay);
-    scriptAutoPlay.addActionListener (new ActionListener() 
-      {
-        public void actionPerformed (ActionEvent event) {
-          toggleAutoPlay();		    
-        } // end ActionPerformed method
-      } // end action listener
-    );
     
     // Equivalent Menu Item to EasyPlay a Script
     if (easyPlay.length() == 0) {
@@ -214,6 +272,10 @@ public class TextMergeScript {
         } // end ActionPerformed method
       } // end action listener
     );
+    
+    recentScripts = new PSFileList ("Play Recent", "recentscript", this);
+    recentScripts.setMax (10);
+    scriptMenu.add (recentScripts.getFileMenu());
     
   } // end method setMenus
   
@@ -280,15 +342,17 @@ public class TextMergeScript {
     setScriptReplayControls();
     
     // Button to set an auto play script 
-		scriptAutoPlayButton.setVisible(true);
-		scriptAutoPlayButton.setToolTipText("Select a script to automatically play at startup");
-		scriptAutoPlayButton.addActionListener (new ActionListener()
-		  {
-		    public void actionPerformed (ActionEvent event) {
-          toggleAutoPlay();
-		    } // end ActionPerformed method
-		  } // end action listener for script play button
-		); 
+    if (autoplayAllowed) {
+      scriptAutoPlayButton.setVisible(true);
+      scriptAutoPlayButton.setToolTipText("Select a script to automatically play at startup");
+      scriptAutoPlayButton.addActionListener (new ActionListener()
+        {
+          public void actionPerformed (ActionEvent event) {
+            toggleAutoPlay();
+          } // end ActionPerformed method
+        } // end action listener for script play button
+      ); 
+    }
     
     // Button to set an easy play folder 
 		scriptEasyPlayButton.setVisible(true);
@@ -323,7 +387,9 @@ public class TextMergeScript {
 		
 		gb.add (scriptRecordButton);
 		gb.add (scriptPlayButton);
-    gb.add (scriptAutoPlayButton);
+    if (autoplayAllowed) {
+      gb.add (scriptAutoPlayButton);
+    }
     
     gb.add (scriptStopButton);
 		gb.add (scriptReplayButton);
@@ -344,7 +410,6 @@ public class TextMergeScript {
     currentDirectory = null;
     scriptDirectory = null;
     templateLibrary = null;
-    autoPlay = "";
     easyPlay = "";
     
     if (psList == null) {
@@ -388,16 +453,6 @@ public class TextMergeScript {
         templateLibrary = new File (
             Home.getShared().getAppFolder().getPath(),  
             "templates");
-      }
-      
-      // Set autoplay options
-      if (source != null) {
-        autoPlay = source.getAutoPlay();
-      }
-      if (autoPlay.length() == 0) { 
-        scriptAutoPlayButton.setText("Turn Autoplay On");
-      } else {
-        scriptAutoPlayButton.setText("Turn Autoplay Off");
       }
       
       // Set easyplay options
@@ -567,12 +622,7 @@ public class TextMergeScript {
   }
   
   private void saveAutoPlay() {
-    if (psList != null) {
-      FileSpec fileSpec = psList.getSource();
-      if (fileSpec != null) {
-        fileSpec.setAutoPlay(autoPlay);
-      }
-    }
+    UserPrefs.getShared().setPref(AUTOPLAY, autoPlay);
   }
   
   /**
@@ -749,6 +799,23 @@ public class TextMergeScript {
     } // end if script recording
   } // end stopScriptRecording method
   
+  /**      
+    Standard way to respond to a request to open a file.
+   
+    @param file File to be opened by this application.
+   */
+  public void handleOpenFile (PSFile file) {
+    playScript (file);
+  }
+  
+  public void playScript (File sFile) {
+    inScriptFile = sFile;
+    // setCurrentDirectoryFromFile (inScriptFile);
+    setScriptDirectoryFromFile (inScriptFile);
+    inScript = new ScriptFile (inScriptFile, templateLibrary.toString());
+    playScript();
+  }
+  
   /**
      Plays back a script file that has already been recorded.
    */
@@ -775,7 +842,7 @@ public class TextMergeScript {
     scriptPlaying = true;
     scriptText.append ("Playing script "
       + inScript.getFileName() + GlobalConstants.LINE_FEED_STRING);
-    if (! quietMode) {
+    if (! quietMode && recentScripts != null) {
       recentScripts.reference (inScriptFile);
     }
     while (! inScript.isAtEnd()) {
@@ -853,124 +920,18 @@ public class TextMergeScript {
      Play one recorded action in the Input module.
    */
   private void playInputModule () {
-   /*
-    if (inActionAction.equals (ScriptConstants.EPUB_IN_ACTION)) {
-      epubFolder = new File (inActionValue);
+   if (inputModule == null) {
+      Logger.getShared().recordEvent(LogEvent.MEDIUM, 
+          "Input module not available to play scripted input action", false);
+    } else {
+      inputModule.playScript(
+          inActionAction, 
+          inActionModifier, 
+          inActionObject, 
+          inActionValue,
+          inActionValueAsInt,
+          inActionValueValidInt);
     }
-    else
-    if (inActionAction.equals (ScriptConstants.EPUB_OUT_ACTION)) {
-      epubFile = new File (inActionValue);
-      createEpub();
-    }
-    else
-    if (inActionAction.equals (ScriptConstants.SET_ACTION)) {
-      if (inActionObject.equals (ScriptConstants.DIR_DEPTH_OBJECT)) {
-        if (inActionValueValidInt) {
-          if (inActionValueAsInt > 0) {
-            dirMaxDepth = inActionValueAsInt;
-          } else {
-            Logger.getShared().recordEvent (LogEvent.MEDIUM, 
-              inActionValue + " is not a valid value for an Open Directory Depth",
-              true);
-          }
-        } else {
-          Logger.getShared().recordEvent (LogEvent.MEDIUM, 
-            inActionValue + " is not a valid integer for an Open Directory Depth Value",
-            true);
-        }
-      }
-      else
-      if (inActionObject.equals (ScriptConstants.NORMAL_OBJECT)) {
-        if (inActionValueValidInt) {
-          if (inActionValueAsInt >= 0
-              && inActionValueAsInt <= ScriptConstants.NORMALTYPE_MAX) {
-            normalType = inActionValueAsInt;
-            setNormalTypeImplications();
-          } else {
-            Logger.getShared().recordEvent (LogEvent.MEDIUM, 
-              inActionValue + " is not a valid value for a Normalization Type Value",
-              true);
-          }
-        } else {
-          Logger.getShared().recordEvent (LogEvent.MEDIUM, 
-            inActionValue + " is not a valid integer for a Normalization Type Value",
-            true);
-        }
-      } else {
-        Logger.getShared().recordEvent (LogEvent.MEDIUM, 
-          inActionObject + " is not a valid Scripting Object for an Open Set Action",
-          true);
-      }
-    } 
-    else
-    if (inActionAction.equals (ScriptConstants.OPEN_ACTION)) {
-      
-      merge = 0;
-      if (inActionObject.equals (ScriptConstants.MERGE_OBJECT)) {
-        merge = 1;
-        setMergeImplications();
-      } else
-      if (inActionObject.equals (ScriptConstants.MERGE_SAME_OBJECT)) {
-        merge = 2;
-        setMergeImplications();
-      }
-
-      inputModuleIndex = 0;
-      inputModuleFound = false;
-      while (inputModuleIndex < inputModules.size() && (! inputModuleFound)) {
-        inputModule = inputModules.get(inputModuleIndex);
-        inputModuleFound = inputModule.setInputTypeByModifier(inActionModifier);
-        if (! inputModuleFound) {
-          inputModuleIndex++;
-        }
-      }
-          
-      if (inActionModifier.equals (ScriptConstants.URL_MODIFIER)) {
-        try {
-          tabURL = new URL (pageURL, inActionValue);
-        } catch (MalformedURLException e) {
-          tabURL = null;
-        }
-        if (tabURL == null) {
-          Logger.getShared().recordEvent (LogEvent.MEDIUM, 
-            inActionValue + " is not a valid " + inActionModifier + " for an Open Action",
-            true);
-        }
-        else {
-          fileName = inActionValue;
-          openURL();
-          // openDataName.setText (fileNameToDisplay);
-        } // end file existence selector
-      } // end if URL modifier
-      else
-      if (inputModuleFound) {
-        chosenFile = new File (inActionValue);
-        if (chosenFile == null) {
-          Logger.getShared().recordEvent (LogEvent.MEDIUM, 
-            inActionValue + " is not a valid " + inActionModifier + " for an Open Action",
-            true);
-        }
-        else {
-          // log.recordEvent (LogEvent.NORMAL,
-          //   "PSTextMerge playInputModule openFileOrDirectory",
-          //   false);
-          // System.out.println ("PSTextMerge playInputModule openFileOrDirectory");
-          openFileOrDirectory();
-          // openDataName.setText (fileNameToDisplay);
-        } // end file existence selector
-      } // end file or directory
-      else {
-        Logger.getShared().recordEvent (LogEvent.MEDIUM, 
-          inActionModifier + " is not a valid Scripting Modifier for an Open Action",
-          true);
-      } // end Action Modifier selector
-    } // end valid action
-    else {
-      Logger.getShared().recordEvent (LogEvent.MEDIUM, 
-        inActionAction + " is not a valid Scripting Action for the Open Module",
-        true);
-    } // end Action selector
-   */
   } // end playInputModule method
   
   /**
@@ -1015,7 +976,7 @@ public class TextMergeScript {
       Logger.getShared().recordEvent(LogEvent.MEDIUM, 
           "Filter module not available to play scripted filter action", false);
     } else {
-      filterModule.playFilterModule(
+      filterModule.playScript(
           inActionAction, 
           inActionModifier, 
           inActionObject,

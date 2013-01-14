@@ -59,7 +59,7 @@ public class DataSet
   private    RecordDefinition   recDef;
   
   /** Collection of all records in the data set. */
-  private    ArrayList          records;
+  private    ArrayList<DataRecord>          records;
   
   /** Index used to cycle through the records in the data set. */
   private    int                recordNumber;
@@ -580,7 +580,20 @@ public class DataSet
       }
       lastRecordNumber = i;
     } // end of seqSpec processing
-   
+   checkMemory();
+  } // end method addRecord
+  
+  public void add (DataRecord inRec) {
+    records.add(inRec);
+    checkMemory();
+  }
+  
+  public void add (int atIndex, DataRecord inRec) {
+    records.add(atIndex, inRec);
+    checkMemory();
+  }
+  
+  private void checkMemory() {
     if (! userWarnedOnMemory) {
       Runtime rt = Runtime.getRuntime();
       if (rt.freeMemory() < LOW_MEMORY_THRESHOLD) {
@@ -593,8 +606,7 @@ public class DataSet
         } // end if final check of memory still indicates it is low
       } // end if initial check of memory indicates it is low
     } // end if user not yet warned on low memory
-     
-  } // end method addRecord
+  }
     
   
   public void removeRecord (int recordNumber) 
@@ -760,7 +772,12 @@ public class DataSet
   	}
   	this.lastRecordNumber = recordNumber;
   	this.recordNumber = recordNumber++;
-  	return (DataRecord)records.get (lastRecordNumber);
+  	return records.get (lastRecordNumber);
+  }
+  
+  public DataRecord get (int recordNumber)
+      throws ArrayIndexOutOfBoundsException {
+    return records.get(recordNumber);
   }
   
   /**
@@ -816,6 +833,10 @@ public class DataSet
      @return Number of records stored internally.
    */
   public int getNumberOfRecords () {
+    return records.size();
+  }
+  
+  public int size() {
     return records.size();
   }
   

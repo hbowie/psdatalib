@@ -1,6 +1,8 @@
 package com.powersurgepub.psdatalib.psdata;
 
   import java.util.*;
+  import com.powersurgepub.psdatalib.pslist.*;
+  import com.powersurgepub.psdatalib.pstags.*;
   import com.powersurgepub.psutils.*;
   
 /**
@@ -45,13 +47,17 @@ package com.powersurgepub.psdatalib.psdata;
  */
 
 public class DataRecord 
-    extends DataField {
+    extends DataField 
+    implements
+      PSItem {
   
   /** An index pointing to a particular field number within the record. */
   private   int           fieldNumber;
   
   /** A number indicating sequence in which records were created/added. */
   private		int						recordSequence = 0;
+  
+  private   Comparator    comparator = null;
   
   /**
      Constructs a new data record with no fields. 
@@ -253,6 +259,18 @@ public class DataRecord
   }
   
   /**
+   Return the value stored in the indicated column. 
+  
+   @param columnIndex An index to the desired column, with zero pointing
+                      to the first column. 
+  
+   @return An Object stored at the indicated column. 
+  */
+  public Object getColumnValue (int columnIndex) {
+    return getField(columnIndex).getData();
+  }
+  
+  /**
      Indicates whether this record contains the given field.
     
      @return True if the field is already contained within this
@@ -316,6 +334,118 @@ public class DataRecord
       recordBuf.append (((DataField)fields.get(i)).toString());
     }
     return recordBuf.toString ();
+  }
+  
+  /**
+   Get the comparator to be used;
+   */
+  public Comparator getComparator() {
+    return comparator;
+  }
+  
+  /**
+   Set the comparator to be used. 
+   */
+  public void setComparator (Comparator comparator) {
+    this.comparator = comparator;
+  }
+  
+  /**
+   Determine if this item has a key that is equal to the passed
+   item.
+
+   @param  obj2        The second object to be compared to this one.
+   @param  comparator  The comparator to be used to make the comparison. 
+   @return True if the keys are equal.
+   */
+  public boolean equals (Object obj2, Comparator comparator) {
+    return (this.compareTo (obj2, comparator) == 0);
+  }
+  
+  /**
+   Determine if this item has a key that is equal to the passed
+   item.
+
+   @param  obj2  The second object to be compared to this one.
+   @return True if the keys are equal.
+   */
+  public boolean equals (Object obj2) {
+    return (this.compareTo (obj2) == 0);
+  }
+  
+  /**
+   Compare this ClubEvent object to another, using the key field(s) for comparison.
+ 
+   @param The second object to compare to this one.
+ 
+   @return A number less than zero if this object is less than the second,
+           a number greater than zero if this object is greater than the second,
+           or zero if the two item's keys are equal.
+   */
+  public int compareTo (Object obj2, Comparator comparator) {
+    if (comparator == null) {
+      return 0;
+    }
+    return comparator.compare (this, obj2);
+  }
+  
+  /**
+   Compare one item to another, for sequencing purposes.
+
+   @param  The second object to be compared to this one.
+   @return A negative number if this item is less than the passed
+           item, zero if they are equal, or a positive number if
+           this item is greater.
+   */
+  public int compareTo (Object obj2) {
+    if (comparator == null) {
+      return 0;
+    }
+    return comparator.compare (this, obj2);
+  }
+  
+  /**
+   Return the tags assigned to this taggable item. 
+   
+   @return The tags assigned. 
+   */
+  public Tags getTags () {
+    return null;
+  }
+
+  /**
+   Flatten all the tags for this item, separating each level/word into its own
+   first-level tag.
+   */
+  public void flattenTags() {
+    
+  }
+
+  /**
+   Convert the tags to all lower-case letters.
+   */
+  public void lowerCaseTags () {
+    
+  }
+
+  /**
+   Set the first TagsNode occurrence for this Taggable item. This is stored
+   in a TagsModel occurrence.
+
+   @param tagsNode The tags node to be stored.
+   */
+  public void setTagsNode (TagsNode tagsNode) {
+    
+  }
+
+  /**
+   Return the first TagsNode occurrence for this Taggable item. These nodes
+   are stored in a TagsModel occurrence.
+
+   @return The tags node stored. 
+   */
+  public TagsNode getTagsNode () {
+    return null;
   }
   
 }

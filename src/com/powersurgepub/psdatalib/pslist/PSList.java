@@ -14,6 +14,11 @@ package com.powersurgepub.psdatalib.pslist;
 public interface PSList {
   
   /**
+   Initialize the list with no items in the list. 
+  */
+  public void initialize();
+  
+  /**
    Set the data source.
  
    @param source The file or folder from which the data is taken.

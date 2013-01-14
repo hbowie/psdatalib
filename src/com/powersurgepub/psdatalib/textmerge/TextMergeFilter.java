@@ -229,7 +229,7 @@ public class TextMergeFilter {
   /**
      Play one recorded action in the Filter module.
    */
-  public void playFilterModule (
+  public void playScript (
       String inActionAction,
       String inActionModifier,
       String inActionObject,

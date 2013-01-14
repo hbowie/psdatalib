@@ -78,6 +78,19 @@ public class TextMergeTemplate {
   public TextMergeTemplate (PSList psList, TextMergeScript scriptRecorder) {
     this.psList = psList;
     this.scriptRecorder = scriptRecorder;
+    
+    // Initialize template library based on app preferences
+    // These may be overridden later by list preferences
+    templateLibrary = new File (UserPrefs.getShared().getPref (TEMPLATE_LIBRARY_KEY));
+    if ((! templateLibrary.exists())
+        || (! templateLibrary.canRead())
+        || (! templateLibrary.isDirectory())) {
+      templateLibrary = new File (Home.getShared().getAppFolder().getPath(),  "templates");
+    }
+    
+    // System.out.println (templateLibrary.toString() 
+    //     + " Exists? " 
+    //     + String.valueOf (templateLibrary.exists()));
     setListOptions();
   }
   
