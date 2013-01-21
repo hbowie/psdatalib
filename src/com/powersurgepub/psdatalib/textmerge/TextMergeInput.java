@@ -18,8 +18,9 @@ package com.powersurgepub.psdatalib.textmerge;
   import javax.swing.border.*;
 
 /**
- 
- @author hbowie
+ The Text Merge module for reading input files. 
+
+ @author Herb Bowie
  */
 public class TextMergeInput {
   

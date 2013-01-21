@@ -37,6 +37,7 @@ public class TextMergeScript
   private     TextMergeFilter     filterModule = null;
   private     TextMergeSort       sortModule = null;
   private     TextMergeTemplate   templateModule = null;
+  private     TextMergeOutput     outputModule = null;
   
   private     JTabbedPane         tabs = null;
   private     JMenuBar            menus = null;
@@ -155,8 +156,16 @@ public class TextMergeScript
     this.templateModule = templateModule;
   }
   
+  public void setOutputModule (TextMergeOutput outputModule) {
+    this.outputModule = outputModule;
+  }
+  
   public void setCurrentDirectory (File currentDirectory) {
     this.currentDirectory = currentDirectory;
+  }
+  
+  public void setCurrentDirectoryFromFile (File currentFile) {
+    this.currentDirectory = currentFile.getParentFile();
   }
   
   public boolean hasCurrentDirectory() {

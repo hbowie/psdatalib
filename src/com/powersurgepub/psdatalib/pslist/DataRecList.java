@@ -33,6 +33,17 @@ public class DataRecList
   private     int                 findIndex = -1;
   private     boolean             findMatch = false;
   
+  private     int                 recordNumber = -1;
+  
+  /** Log used to record events. */
+  private     Logger              log = Logger.getShared();
+  
+  /** Data to be logged. */
+  private     LogData             logData;
+  
+  /** Should all data be logged (or only data preceding significant events(? */
+  private     boolean             dataLogging = false;
+  
   /**
    Constructor with no arguments.
   */
@@ -267,6 +278,49 @@ public class DataRecList
       }
     } // end while looking for right position
   } // end find method
+  
+  /**
+     Prepares the data set to return records
+     one at a time.
+   */
+  public void openForInput () {
+    recordNumber = -1;
+  }
+  
+  public void close() {
+    
+  }
+  
+  /**
+     Returns the next data record from the set.
+    
+     @return Next data record
+   */
+  public DataRecord nextRecordIn () {
+    DataRecord nextRec;
+    recordNumber++;
+    if (hasMoreRecords()) {
+      nextRec = get (recordNumber);
+    } 
+    else {
+      nextRec = null;
+    }
+    if (dataLogging) {
+      logData.setData (nextRec.toString());
+      logData.setSequenceNumber (recordNumber);
+      log.nextLine (logData);
+    }
+    return nextRec;
+  }
+  
+  /**
+     Indicates whether there are more records to return.
+    
+     @return True if there are more records yet to return.
+   */  
+  public boolean hasMoreRecords () {
+    return ((recordNumber) < size());
+  }
   
   /**
    Get the item at the specified index in the sorted, filtered list.

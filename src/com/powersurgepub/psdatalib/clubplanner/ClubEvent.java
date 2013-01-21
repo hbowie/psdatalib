@@ -742,11 +742,11 @@ public class ClubEvent
       this.diskLocation = diskLocationFile.getAbsolutePath();
     }
   }
-  
+ 
   /**
-   Indicate whether the item has a disk location. 
-  
-   @return True if we've got a disk location, false otherwise. 
+   Indicate whether the item has a disk location.
+ 
+   @return True if we've got a disk location, false otherwise.
   */
   public boolean hasDiskLocation() {
     return (diskLocation != null

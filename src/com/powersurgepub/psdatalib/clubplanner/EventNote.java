@@ -85,7 +85,7 @@ public class EventNote
  
   public static final int NOTE_FROM_COLUMN_INDEX = 2;
  
-  public static final int NOTE_FROM_COLUMN_WIDTH = 10;
+  public static final int NOTE_FROM_COLUMN_WIDTH = 40;
  
 
   /**
@@ -117,7 +117,7 @@ public class EventNote
  
   public static final int NOTE_COLUMN_INDEX = 4;
  
-  public static final int NOTE_COLUMN_WIDTH = 50;
+  public static final int NOTE_COLUMN_WIDTH = 40;
  
 
   /**
@@ -265,6 +265,16 @@ public class EventNote
     } catch (java.io.IOException e) {
       this.diskLocation = diskLocationFile.getAbsolutePath();
     }
+  }
+ 
+  /**
+   Indicate whether the item has a disk location.
+ 
+   @return True if we've got a disk location, false otherwise.
+  */
+  public boolean hasDiskLocation() {
+    return (diskLocation != null
+        && diskLocation.length() > 0);
   }
  
   /**
@@ -712,6 +722,8 @@ public class EventNote
    */
   public static boolean isMarkdownFormat (int columnIndex) {
     switch (columnIndex) {
+      case NOTE_COLUMN_INDEX:
+          return true;
       default: return false;
     }
   }
