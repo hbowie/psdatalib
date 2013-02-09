@@ -1,12 +1,6 @@
-/*
- * DatePanel.java
- *
- * Created on September 16, 2005, 4:58 PM
- */
-
 package com.powersurgepub.psdatalib.ui;
 
-
+  import com.powersurgepub.psutils.*;
   import java.awt.*;
   import java.awt.event.*;
   import java.io.*;
@@ -17,8 +11,9 @@ package com.powersurgepub.psdatalib.ui;
   import java.util.*;
 
 /**
- *
- * @author  b286172
+  UI Component that allows the user to enter a date. 
+
+  @author  Herb Bowie. 
  */
 public class DatePanel 
     extends javax.swing.JPanel {
@@ -75,6 +70,12 @@ public class DatePanel
     // setBorder (BorderFactory.createLineBorder(Color.black));
   }
   
+  public void setText (String date) {
+    StringDate strDate = new StringDate();
+    strDate.parse(date);
+    setDate(strDate.getCalendar().getTime());
+  }
+  
   public void setDate (Date date) {
     this.date.setTime (date);
     displayDate();
@@ -90,6 +91,10 @@ public class DatePanel
     return date.getTime();
   }
   
+  public String getText() {
+    return dateButton.getText();
+  }
+  
   private void displayDate () {
     dateButton.setText (DateEditor.formatLong (this.date.getTime()));
   }
@@ -102,7 +107,7 @@ public class DatePanel
     }
     editor.setLocationRelativeTo (frame);
     // editor.setBounds (40, 40, 150, 150);
-    editor.show();
+    editor.setVisible(true);
     // System.out.println ("ui DatePanel modified = " + String.valueOf (editor.isModified()));
     // System.out.println ("ui DatePanel date     = " + editor.getDate().toString());
     if (editor.isModified()) {

@@ -2,7 +2,6 @@ package com.powersurgepub.psdatalib.pslist;
 
   import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psfiles.*;
-  import com.powersurgepub.psdatalib.pslist.*;
   import com.powersurgepub.psutils.*;
   import java.io.*;
   import java.util.*;
@@ -17,7 +16,7 @@ public class DataRecList
     extends
       AbstractTableModel
     implements
-        PSList {
+        PSList, DataSource {
   
   private     FileSpec            fileSpec = null;
   
@@ -39,10 +38,16 @@ public class DataRecList
   private     Logger              log = Logger.getShared();
   
   /** Data to be logged. */
-  private     LogData             logData;
+  private     LogData             logData = new LogData();
   
   /** Should all data be logged (or only data preceding significant events(? */
   private     boolean             dataLogging = false;
+  
+  /** Identifier used to identify this reader in the log. */
+  private     String              fileId;
+  
+  /** Debug instance. */
+  private		  Debug							  debug = new Debug (false);
   
   /**
    Constructor with no arguments.
@@ -63,6 +68,13 @@ public class DataRecList
     recDef = new RecordDefinition(dataDict);
     completeDataSet = new DataSet (recDef);
     completeDataSet.setLog (Logger.getShared());
+    newListLoaded();
+  }
+  
+  /**
+   Set things up after a new list has been loaded. 
+  */
+  public void newListLoaded() {
     comparator = new PSDefaultComparator();
     itemFilter = null;
     reloadFilteredDataSet();
@@ -75,6 +87,54 @@ public class DataRecList
   */
   public void setSource (FileSpec fileSpec) {
     this.fileSpec = fileSpec;
+  }
+  
+  /**
+     Overrides the default identifier assigned to this data set.
+    
+     @param fileId Identifier to be used for this data set.
+   */
+  public void setFileId (String fileId) {
+    this.fileId = fileId;
+    logData.setSourceId (fileId);
+  }
+  
+  /**
+     Indicates whether all data should be logged.
+    
+     @param dataLoging True if all data should be logged,
+                       false if only data preceding significant
+                       events should be logged.
+   */
+  public void setDataLogging (boolean dataLogging) {
+    this.dataLogging = dataLogging;
+  }
+  
+  /**
+     Sets the debug instance to the passed value.
+    
+     @param debug Debug instance. 
+   */
+  public void setDebug (Debug debug) {
+    this.debug = debug;
+  }
+  
+  /**
+     Sets a logger to be used for logging operations.
+    
+     @param log Logger instance.
+   */
+  public void setLog (Logger log) {
+    this.log = log;
+  }
+  
+  /**
+     Sets the maximum directory explosion depth.
+    
+     @param maxDepth Desired directory/sub-directory explosion depth.
+   */
+  public void setMaxDepth (int maxDepth) {
+    // Not applicable
   }
   
   /**
@@ -109,7 +169,9 @@ public class DataRecList
   
   public void load (DataDictionary dataDict, DataSource dataSource, Logger log) 
       throws IOException {
+    
     completeDataSet = new DataSet (dataDict, dataSource, log);
+    recDef = completeDataSet.getRecDef();
     reloadFilteredDataSet();
   }
   
@@ -124,6 +186,15 @@ public class DataRecList
   */
   public FileSpec getSource () {
     return fileSpec;
+  }
+  
+  /**
+     Retrieves the path to the original source file (if any).
+    
+     @return Path to the original source file (if any).
+   */
+  public String getDataParent () {
+    return fileSpec.getPath();
   }
   
   /**
@@ -287,6 +358,14 @@ public class DataRecList
     recordNumber = -1;
   }
   
+  public void openForInput (DataDictionary dataDict) {
+    recordNumber = -1;
+  }
+  
+  public void openForInput (RecordDefinition recDef) {
+    recordNumber = -1;
+  }
+  
   public void close() {
     
   }
@@ -305,12 +384,21 @@ public class DataRecList
     else {
       nextRec = null;
     }
-    if (dataLogging) {
+    if (dataLogging && nextRec != null) {
       logData.setData (nextRec.toString());
       logData.setSequenceNumber (recordNumber);
       log.nextLine (logData);
     }
     return nextRec;
+  }
+  
+  /**
+     Returns the record number of the next data record to be returned.
+    
+     @return Record number of the next data record returned.
+   */
+  public int getRecordNumber() {
+    return recordNumber;
   }
   
   /**
@@ -320,6 +408,15 @@ public class DataRecList
    */  
   public boolean hasMoreRecords () {
     return ((recordNumber) < size());
+  }
+  
+  /**
+     Indicates whether the last record has already been returned.
+    
+     @return True if the last record has already been returned.
+   */
+  public boolean isAtEnd () {
+    return (! hasMoreRecords());
   }
   
   /**
@@ -375,6 +472,14 @@ public class DataRecList
     return names;
   }
   
+  /**
+   Return the field name for this particular column. 
+  
+   @param columnIndex The index identifying the column of interest, with 
+                      zero identifying the first column.
+  
+   @return The field name for the column. 
+  */
   public String getColumnName (int columnIndex) {
     if (recDef == null) {
       return "";

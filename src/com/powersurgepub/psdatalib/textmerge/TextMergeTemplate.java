@@ -88,9 +88,6 @@ public class TextMergeTemplate {
       templateLibrary = new File (Home.getShared().getAppFolder().getPath(),  "templates");
     }
     
-    // System.out.println (templateLibrary.toString() 
-    //     + " Exists? " 
-    //     + String.valueOf (templateLibrary.exists()));
     setListOptions();
   }
   
@@ -554,6 +551,7 @@ public class TextMergeTemplate {
      Generates the output file specified in the template.
    */
   private void templateGenerate() {
+
     if (templateFileOK 
         && fileAvailable() 
         && templateCreated
@@ -612,6 +610,11 @@ public class TextMergeTemplate {
         source.setTemplatesFolder(templateLibrary);
       }
     }
+  }
+  
+  public void savePrefs() {
+    UserPrefs.getShared().setPref 
+        (TEMPLATE_LIBRARY_KEY, templateLibrary.toString());
   }
 
 }

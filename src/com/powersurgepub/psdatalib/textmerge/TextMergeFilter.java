@@ -57,6 +57,7 @@ public class TextMergeFilter {
   
   public void setPSList (PSList psList) {
     this.psList = psList;
+    loadFilterFields();
   }
   
   public void setTabs(JTabbedPane tabs) {

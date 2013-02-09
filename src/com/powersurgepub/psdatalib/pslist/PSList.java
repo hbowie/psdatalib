@@ -80,6 +80,16 @@ public interface PSList {
   public int getColumnCount();
   
   /**
+   Return the field name for this particular column. 
+  
+   @param columnIndex The index identifying the column of interest, with 
+                      zero identifying the first column.
+  
+   @return The field name for the column. 
+  */
+  public String getColumnName (int columnIndex);
+  
+  /**
    Get the value stored in one cell of the list/table. 
   
    @param row    The row index, with the first row denoted by zero.

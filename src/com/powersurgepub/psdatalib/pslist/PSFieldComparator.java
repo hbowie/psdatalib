@@ -208,6 +208,27 @@ public class PSFieldComparator
         result = 1;
       }
       else
+      if (fieldObj1 instanceof String
+          && fieldObj2 instanceof String) {
+        String str1 = (String)fieldObj1;
+        String str2 = (String)fieldObj2;
+        try {
+          int int1 = Integer.parseInt(str1);
+          int int2 = Integer.parseInt(str2);
+          if (int1 < int2) {
+            result = -1;
+          }
+          else 
+          if (int1 > int2) {
+            result = 1;
+          } else {
+            result = 0;
+          }
+        } catch (NumberFormatException e) {
+          result = str1.compareTo(str2);
+        }
+      }
+      else
       if (fieldObj1 instanceof Comparable
           && fieldObj2 instanceof Comparable) {
         Comparable field1 = (Comparable)fieldObj1;

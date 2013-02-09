@@ -38,6 +38,9 @@ public class TextMergeInput {
   private     TextMergeController textMergeController = null;
   private     TextMergeScript     textMergeScript = null;
   
+  private     File                appFolder;
+  private     URL                 pageURL;
+  
   private     JTabbedPane         tabs = null;
   private     JMenuBar            menus = null;
   
@@ -78,7 +81,7 @@ public class TextMergeInput {
   private     GridBagger          gb = new GridBagger();
   
   // Input Panel objects
-  private     JPanel              inputTab;
+  private     JPanel              inputPanel;
   
   // Open Input Button
   private     JButton             openDataButton;
@@ -117,6 +120,8 @@ public class TextMergeInput {
     
   // Text Area (filler)
   private     JTextArea           inputText;
+  
+  private     String              possibleFileName = "";
   
   // File chosen as input Tab-Delimited File.
   private     File                chosenFile = null;
@@ -176,6 +181,14 @@ public class TextMergeInput {
     this.textMergeController = textMergeController;
     this.textMergeScript = textMergeScript;
     
+    appFolder = Home.getShared().getAppFolder();
+    try {
+      pageURL = appFolder.toURI().toURL(); 
+    } catch (MalformedURLException e) {
+      Trouble.getShared().report ("Trouble forming pageURL from " + appFolder.toString(), 
+          "URL Problem");
+    }
+    
     // Initialization related to input modules
     int insertAt = 0;
     insertAt = addInputModule(inTDF, insertAt);
@@ -192,6 +205,35 @@ public class TextMergeInput {
     // insertAt = addInputModule(inYAML, insertAt);
     insertAt = addInputModule(inYojimbo, insertAt);
     inputTypeBox.setSelectedIndex (0);
+    
+    // Normalization init
+    String normalProperty = UserPrefs.getShared().getPref (NORMALIZATION_KEY);
+    normalization = Boolean.valueOf(normalProperty).booleanValue();
+    if (! normalization) {
+      File boeing = new File (Home.getShared().getAppFolder(), "boeing.txt");
+      if (boeing.exists()) {
+        // System.out.println (
+        //     "File " + boeing.getPath() + " found -- normalization on");
+        normalization = true;
+      } else {
+        // System.out.println (
+        //     "File " + boeing.getPath() + " not found -- normalization off");
+      }
+    }
+    
+    // Open file if it was passed as a parameter
+    possibleFileName = System.getProperty ("tabfile", "");
+    if ((possibleFileName != null) && (! possibleFileName.equals (""))) {
+      fileName = possibleFileName;
+      try {
+        tabURL = new URL (pageURL, fileName);
+        openURL();
+      } catch (MalformedURLException e) {
+        // Shouldn't happen
+      }
+    } else {
+      openEmpty();
+    }
   }
 
   public void setPSList (PSList psList) {
@@ -236,7 +278,7 @@ public class TextMergeInput {
       fileOpen.addActionListener (new ActionListener() 
         {
           public void actionPerformed (ActionEvent event) {
-            tabs.setSelectedComponent (inputTab);
+            tabs.setSelectedComponent (inputPanel);
             openInputFile();		    
           } // end ActionPerformed method
         } // end action listener
@@ -266,7 +308,7 @@ public class TextMergeInput {
     raisedBevel = BorderFactory.createRaisedBevelBorder();
     etched      = BorderFactory.createEtchedBorder();
     
-		inputTab = new JPanel();
+		inputPanel = new JPanel();
     
     // Button to Specify the Input Source and Open it
     openDataButton = new JButton ("Open Input");
@@ -435,7 +477,7 @@ public class TextMergeInput {
     setMergeImplications();
     setNormalTypeImplications();
     
-		gb.startLayout (inputTab, 3, 9);
+		gb.startLayout (inputPanel, 3, 9);
 		gb.setByRows (false);
 		gb.setAllInsets (2);
 		gb.setDefaultRowWeight (0.0);
@@ -493,7 +535,16 @@ public class TextMergeInput {
     gb.setRowWeight (1.0);
     gb.add (inputText);
 
-		tabs.addTab ("Input", inputTab);
+		tabs.addTab ("Input", inputPanel);
+  }
+  
+  /**
+   Select the tab for this panel. 
+  */
+  public void selectTab() {
+    if (tabs != null) {
+      tabs.setSelectedComponent (inputPanel);
+    }
   }
   
   /**
@@ -652,6 +703,20 @@ public class TextMergeInput {
   }
   
   /**
+     Open the tab-delimited data file as an empty data set.
+   */
+  public void openEmpty () {
+    fileNameToDisplay = "No Input File";
+    tabName = "";
+    dataDict = new DataDictionary();
+    dataDict.setLog (log);
+    dataRecList.initialize();
+   
+    initDataSets();
+    this.textMergeController.setListAvailable(false);
+  }
+  
+  /**
      Open the input file.
    */
   private void openInputFile() {
@@ -667,6 +732,16 @@ public class TextMergeInput {
       chosenFile = fileChooser.getSelectedFile();
       openFileOrDirectory();
     }
+  }
+  
+  /**
+   Open the passed file or directory as an input file. 
+  
+   @param inFile The file or directory to be opened. 
+  */
+  public void openFileOrDirectory (File inFile) {
+    chosenFile = inFile;
+    openFileOrDirectory();
   }
   
   /** 
@@ -846,6 +921,7 @@ public class TextMergeInput {
         dataRecList.load(dataDict, dataSource, log);
       }
       dataDict.setLog (log);
+      dataRecList.setSource(new FileSpec(chosenFile));
 
       if ((! quietMode) 
           && (! textMergeController.isRegistered())
@@ -859,7 +935,7 @@ public class TextMergeInput {
       } // end if over demo limit
 
       initDataSets();
-      textMergeController.setListAvailable (true);
+      
       /*
       if (openOutputDataButton != null) {
         openOutputDataButton.setEnabled (true);
@@ -903,7 +979,7 @@ public class TextMergeInput {
         }
       }
       openOK = false;
-      psList.initialize();
+      dataRecList.newListLoaded();
     } // end try block
     
     textMergeController.setListAvailable(openOK);
@@ -1129,6 +1205,10 @@ public class TextMergeInput {
       loadFilterFields();
     }
     */
+  }
+  
+  public String getFileNameToDisplay() {
+    return fileNameToDisplay;
   }
   
 }

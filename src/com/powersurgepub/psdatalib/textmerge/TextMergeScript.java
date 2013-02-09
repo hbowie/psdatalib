@@ -797,7 +797,11 @@ public class TextMergeScript
     }
   }
 	
-	private void stopScriptRecording() {
+  /**
+   If we are currently recording a script, then let's close it. 
+  
+  */
+	public void stopScriptRecording() {
     if (scriptRecording) {
       outScript.close();
       scriptRecording = false;
@@ -807,6 +811,12 @@ public class TextMergeScript
       setScriptReplayControls();
     } // end if script recording
   } // end stopScriptRecording method
+  
+  public void closeRecentScripts () {
+    if (recentScripts != null) {
+      recentScripts.close();
+    }
+  }
   
   /**      
     Standard way to respond to a request to open a file.
@@ -832,7 +842,9 @@ public class TextMergeScript
     Logger.getShared().recordEvent (LogEvent.NORMAL,
         "Playing script " + inScript.toString(),
         false);
-    normalizerPath = currentDirectory.getPath();
+    if (hasCurrentDirectory()) {
+      normalizerPath = currentDirectory.getPath();
+    }
     inScript.setLog (Logger.getShared());
     try {
       inScript.openForInput();
@@ -919,6 +931,7 @@ public class TextMergeScript
     scriptText.append ("Playback stopped" + GlobalConstants.LINE_FEED_STRING);
     resetOptions();
     setScriptReplayControls();
+    selectTab();
   } // end method playScript
   
   private void removeEasyPlayTab() {

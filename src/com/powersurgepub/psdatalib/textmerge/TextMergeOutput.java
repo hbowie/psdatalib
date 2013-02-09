@@ -93,10 +93,27 @@ public class TextMergeOutput {
     this.textMergeController = textMergeController;
     this.textMergeScript = textMergeScript;
   }
+  
+
 
   public void setPSList (PSList psList) {
     this.psList = psList;
     setListOptions();
+    setListAvailable(true);
+  }
+  
+  public void setListAvailable (boolean listAvailable) {
+    if (listAvailable) {
+      
+    } else {
+      
+    }
+    if (openOutputDataButton != null) {
+      openOutputDataButton.setEnabled (listAvailable);
+    }
+    if (fileSave != null) {
+      fileSave.setEnabled (listAvailable);
+    }
   }
   
   private void setListOptions() {

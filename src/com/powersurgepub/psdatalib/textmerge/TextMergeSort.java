@@ -84,6 +84,8 @@ public class TextMergeSort {
   private			int									minNoLoss = 0;
   private			int									totalCombinations = -1;
   
+  private     boolean             clearBeforeAdd = false;
+  
   public TextMergeSort (PSList psList, TextMergeScript scriptRecorder) {
     this.psList = psList;
     this.scriptRecorder = scriptRecorder;
@@ -92,6 +94,7 @@ public class TextMergeSort {
   
   public void setPSList (PSList psList) {
     this.psList = psList;
+    loadSortFields();
   }
   
   public void setTabs (JTabbedPane tabs, boolean combineAllowed) {
@@ -477,7 +480,15 @@ public class TextMergeSort {
   }
   
   private void sortAdd() {
+    
+    if (clearBeforeAdd) {
+      itemComparator = new PSItemComparator (psList);
+    }
+    
     itemComparator.addField (currentSortField, currentSortDirection);
+    
+    clearBeforeAdd = false;
+    
     sortText.append (currentSortField + " " + currentSortDirection
       + GlobalConstants.LINE_FEED_STRING);
     scriptRecorder.recordScriptAction (
@@ -498,6 +509,13 @@ public class TextMergeSort {
       ScriptConstants.NO_VALUE);
   }
   
+  private void initSortSpec () {
+    itemComparator = new PSItemComparator (psList);
+    clearBeforeAdd = false;
+    sortText.setText ("");
+    sorted = false;
+  }
+  
   private void sortSetParams() {
     psList.setComparator(itemComparator);
     sorted = true;
@@ -509,6 +527,8 @@ public class TextMergeSort {
       ScriptConstants.NO_MODIFIER, 
       ScriptConstants.PARAMS_OBJECT, 
       ScriptConstants.NO_VALUE);
+    
+    clearBeforeAdd = true;
   }
   
   private void combineSet() {
@@ -579,12 +599,6 @@ public class TextMergeSort {
         ScriptConstants.PARAMS_OBJECT, 
         ScriptConstants.NO_VALUE);
     } // end if sorted
-  }
-  
-  private void initSortSpec () {
-    itemComparator = new PSItemComparator (psList);
-    sortText.setText ("");
-    sorted = false;
   }
 
 }
