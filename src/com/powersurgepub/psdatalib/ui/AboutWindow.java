@@ -32,6 +32,9 @@ public class AboutWindow
     extends javax.swing.JFrame 
       implements HyperlinkListener {
   
+  private String  fontBegin = "<font face=\"Arial\" size=\"4\">";
+  private String  fontEnd   = "</font>";
+  
   private Home    home       = Home.getShared();
   private File    appFolder  = null;
   private URL     pageURL;
@@ -42,12 +45,19 @@ public class AboutWindow
   
   /** Creates new form AboutWindow */
   public AboutWindow() {
-
+    setupWindow (true);
+  }
+  
+  public AboutWindow (boolean loadFromDisk) {
+    setupWindow (loadFromDisk);
+  }
+  
+  private void setupWindow (boolean loadFromDisk) {
     initComponents();
     
     this.setTitle ("About " + Home.getShared().getProgramName());
 
-    aboutJavaText.setText
+    aboutJavaTextArea.setText
         (System.getProperty("java.vm.name") + 
         " version " + System.getProperty("java.vm.version") +
         " from " + StringUtils.removeQuotes(System.getProperty("java.vm.vendor")) +
@@ -56,27 +66,114 @@ public class AboutWindow
         (home.getProgramName() 
         + " version " + home.getProgramVersion());
     
+    boolean loadedFromDisk = loadFromDisk;
     appFolder = home.getAppFolder();
-    if (appFolder == null) {
+    if (loadFromDisk 
+        && appFolder == null) {
       aboutFileError();
-    } else {
+      loadedFromDisk = false;
+    }
+    if (loadedFromDisk) {
       try {
         URI pageURI = appFolder.toURI();
         pageURL = pageURI.toURL();
       } catch (MalformedURLException e) {
+        loadedFromDisk = false;
         trouble.report ("Trouble forming pageURL from " + appFolder.toString(), 
             "URL Problem");
       }
+    }
+    if (loadedFromDisk) {
       try {
         aboutURL = new URL (pageURL, aboutFileName);
       } catch (MalformedURLException e) {
+        loadedFromDisk = false;
         trouble.report ("Trouble forming aboutURL", "URL Problem");
       }
+    }
+    if (loadedFromDisk) {
       try {
         aboutTextPane.setPage (aboutURL);
       } catch (IOException e) {
+        loadedFromDisk = false;
         aboutFileError();
       }
+    }
+    if (! loadedFromDisk) {
+      StringBuilder t = new StringBuilder();
+      t.append("<html>");
+      
+      t.append("<p>");
+      t.append(fontBegin);
+      t.append("Copyright &copy; ");
+      t.append(home.getCopyrightYearFrom());
+      t.append(" - 2013 Herb Bowie");
+      t.append(fontEnd);
+      t.append("</p>");
+      
+      t.append("<p>");
+      t.append(fontBegin);
+      t.append("Licensed under the ");
+      t.append("<a href=\"http://www.apache.org/licenses/LICENSE-2.0\">");
+      t.append("Apache License 2.0");
+      t.append("</a>");
+      t.append(fontEnd);
+      t.append("</p>");
+      
+      t.append("<p>");
+      t.append(fontBegin);
+      t.append("To receive support, report bugs, request enhancements, ");
+      t.append("or simply express unbridled enthusiasm for this product and its author, ");
+      t.append("send an e-mail to the address below.");
+      t.append(fontEnd);
+      t.append("</p>");
+      
+      t.append("<p>");
+      t.append(fontBegin);
+      t.append(home.getProgramName());
+      t.append(" is written in Java. It may be run on Windows, Macintosh and other Unix platforms. ");
+      t.append(home.getProgramName());
+      t.append(" requires a Java Virtual Machine (JVM/JRE) of 1.6 or later. ");
+      t.append("You may wish to visit www.Java.com to download a compatible JVM. ");
+      t.append(fontEnd);
+      t.append("</p>");
+      
+      t.append("<br>");
+      
+      t.append("<table border=0 cellpadding=0 cellspacing=0>");
+      
+      t.append("<tr><td width=70 align=left valign=top>");
+      t.append(fontBegin);
+      t.append("E-mail: ");
+      t.append(fontEnd);
+      t.append("</td>");
+      t.append("<td>");
+      t.append(fontBegin);
+      t.append("<a href=\"mailto:support@powersurgepub.com\">");
+      t.append("support@powersurgepub.com");
+      t.append("</a>");
+      t.append(fontEnd);
+      t.append("</td></tr>");
+      
+      t.append("<tr><td columns=2>&nbsp;</td></tr>");
+      
+      t.append("<tr><td width=70 align=left valign=top>");
+      t.append(fontBegin);
+      t.append("WWW: ");
+      t.append(fontEnd);
+      t.append("</td>");
+      t.append("<td>");
+      t.append(fontBegin);
+      t.append("<a href=\"http://www.powersurgepub.com/\">");
+      t.append("www.powersurgepub.com");
+      t.append("</a>");
+      t.append(fontEnd);
+      t.append("</td></tr>");
+
+      t.append("</table>");
+      
+      t.append("</html>");
+      aboutTextPane.setText (t.toString());
     }
 
     this.setBounds (100, 100, 600, 540);
@@ -103,8 +200,6 @@ public class AboutWindow
   }
   
   private void aboutFileError () {
-    aboutTextPane.setText 
-          ("<html><p>From PowerSurge Publishing at www.PowerSurgePub.com</p></html>");
     JOptionPane.showMessageDialog (this, 
         "About File named "
         + aboutFileName
@@ -118,89 +213,98 @@ public class AboutWindow
    * WARNING: Do NOT modify this code. The content of this method is
    * always regenerated by the Form Editor.
    */
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
+  // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+  private void initComponents() {
+    java.awt.GridBagConstraints gridBagConstraints;
 
-        aboutPanel1 = new javax.swing.JPanel();
-        programNameAndVersionText = new javax.swing.JLabel();
-        aboutScrollPane = new javax.swing.JScrollPane();
-        aboutTextPane = new javax.swing.JEditorPane();
-        aboutJavaLabel = new javax.swing.JLabel();
-        aboutJavaText = new javax.swing.JTextField();
+    aboutPanel1 = new javax.swing.JPanel();
+    programNameAndVersionText = new javax.swing.JLabel();
+    aboutScrollPane = new javax.swing.JScrollPane();
+    aboutTextPane = new javax.swing.JEditorPane();
+    aboutJavaLabel = new javax.swing.JLabel();
+    aboutJavaScrollPane = new javax.swing.JScrollPane();
+    aboutJavaTextArea = new javax.swing.JTextArea();
 
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosed(java.awt.event.WindowEvent evt) {
-                formWindowClosed(evt);
-            }
-        });
-        addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentHidden(java.awt.event.ComponentEvent evt) {
-                formComponentHidden(evt);
-            }
-        });
+    addWindowListener(new java.awt.event.WindowAdapter() {
+      public void windowClosed(java.awt.event.WindowEvent evt) {
+        formWindowClosed(evt);
+      }
+    });
+    addComponentListener(new java.awt.event.ComponentAdapter() {
+      public void componentHidden(java.awt.event.ComponentEvent evt) {
+        formComponentHidden(evt);
+      }
+    });
 
-        aboutPanel1.addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentShown(java.awt.event.ComponentEvent evt) {
-                aboutPanel1formComponentShown(evt);
-            }
-        });
-        aboutPanel1.setLayout(new java.awt.GridBagLayout());
+    aboutPanel1.addComponentListener(new java.awt.event.ComponentAdapter() {
+      public void componentShown(java.awt.event.ComponentEvent evt) {
+        aboutPanel1formComponentShown(evt);
+      }
+    });
+    aboutPanel1.setLayout(new java.awt.GridBagLayout());
 
-        programNameAndVersionText.setFont(new java.awt.Font("Lucida Grande", 0, 18)); // NOI18N
-        programNameAndVersionText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        programNameAndVersionText.setText("xxx version n.nn");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        aboutPanel1.add(programNameAndVersionText, gridBagConstraints);
+    programNameAndVersionText.setFont(new java.awt.Font("Lucida Grande", 0, 18)); // NOI18N
+    programNameAndVersionText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+    programNameAndVersionText.setText("xxx version n.nn");
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 0;
+    gridBagConstraints.gridy = 0;
+    gridBagConstraints.gridwidth = 2;
+    gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+    gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+    gridBagConstraints.weightx = 1.0;
+    gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+    aboutPanel1.add(programNameAndVersionText, gridBagConstraints);
 
-        aboutTextPane.setEditable(false);
-        aboutScrollPane.setViewportView(aboutTextPane);
+    aboutTextPane.setEditable(false);
+    aboutTextPane.setContentType("text/html"); // NOI18N
+    aboutScrollPane.setViewportView(aboutTextPane);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        aboutPanel1.add(aboutScrollPane, gridBagConstraints);
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 0;
+    gridBagConstraints.gridy = 1;
+    gridBagConstraints.gridwidth = 2;
+    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+    gridBagConstraints.weightx = 1.0;
+    gridBagConstraints.weighty = 1.0;
+    gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+    aboutPanel1.add(aboutScrollPane, gridBagConstraints);
 
-        aboutJavaLabel.setText("About Java:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.ipadx = 2;
-        gridBagConstraints.ipady = 2;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        aboutPanel1.add(aboutJavaLabel, gridBagConstraints);
+    aboutJavaLabel.setText("About Java:");
+    aboutJavaLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 0;
+    gridBagConstraints.gridy = 2;
+    gridBagConstraints.ipadx = 2;
+    gridBagConstraints.ipady = 2;
+    gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+    gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+    aboutPanel1.add(aboutJavaLabel, gridBagConstraints);
 
-        aboutJavaText.setEditable(false);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 2;
-        gridBagConstraints.ipady = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        aboutPanel1.add(aboutJavaText, gridBagConstraints);
+    aboutJavaTextArea.setEditable(false);
+    aboutJavaTextArea.setColumns(20);
+    aboutJavaTextArea.setLineWrap(true);
+    aboutJavaTextArea.setRows(3);
+    aboutJavaTextArea.setWrapStyleWord(true);
+    aboutJavaScrollPane.setViewportView(aboutJavaTextArea);
 
-        getContentPane().add(aboutPanel1, java.awt.BorderLayout.CENTER);
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 1;
+    gridBagConstraints.gridy = 2;
+    gridBagConstraints.gridheight = 3;
+    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+    gridBagConstraints.weightx = 1.0;
+    gridBagConstraints.weighty = 0.1;
+    gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+    aboutPanel1.add(aboutJavaScrollPane, gridBagConstraints);
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+    getContentPane().add(aboutPanel1, java.awt.BorderLayout.CENTER);
+
+    pack();
+  }// </editor-fold>//GEN-END:initComponents
 
   private void aboutPanel1formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_aboutPanel1formComponentShown
-    aboutJavaText.requestFocus();
+    aboutJavaTextArea.requestFocus();
   }//GEN-LAST:event_aboutPanel1formComponentShown
 
 private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
@@ -212,13 +316,14 @@ private void formComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST
 }//GEN-LAST:event_formComponentHidden
   
   
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel aboutJavaLabel;
-    private javax.swing.JTextField aboutJavaText;
-    private javax.swing.JPanel aboutPanel1;
-    private javax.swing.JScrollPane aboutScrollPane;
-    private javax.swing.JEditorPane aboutTextPane;
-    private javax.swing.JLabel programNameAndVersionText;
-    // End of variables declaration//GEN-END:variables
+  // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JLabel aboutJavaLabel;
+  private javax.swing.JScrollPane aboutJavaScrollPane;
+  private javax.swing.JTextArea aboutJavaTextArea;
+  private javax.swing.JPanel aboutPanel1;
+  private javax.swing.JScrollPane aboutScrollPane;
+  private javax.swing.JEditorPane aboutTextPane;
+  private javax.swing.JLabel programNameAndVersionText;
+  // End of variables declaration//GEN-END:variables
   
 }
