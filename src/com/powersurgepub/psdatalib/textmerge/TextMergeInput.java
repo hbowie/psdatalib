@@ -24,9 +24,6 @@ package com.powersurgepub.psdatalib.textmerge;
  */
 public class TextMergeInput {
   
-  // Maximum number of records that can be processed in demo mode.
-  private		static	final	int			DEMO_MAX_RECORDS = 20;
-  
   private   static  final String  MIME_TYPE = "mimetype";
   
   // Maximum value for normalization Type
@@ -922,17 +919,6 @@ public class TextMergeInput {
       }
       dataDict.setLog (log);
       dataRecList.setSource(new FileSpec(chosenFile));
-
-      if ((! quietMode) 
-          && (! textMergeController.isRegistered())
-          && (psList.totalSize() > DEMO_MAX_RECORDS)) {
-        textMergeController.handleRegistrationLimitation();
-        log.recordEvent(LogEvent.MEDIUM, 
-            "List truncated due to demo limitations", false);
-        while (psList.totalSize() > DEMO_MAX_RECORDS) {
-          dataRecList.removeFromCompleteList(dataRecList.totalSize() - 1); 
-        }
-      } // end if over demo limit
 
       initDataSets();
       
