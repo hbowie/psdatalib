@@ -29,6 +29,8 @@ public class TextMergeScript
   private     boolean             tabSet = false;
   private     boolean             menuSet = false;
   
+  private     ScriptExecutor      scriptExecutor = null;
+  
   private     PSList              psList = null;
   
   private     File                templateLibrary = null;
@@ -158,6 +160,15 @@ public class TextMergeScript
   
   public void setOutputModule (TextMergeOutput outputModule) {
     this.outputModule = outputModule;
+  }
+  
+  /**
+   Set a class to be used for callbacks. 
+  
+   @param scriptExecutor The class to be used for callbacks.
+  */
+  public void setScriptExecutor(ScriptExecutor scriptExecutor) {
+    this.scriptExecutor = scriptExecutor;
   }
   
   public void setCurrentDirectory (File currentDirectory) {
@@ -1053,11 +1064,17 @@ public class TextMergeScript
   } // end playTemplateModule method
 
   private void playCallbackModule() {
-  /*
+  
+    Logger.getShared().recordEvent(LogEvent.NORMAL, 
+        "Playing callback for " + inActionAction + " action", false);
+    if (scriptExecutor == null) {
+      Logger.getShared().recordEvent(LogEvent.MEDIUM, 
+          "Script callback executor not available", false);
+    }
     if (scriptExecutor != null) {
       scriptExecutor.scriptCallback(inActionAction);
     }
-   */
+   
   }
   
   /**
