@@ -685,7 +685,7 @@ public class TextMergeScript
           scriptEasyPlayButton.setText("Turn Easy Play Off");
         }
         addEasyPlayTab(easyPlay);
-        tabs.setSelectedIndex(0);
+        selectEasyTab();
       } // end if file approved
     } // End if turning easy play on
   }
@@ -774,6 +774,16 @@ public class TextMergeScript
   	  scriptText.append (outAction.toString() + GlobalConstants.LINE_FEED_STRING);
 	  }
 	} // end recordScriptAction method
+  
+  /**
+   Select the easy play tab, or the first tab, if the easy play tab is not 
+   active. 
+   */
+  public void selectEasyTab() {
+    if (tabs != null) {
+      tabs.setSelectedIndex(0);
+    }
+  }
   
   /**
    Select the tab for this panel. 
