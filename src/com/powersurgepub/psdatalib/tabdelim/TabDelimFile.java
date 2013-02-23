@@ -16,15 +16,8 @@
 
 package com.powersurgepub.psdatalib.tabdelim;
 
-import com.powersurgepub.psdatalib.pstextio.TextLineWriter;
-import com.powersurgepub.psdatalib.pstextio.FileMaker;
-import com.powersurgepub.psdatalib.psdata.DataDictionary;
-import com.powersurgepub.psdatalib.psdata.DataField;
-import com.powersurgepub.psdatalib.psdata.DataSource;
-import com.powersurgepub.psdatalib.psdata.DataStore;
-import com.powersurgepub.psdatalib.psdata.RecordDefinition;
-import com.powersurgepub.psdatalib.psdata.DataRecord;
-import com.powersurgepub.psdatalib.psdata.DataFieldDefinition;
+  import com.powersurgepub.psdatalib.pstextio.*;
+  import com.powersurgepub.psdatalib.psdata.*;
   import java.io.*;
   import java.net.*;
   import com.powersurgepub.psutils.*;
@@ -32,30 +25,7 @@ import com.powersurgepub.psdatalib.psdata.DataFieldDefinition;
 /**
    A disk file of tab-delimited records. Records are passed to and from 
    this class in psdata.DataRecord formats. The first tab-delimited record 
-   in the file should contain field names (column headings). <p>
-   
-   This code is copyright (c) 1999-2003 by Herb Bowie of PowerSurge Publishing. 
-   All rights reserved. <p>
-   
-   Version History: <ul><li>
-      2004/06/01 - Added purify method call to each field when writing output records
-                   in nextRecordOut method. <li>
-      2004/01/11 - Added ability to append data to an existing file. <li>
-      2003/07/28 - Added support for passing path information. <li>
-      2002/11/17 - Added openForInput method that accepts a record definition,
-                   for files that do not have column headings in the first row. <li>
-      2000/11/16 - Added constructor to receive URL. <li>
-      2000/11/15 - Added special processing for commma-separated value (.csv) files. <li>
-      2000/08/18 - Added a constructor accepting a single File object. <li>
-      2000/05/19 - Modified to be consistent with "The Elements of Java Style".</ul>
-  
-   @author Herb Bowie (<a href="mailto:herb@powersurgepub.com">
-           herb@powersurgepub.com</a>)<br>
-           of PowerSurge Publishing (<A href="http://www.powersurgepub.com">
-           www.powersurgepub.com</a>)
-  
-   @version 
-    2004/06/04 - Added trim method to check for a null line on nextRecordIn.  
+   in the file should contain field names (column headings).  
  */
 public class TabDelimFile 
     implements DataSource,

@@ -22,21 +22,6 @@ package com.powersurgepub.psdatalib.psdata;
 /**
    A source of DataRecord objects. <p>
    
-   This code is copyright (c) 1999-2000 by Herb Bowie of PowerSurge Publishing. 
-   All rights reserved. <p>
-   
-   Version History: <ul><li>
-    2002/10/12 - Added setDebug method. <li>
-    2000/05/18 - Changed interface name from DataRecordReadable to DataSource. <li>
-    2000/05/08 - Modified to be consistent with "The Elements of Java Style".</ul>
-  
-   @author Herb Bowie (<a href="mailto:herb@powersurgepub.com">
-           herb@powersurgepub.com</a>)<br>
-           of PowerSurge Publishing (<A href="http://www.powersurgepub.com/software/">
-           www.powersurgepub.com/software</a>)
-  
-   @version 
-    2003/07/29 - Added getDataParent method.
  */
 public interface DataSource {
     

@@ -27,22 +27,7 @@ package com.powersurgepub.psdatalib.ui;
 
 /**
    A panel to display information about the version of the 
-   software being executed. <p>
-  
-   This code is copyright (c) 2003-2007 by Herb Bowie.
-   All rights reserved. <p>
-  
-   Version History: <ul><li>
-      2003/08/31 - Originally written.
-       </ul>
-  
-   @author Herb Bowie (<a href="mailto:herb@powersurgepub.com">
-           herb@powersurgepub.com</a>)<br>
-           of PowerSurge Publishing 
-           (<a href="http://www.powersurgepub.com">
-           www.powersurgepub.com</a>)
-  
-   @version 2003/11/09 - Added Category field. 
+   software being executed. 
  */
 public class AboutWindow 
     extends javax.swing.JFrame 

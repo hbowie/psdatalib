@@ -49,8 +49,10 @@ public class TagsIterator {
    */
   public String nextWord () {
     if (hasNextWord()) {
-      int start = Tags.indexOfNextWordStart (tags.getTags(), tagIndex);
-      int end   = Tags.indexOfNextSeparator (tags.getTags(), start, true, true);
+      int start = Tags.indexOfNextWordStart 
+          (tags.getTags(), tagIndex, tags.isSlashToSeparate());
+      int end   = Tags.indexOfNextSeparator 
+          (tags.getTags(), start, true, true, tags.isSlashToSeparate());
       tagIndex = end + 1;
       endOfTag = (end >= tags.length() || Tags.isTagSeparator (tags.charAt(end)));
       return (tags.substring (start, end));
@@ -78,9 +80,11 @@ public class TagsIterator {
   public String nextTag () {
     if (hasNextTag()) {
       lastTagIndex 
-          = Tags.indexOfNextWordStart (tags.getTags(), tagIndex);
+          = Tags.indexOfNextWordStart 
+              (tags.getTags(), tagIndex, tags.isSlashToSeparate());
       lastTagEnd 
-          = Tags.indexOfNextSeparator (tags.getTags(), lastTagIndex, false, true);
+          = Tags.indexOfNextSeparator 
+              (tags.getTags(), lastTagIndex, false, true, tags.isSlashToSeparate());
       // lastTagIndex = tagIndex;
       tagIndex = lastTagEnd + 1;
       return (tags.substring (lastTagIndex, lastTagEnd));

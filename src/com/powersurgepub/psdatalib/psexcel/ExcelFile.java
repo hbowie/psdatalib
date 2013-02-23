@@ -36,8 +36,6 @@ package com.powersurgepub.psdatalib.psexcel;
   the column heading. For example, a column named "ISBN" could have its content
   accessed with the variable "isbn" and its link accessed with the variable
   "isbnlink".
-
-  @author Herb Bowie
  */
 public class ExcelFile
     extends File 

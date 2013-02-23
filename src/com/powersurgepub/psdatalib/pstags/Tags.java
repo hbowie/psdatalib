@@ -64,6 +64,9 @@ public class Tags
   /** Alternate separator between multiple tags. */
   public static final char     ALTERNATE_TAG_SEPARATOR = ';';
   
+  /** Should we recognize a forward slash as a level separator? */
+  private boolean slashToSeparate = true;
+  
   /** 
     The normalized representation of zero or more tags,
     with periods separating each level, with commas separating
@@ -78,16 +81,39 @@ public class Tags
     set ("");
   }
   
+  /**
+   Creates a new instance of Tags with blank tags, but setting the option
+   of whether to recognize forward slashes as level separators. 
+   
+   @param slashToSeparate Should we recognize slashes as level separators?
+  */
+  public Tags (boolean slashToSeparate) {
+    this.slashToSeparate = slashToSeparate;
+  }
+  
+  public Tags (String tags, boolean slashToSeparate) {
+    this.slashToSeparate = slashToSeparate;
+    set (tags);
+  }
+  
   /** 
     Creates a new instance of Tags with a particular value.
    
     @param tags     A string containing one or more tags.
                     Levels may be separated by periods or slashes, 
-                    and spaces may separate the periords or slashes from
+                    and spaces may separate the periods or slashes from
                     the words.
    */
   public Tags (String tags) {
     set (tags);
+  }
+  
+  public boolean isSlashToSeparate() {
+    return slashToSeparate;
+  }
+  
+  public void setSlashToSeparate (boolean slashToSeparate) {
+    this.slashToSeparate = slashToSeparate;
   }
 
   /**
@@ -195,11 +221,11 @@ public class Tags
     String tags2 = tags.toString();
     tags.delete (0, tags.length());
     int e2 = 0;
-    int s2 = indexOfNextWordStart (tags2, e2);
+    int s2 = indexOfNextWordStart (tags2, e2, slashToSeparate);
     while (s2 < tags2.length()) {
-      e2 = indexOfNextSeparator (tags2, s2, true, true);
+      e2 = indexOfNextSeparator (tags2, s2, true, true, slashToSeparate);
       merge (tags2.substring (s2, e2));
-      s2 = indexOfNextWordStart (tags2, e2);
+      s2 = indexOfNextWordStart (tags2, e2, slashToSeparate);
     }
   }
 
@@ -226,16 +252,16 @@ public class Tags
     }
     */
     int e = 0;
-    int s = indexOfNextWordStart (tags, e);
+    int s = indexOfNextWordStart (tags, e, slashToSeparate);
 
     // Go through tags, looking for complete tags
     while (s < tags.length() && (! found)) {
-      e = indexOfNextSeparator (tags, s, false, true);
+      e = indexOfNextSeparator (tags, s, false, true, slashToSeparate);
       if (from.equalsIgnoreCase (tags.substring (s, e))) {
         found = true;
         removeTag (s, e);
       } else {
-        s = indexOfNextWordStart (tags, e);
+        s = indexOfNextWordStart (tags, e, slashToSeparate);
       }
     }
     if (found && to.length() > 0) {
@@ -261,7 +287,7 @@ public class Tags
     String tags2 = StringUtils.purify(inTags).trim();
     // System.out.println ("tags2 (purified) = " + tags2);
     int e2 = 0;
-    int s2 = indexOfNextWordStart (tags2, e2);
+    int s2 = indexOfNextWordStart (tags2, e2, slashToSeparate);
     // System.out.println ("initial s2 = " + String.valueOf(s2));
     int wordEnd2 = e2;
     char sep = ' ';
@@ -271,7 +297,7 @@ public class Tags
       sep = ' ';
       while (s2 < tags2.length() && (! isTagSeparator (sep))) {
         // Process next level in text tag from input
-        e2 = indexOfNextSeparator (tags2, s2, true, true);
+        e2 = indexOfNextSeparator (tags2, s2, true, true, slashToSeparate);
         // System.out.println ("e2 and wordend both = " + String.valueOf(e2));
         wordEnd2 = e2;
         while (wordEnd2 > 0 && Character.isWhitespace (tags2.charAt(wordEnd2 - 1))) {
@@ -286,25 +312,25 @@ public class Tags
         if (e2 < tags2.length()) {
           sep = tags2.charAt (e2);
         }
-        s2 = indexOfNextWordStart (tags2, e2);
+        s2 = indexOfNextWordStart (tags2, e2, slashToSeparate);
         // System.out.println ("s2 = " + String.valueOf(s2));
       } // end while processing levels for next input tag
 
       // System.out.println ("next2 = " + next2.toString());
 
       // next2 now contains next tag from input string
-      int s = indexOfNextWordStart (tags, 0);
+      int s = indexOfNextWordStart (tags, 0, slashToSeparate);
       int e = 0;
       int compareResult = 1;
       while (s < tags.length() && (compareResult > 0)) {
-        e = indexOfNextSeparator (tags, s, false, true);
+        e = indexOfNextSeparator (tags, s, false, true, slashToSeparate);
         compareResult
             = (next2.toString().compareToIgnoreCase (tags.substring (s, e)));
         // System.out.println ("s = " + String.valueOf(s)
         //     + " e = " + String.valueOf(e)
         //     + " compareResult = " + String.valueOf(compareResult));
         if ((compareResult > 0) && (s < tags.length())) {
-          s = indexOfNextWordStart (tags, e);
+          s = indexOfNextWordStart (tags, e, slashToSeparate);
         }
       } // End while looking for a match or insertion point
 
@@ -323,7 +349,7 @@ public class Tags
         tags.insert (s + next2.length(), PREFERRED_TAG_SEPARATOR);
         tags.insert (s + next2.length() + 1, ' ');
       }
-      s2 = indexOfNextWordStart (tags2, e2);
+      s2 = indexOfNextWordStart (tags2, e2, slashToSeparate);
     } // end while more tags from input
   } // end merge string method
 
@@ -349,13 +375,15 @@ public class Tags
 
     // If we have a period immediately before or after, then treat
     // the deleted tag as a level, and not a complete tag
-    if (start > 0 && isLevelSeparator (tags.charAt (start - 1))) {
+    if (start > 0 
+        && isLevelSeparator (tags.charAt (start - 1), slashToSeparate)) {
       levelDeleted = true;
       sepBefore = true;
       sepLocation = start - 1;
     }
     else
-    if (start < tags.length() && isLevelSeparator (tags.charAt (start))) {
+    if (start < tags.length() 
+        && isLevelSeparator (tags.charAt (start), slashToSeparate)) {
       levelDeleted = true;
       sepBefore = false;
       sepLocation = start;
@@ -428,15 +456,15 @@ public class Tags
   public int getLevels (int tagIndex) {
     int levels = 0;
     int s = getTagStart (tagIndex);
-    int e = indexOfNextSeparator (tags, s, true, true);
+    int e = indexOfNextSeparator (tags, s, true, true, slashToSeparate);
     if (s >= 0 && s < tags.length()) {
       levels = 1;
       while (s < tags.length()
           && e < tags.length()
           && (! isTagSeparator (tags.charAt(e)))) {
         levels++;
-        s = indexOfNextWordStart (tags, e);
-        e = indexOfNextSeparator (tags, s, true, true);
+        s = indexOfNextWordStart (tags, e, slashToSeparate);
+        e = indexOfNextSeparator (tags, s, true, true, slashToSeparate);
       }
     }
     return levels;
@@ -456,11 +484,11 @@ public class Tags
       return "";
     } else {
       int s = getTagStart (tagIndex);
-      int e = indexOfNextSeparator (tags, s, true, true);
+      int e = indexOfNextSeparator (tags, s, true, true, slashToSeparate);
       int levelCount = 0;
       while (levelCount < levelIndex && s < tags.length()) {
-        s = indexOfNextWordStart (tags, e);
-        e = indexOfNextSeparator (tags, s, true, true);
+        s = indexOfNextWordStart (tags, e, slashToSeparate);
+        e = indexOfNextSeparator (tags, s, true, true, slashToSeparate);
         if (s < tags.length()) {
           levelCount++;
         }
@@ -485,7 +513,7 @@ public class Tags
       return "";
     } else {
       int s = getWordStart (wordIndex);
-      int e = indexOfNextSeparator (tags, s, true, true);
+      int e = indexOfNextSeparator (tags, s, true, true, slashToSeparate);
       if (e > s) {
         return tags.substring (s, e);
       } else {
@@ -600,8 +628,8 @@ public class Tags
     int start = 0;
     int end = 0;
     while (i < tags.length() && tagCount < tagIndex) {
-      start = indexOfNextWordStart (tags, i);
-      end   = indexOfNextSeparator (tags, start, false, true);
+      start = indexOfNextWordStart (tags, i, slashToSeparate);
+      end   = indexOfNextSeparator (tags, start, false, true, slashToSeparate);
       tagCount++;
       if (tagCount < tagIndex) {
         i = end + 1;
@@ -628,8 +656,8 @@ public class Tags
     int start = 0;
     int end = 0;
     while (i < tags.length() && tagCount < tagIndex) {
-      start = indexOfNextWordStart (tags, i);
-      end   = indexOfNextSeparator (tags, start, false, true);
+      start = indexOfNextWordStart (tags, i, slashToSeparate);
+      end   = indexOfNextSeparator (tags, start, false, true, slashToSeparate);
       tagCount++;
       if (tagCount < tagIndex) {
         i = end + 1;
@@ -652,8 +680,8 @@ public class Tags
     int start = 0;
     int end = 0;
     while (i < tags.length() && wordCount < wordIndex) {
-      start = indexOfNextWordStart (tags, i);
-      end   = indexOfNextSeparator (tags, start, true, true);
+      start = indexOfNextWordStart (tags, i, slashToSeparate);
+      end   = indexOfNextSeparator (tags, start, true, true, slashToSeparate);
       wordCount++;
       if (wordCount < wordIndex) {
         i = end + 1;
@@ -676,8 +704,8 @@ public class Tags
     int start = 0;
     int end = 0;
     while (i < tags.length() && wordCount < wordIndex) {
-      start = indexOfNextWordStart (tags, i);
-      end   = indexOfNextSeparator (tags, start, true, true);
+      start = indexOfNextWordStart (tags, i, slashToSeparate);
+      end   = indexOfNextSeparator (tags, start, true, true, slashToSeparate);
       wordCount++;
       if (wordCount < wordIndex) {
         i = end + 1;
@@ -815,13 +843,18 @@ public class Tags
    
    @param str       The StringBuilder to be scanned. 
    @param fromIndex The starting point for the scan.
+   @param slashToSeparate Should we recognize forward slashes as level separators?
    @return          The position of the start of the next word, or the length
                     of the StringBuilder, if not found.
    */
-  public static int indexOfNextWordStart (StringBuilder str, int fromIndex) {
+  public static int indexOfNextWordStart (
+      StringBuilder str, 
+      int fromIndex, 
+      boolean slashToSeparate) {
     int i = fromIndex;
     if (i < str.length() && 
-        (isLevelSeparator (str.charAt(i)) || isTagSeparator (str.charAt(i)))) {
+        (isLevelSeparator (str.charAt(i), slashToSeparate) 
+        || isTagSeparator (str.charAt(i)))) {
       i++;
     }
     while (i < str.length() && Character.isWhitespace (str.charAt(i))) {
@@ -836,13 +869,18 @@ public class Tags
 
    @param str       The String to be scanned.
    @param fromIndex The starting point for the scan.
+   @param slashToSeparate Should we recognize a forward slash as a level separator?
+  
    @return          The position of the start of the next word, or the length
                     of the String, if not found.
    */
-  public static int indexOfNextWordStart (String str, int fromIndex) {
+  public static int indexOfNextWordStart (
+      String str, 
+      int fromIndex, 
+      boolean slashToSeparate) {
     int i = fromIndex;
     if (i < str.length() &&
-        (isLevelSeparator (str.charAt(i)) || isTagSeparator (str.charAt(i)))) {
+        (isLevelSeparator (str.charAt(i), slashToSeparate) || isTagSeparator (str.charAt(i)))) {
       i++;
     }
     while (i < str.length() && Character.isWhitespace (str.charAt(i))) {
@@ -859,17 +897,23 @@ public class Tags
    @param fromIndex The starting point for the scan.
    @param levelSep  Stop at level separators?
    @param tagSep    Stop at tag separators?
+   @param slashToSeparate Should we recognize a forward slash as a level separator?
+  
    @return          The position of the next separator of the specified type,
                     or the length of the StringBuilder if nothing found.
    */
-  public static int indexOfNextSeparator
-      (StringBuilder str, int fromIndex, boolean levelSep, boolean tagSep) {
+  public static int indexOfNextSeparator (
+      StringBuilder str, 
+      int fromIndex, 
+      boolean levelSep, 
+      boolean tagSep, 
+      boolean slashToSeparate) {
     int i = fromIndex;
     boolean found = false;
     char c = ' ';
     while (i < str.length() && (! found)) {
       c = str.charAt (i);
-      if (isLevelSeparator (c) && levelSep) {
+      if (isLevelSeparator (c, slashToSeparate) && levelSep) {
         found = true;
       }
       else
@@ -891,17 +935,23 @@ public class Tags
    @param fromIndex The starting point for the scan.
    @param levelSep  Stop at level separators?
    @param tagSep    Stop at tag separators?
+   @param slashToSeparate Should we recognize a forward slash as a level separator?
+  
    @return          The position of the next separator of the specified type,
                     or the length of the String if nothing found.
    */
-  public static int indexOfNextSeparator
-      (String str, int fromIndex, boolean levelSep, boolean tagSep) {
+  public static int indexOfNextSeparator (
+      String str, 
+      int fromIndex, 
+      boolean levelSep, 
+      boolean tagSep, 
+      boolean slashToSeparate) {
     int i = fromIndex;
     boolean found = false;
     char c = ' ';
     while (i < str.length() && (! found)) {
       c = str.charAt (i);
-      if (isLevelSeparator (c) && levelSep) {
+      if (isLevelSeparator (c, slashToSeparate) && levelSep) {
         found = true;
       }
       else
@@ -923,9 +973,9 @@ public class Tags
 
    @return True if this is a level separator (a period or a slash).
    */
-  public static boolean isLevelSeparator (char sepChar) {
+  public static boolean isLevelSeparator (char sepChar, boolean slashToSeparate) {
     return (sepChar == PREFERRED_LEVEL_SEPARATOR
-          || sepChar == ALTERNATE_LEVEL_SEPARATOR);
+          || (slashToSeparate && sepChar == ALTERNATE_LEVEL_SEPARATOR));
   }
 
   /**
