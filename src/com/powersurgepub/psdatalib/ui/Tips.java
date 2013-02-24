@@ -307,14 +307,9 @@ public class Tips
   
   public void hyperlinkUpdate (HyperlinkEvent e) {
     HyperlinkEvent.EventType type = e.getEventType();
-    String url = StringUtils.cleanURLString(e.getURL().toString());
+    String url = e.getURL().toString();
     if (type == HyperlinkEvent.EventType.ACTIVATED) {
-      try {
-        XOS.getShared().openURL (url);
-      } catch (java.io.IOException exc) {
-        Trouble.getShared().report 
-            ("Trouble opening Web page " + url, "Web Browser Problem");
-      } 
+      home.openURL(appFolder); 
     }
   }
 

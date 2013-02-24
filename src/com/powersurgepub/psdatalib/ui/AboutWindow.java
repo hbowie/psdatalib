@@ -188,16 +188,12 @@ public class AboutWindow
     }
   }
   
-  public void openURL (URL url) {
-    openURL (url.toString());
+  public boolean openURL (URL url) {
+    return openURL (url.toString());
   }
   
-  public void openURL (String url) {
-    try {
-      xos.openURL (StringUtils.cleanURLString(url));
-    } catch (java.io.IOException e) {
-      trouble.report ("Trouble opening Web page " + url, "Web Browser Problem");
-    }
+  public boolean openURL (String url) {
+    return home.openURL(url);
   }
   
   private void aboutFileError () {
