@@ -44,16 +44,39 @@ public class AboutWindow
   private Trouble trouble = Trouble.getShared();
   private XOS     xos        = XOS.getShared();
   
+  private boolean loadFromDisk = true;
+  
+  private boolean browserLauncher2Used = true;
+  private boolean jxlUsed              = true;
+  private boolean pegdownUsed          = true;
+  
   /** Creates new form AboutWindow */
   public AboutWindow() {
-    setupWindow (true);
+    this.loadFromDisk = true;
+    setupWindow ();
   }
   
   public AboutWindow (boolean loadFromDisk) {
-    setupWindow (loadFromDisk);
+    this.loadFromDisk = loadFromDisk;
+    setupWindow ();
   }
   
-  private void setupWindow (boolean loadFromDisk) {
+  public void setBrowserLauncher2Used (boolean browserLauncher2Used) {
+    this.browserLauncher2Used = browserLauncher2Used;
+    setupWindow();
+  }
+  
+  public void setJXLUsed (boolean jxlUsed) {
+    this.jxlUsed = jxlUsed;
+    setupWindow();
+  }
+  
+  public void setPegdownUsed (boolean pegdownUsed) {
+    this.pegdownUsed = pegdownUsed;
+    setupWindow();
+  }
+  
+  private void setupWindow () {
     initComponents();
     
     this.setTitle ("About " + Home.getShared().getProgramName());
@@ -170,7 +193,111 @@ public class AboutWindow
       t.append("</a>");
       t.append(fontEnd);
       t.append("</td></tr>");
-
+      
+      boolean firstCredit = true;
+        
+      if (browserLauncher2Used) {
+        t.append("<tr><td columns=2>&nbsp;</td></tr>");
+        t.append("<tr><td width=70 align=left valign=top>");
+        t.append(fontBegin);
+        if (firstCredit) {
+          t.append("Credits:");
+          firstCredit = false;
+        } else {
+          t.append("&nbsp;");
+        }
+        t.append(fontEnd);
+        t.append("</td>");
+        t.append("<td>");
+        t.append(fontBegin);
+        t.append("<a href=\"http://sourceforge.net/projects/browserlaunch2\">");
+        t.append("BrowserLauncher2");
+        t.append("</a>");
+        t.append(" Copyright 2004 - 2007 Markus Gebhard, Jeff Chapman, ");
+        t.append("used under the terms of the ");
+        t.append("<a href=\"http://www.gnu.org/licenses/lgpl.html\">");
+        t.append("GNU Lesser General Public License");
+        t.append("</a>");
+        t.append(fontEnd);
+        t.append("</td></tr>");
+      }
+      
+      if (jxlUsed) {
+        t.append("<tr><td columns=2>&nbsp;</td></tr>");
+        t.append("<tr><td width=70 align=left valign=top>");
+        t.append(fontBegin);
+        if (firstCredit) {
+          t.append("Credits:");
+          firstCredit = false;
+        } else {
+          t.append("&nbsp;");
+        }
+        t.append(fontEnd);
+        t.append("</td>");
+        t.append("<td>");
+        t.append(fontBegin);
+        t.append("<a href=\"http://sourceforge.net/projects/jexcelapi\">");
+        t.append("JExcelAPI");
+        t.append("</a>");
+        t.append(" Copyright 2002 Andrew Khan, ");
+        t.append("used under the terms of the ");
+        t.append("<a href=\"http://www.gnu.org/licenses/lgpl.html\">");
+        t.append("GNU Lesser General Public License");
+        t.append("</a>");
+        t.append(fontEnd);
+        t.append("</td></tr>");
+      }
+      
+      if (pegdownUsed) {
+        t.append("<tr><td columns=2>&nbsp;</td></tr>");
+        t.append("<tr><td width=70 align=left valign=top>");
+        t.append(fontBegin);
+        if (firstCredit) {
+          t.append("Credits:");
+          firstCredit = false;
+        } else {
+          t.append("&nbsp;");
+        }
+        t.append(fontEnd);
+        t.append("</td>");
+        t.append("<td>");
+        t.append(fontBegin);
+        t.append("<a href=\"https://github.com/sirthias/parboiled\">");
+        t.append("parboiled");
+        t.append("</a>");
+        t.append(" Copyright 2009-2011 Mathias Doenitz, ");
+        t.append("used under the terms of the ");
+        t.append("<a href=\"http://www.apache.org/licenses/LICENSE-2.0\">");
+        t.append("Apache License, Version 2.0");
+        t.append("</a>");
+        t.append(fontEnd);
+        t.append("</td></tr>");
+        
+        t.append("<tr><td columns=2>&nbsp;</td></tr>");
+        t.append("<tr><td width=70 align=left valign=top>");
+        t.append(fontBegin);
+        if (firstCredit) {
+          t.append("Credits:");
+          firstCredit = false;
+        } else {
+          t.append("&nbsp;");
+        }
+        t.append(fontEnd);
+        t.append("</td>");
+        t.append("<td>");
+        t.append(fontBegin);
+        t.append("<a href=\"https://github.com/sirthias/pegdown\">");
+        t.append("pegdown");
+        t.append("</a>");
+        t.append(" Copyright 2010-2011 Mathias Doenitz, ");
+        t.append("used under the terms of the ");
+        t.append("<a href=\"http://www.apache.org/licenses/LICENSE-2.0\">");
+        t.append("Apache License, Version 2.0");
+        t.append("</a>");
+        t.append(fontEnd);
+        t.append("</td></tr>");
+      }
+      
       t.append("</table>");
       
       t.append("</html>");
