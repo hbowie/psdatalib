@@ -47,7 +47,7 @@ limitations under the License.
 
 ### BrowserLauncher2
 
-Copyright 2004,2005,2006,2007 Markus Gebhard, Jeff Chapman
+Copyright 2004 - 2007 Markus Gebhard, Jeff Chapman
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
