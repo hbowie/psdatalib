@@ -157,7 +157,7 @@ public class AboutWindow
       t.append(home.getProgramName());
       t.append(" is written in Java. It may be run on Windows, Macintosh and other Unix platforms. ");
       t.append(home.getProgramName());
-      t.append(" requires a Java Virtual Machine (JVM/JRE) of 1.6 or later. ");
+      t.append(" requires a Java Virtual Machine (JVM/JRE) of version 6 or later. ");
       t.append("You may wish to visit www.Java.com to download a compatible JVM. ");
       t.append(fontEnd);
       t.append("</p>");
