@@ -285,72 +285,76 @@ public class Tags
 
     // Remove any rubbish and drop leading and trailing spaces
     String tags2 = StringUtils.purify(inTags).trim();
-    // System.out.println ("tags2 (purified) = " + tags2);
-    int e2 = 0;
-    int s2 = indexOfNextWordStart (tags2, e2, slashToSeparate);
-    // System.out.println ("initial s2 = " + String.valueOf(s2));
-    int wordEnd2 = e2;
-    char sep = ' ';
-    while (s2 < tags2.length()) {
-      // Process next tag from input
-      StringBuilder next2 = new StringBuilder();
-      sep = ' ';
-      while (s2 < tags2.length() && (! isTagSeparator (sep))) {
-        // Process next level in text tag from input
-        e2 = indexOfNextSeparator (tags2, s2, true, true, slashToSeparate);
-        // System.out.println ("e2 and wordend both = " + String.valueOf(e2));
-        wordEnd2 = e2;
-        while (wordEnd2 > 0 && Character.isWhitespace (tags2.charAt(wordEnd2 - 1))) {
-          wordEnd2--;
+    if (tags2.equals(tags.toString())) {
+      // No need to merge
+    } else {
+      // System.out.println ("tags2 (purified) = " + tags2);
+      int e2 = 0;
+      int s2 = indexOfNextWordStart (tags2, e2, slashToSeparate);
+      // System.out.println ("initial s2 = " + String.valueOf(s2));
+      int wordEnd2 = e2;
+      char sep = ' ';
+      while (s2 < tags2.length()) {
+        // Process next tag from input
+        StringBuilder next2 = new StringBuilder();
+        sep = ' ';
+        while (s2 < tags2.length() && (! isTagSeparator (sep))) {
+          // Process next level in text tag from input
+          e2 = indexOfNextSeparator (tags2, s2, true, true, slashToSeparate);
+          // System.out.println ("e2 and wordend both = " + String.valueOf(e2));
+          wordEnd2 = e2;
+          while (wordEnd2 > 0 && Character.isWhitespace (tags2.charAt(wordEnd2 - 1))) {
+            wordEnd2--;
+          }
+          if (next2.length() > 0) {
+            next2.append (PREFERRED_LEVEL_SEPARATOR);
+          }
+          next2.append (tags2.substring (s2, wordEnd2));
+          // System.out.println ("appending " + String.valueOf(s2) + "-"
+          //     + String.valueOf(e2) + " from " + tags2);
+          if (e2 < tags2.length()) {
+            sep = tags2.charAt (e2);
+          }
+          s2 = indexOfNextWordStart (tags2, e2, slashToSeparate);
+          // System.out.println ("s2 = " + String.valueOf(s2));
+        } // end while processing levels for next input tag
+
+        // System.out.println ("next2 = " + next2.toString());
+
+        // next2 now contains next tag from input string
+        int s = indexOfNextWordStart (tags, 0, slashToSeparate);
+        int e = 0;
+        int compareResult = 1;
+        while (s < tags.length() && (compareResult > 0)) {
+          e = indexOfNextSeparator (tags, s, false, true, slashToSeparate);
+          compareResult
+              = (next2.toString().compareToIgnoreCase (tags.substring (s, e)));
+          // System.out.println ("s = " + String.valueOf(s)
+          //     + " e = " + String.valueOf(e)
+          //     + " compareResult = " + String.valueOf(compareResult));
+          if ((compareResult > 0) && (s < tags.length())) {
+            s = indexOfNextWordStart (tags, e, slashToSeparate);
+          }
+        } // End while looking for a match or insertion point
+
+        if (s >= tags.length()) {
+          if (tags.length() > 0) {
+            tags.append (PREFERRED_TAG_SEPARATOR);
+            tags.append (' ');
+          }
+          tags.append (next2);
+          // System.out.println ("At end of tags, appending with result "
+          //     + tags.toString());
         }
-        if (next2.length() > 0) {
-          next2.append (PREFERRED_LEVEL_SEPARATOR);
-        }
-        next2.append (tags2.substring (s2, wordEnd2));
-        // System.out.println ("appending " + String.valueOf(s2) + "-"
-        //     + String.valueOf(e2) + " from " + tags2);
-        if (e2 < tags2.length()) {
-          sep = tags2.charAt (e2);
+        else
+        if (compareResult < 0) {
+          tags.insert (s, next2);
+          tags.insert (s + next2.length(), PREFERRED_TAG_SEPARATOR);
+          tags.insert (s + next2.length() + 1, ' ');
         }
         s2 = indexOfNextWordStart (tags2, e2, slashToSeparate);
-        // System.out.println ("s2 = " + String.valueOf(s2));
-      } // end while processing levels for next input tag
-
-      // System.out.println ("next2 = " + next2.toString());
-
-      // next2 now contains next tag from input string
-      int s = indexOfNextWordStart (tags, 0, slashToSeparate);
-      int e = 0;
-      int compareResult = 1;
-      while (s < tags.length() && (compareResult > 0)) {
-        e = indexOfNextSeparator (tags, s, false, true, slashToSeparate);
-        compareResult
-            = (next2.toString().compareToIgnoreCase (tags.substring (s, e)));
-        // System.out.println ("s = " + String.valueOf(s)
-        //     + " e = " + String.valueOf(e)
-        //     + " compareResult = " + String.valueOf(compareResult));
-        if ((compareResult > 0) && (s < tags.length())) {
-          s = indexOfNextWordStart (tags, e, slashToSeparate);
-        }
-      } // End while looking for a match or insertion point
-
-      if (s >= tags.length()) {
-        if (tags.length() > 0) {
-          tags.append (PREFERRED_TAG_SEPARATOR);
-          tags.append (' ');
-        }
-        tags.append (next2);
-        // System.out.println ("At end of tags, appending with result "
-        //     + tags.toString());
-      }
-      else
-      if (compareResult < 0) {
-        tags.insert (s, next2);
-        tags.insert (s + next2.length(), PREFERRED_TAG_SEPARATOR);
-        tags.insert (s + next2.length() + 1, ' ');
-      }
-      s2 = indexOfNextWordStart (tags2, e2, slashToSeparate);
-    } // end while more tags from input
+      } // end while more tags from input
+    }
   } // end merge string method
 
   /**

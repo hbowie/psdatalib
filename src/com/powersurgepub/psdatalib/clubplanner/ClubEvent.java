@@ -342,7 +342,7 @@ public class ClubEvent
  
   public static final int PLANNED_INCOME_COLUMN_INDEX = 17;
  
-  public static final int PLANNED_INCOME_COLUMN_WIDTH = 12;
+  public static final int PLANNED_INCOME_COLUMN_WIDTH = 40;
  
 
   /**
@@ -358,7 +358,7 @@ public class ClubEvent
  
   public static final int ACTUAL_INCOME_COLUMN_INDEX = 18;
  
-  public static final int ACTUAL_INCOME_COLUMN_WIDTH = 12;
+  public static final int ACTUAL_INCOME_COLUMN_WIDTH = 40;
  
 
   /**
@@ -374,7 +374,7 @@ public class ClubEvent
  
   public static final int PLANNED_EXPENSE_COLUMN_INDEX = 19;
  
-  public static final int PLANNED_EXPENSE_COLUMN_WIDTH = 12;
+  public static final int PLANNED_EXPENSE_COLUMN_WIDTH = 40;
  
 
   /**
@@ -390,7 +390,7 @@ public class ClubEvent
  
   public static final int ACTUAL_EXPENSE_COLUMN_INDEX = 20;
  
-  public static final int ACTUAL_EXPENSE_COLUMN_WIDTH = 12;
+  public static final int ACTUAL_EXPENSE_COLUMN_WIDTH = 40;
  
 
   /**
