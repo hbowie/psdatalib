@@ -224,8 +224,8 @@ public class ClubEventCalc {
     calcNotesAsHtml (clubEvent);
     calcFinanceProjection (clubEvent);
     calcOverUnder (clubEvent);
-    calcSeq (clubEvent);
     calcYmd (clubEvent);
+    calcSeq (clubEvent);
     calcShortDate (clubEvent);
 
   }
@@ -333,6 +333,16 @@ public class ClubEventCalc {
     }
   }
   
+  public void calcYmd (ClubEvent clubEvent) {
+    
+    // Now get the date in a predictable year-month-date format
+    if (clubEvent.hasWhen()) {
+      strDate.setFuture(clubEvent.getStatusAsString());
+      strDate.parse(clubEvent.getWhen());
+      clubEvent.setYmd(strDate.getYMD());
+    }
+  }
+  
   public void calcSeq (ClubEvent clubEvent) {
     String typeLower = clubEvent.getType().toString().toLowerCase();
     if (typeLower.indexOf("open meeting") >= 0) {
@@ -349,18 +359,12 @@ public class ClubEventCalc {
     else
     if (typeLower.indexOf("close meeting") >= 0) {
       clubEvent.setSeq("9");
+    } 
+    else
+    if (clubEvent.hasWhen() && strDate.isInThePast()) {
+      clubEvent.setSeq("4");
     } else {
       clubEvent.setSeq("5");
-    }
-  }
-  
-  public void calcYmd (ClubEvent clubEvent) {
-    
-    // Now get the date in a predictable year-month-date format
-    if (clubEvent.hasWhen()) {
-      strDate.setFuture(clubEvent.getStatusAsString());
-      strDate.parse(clubEvent.getWhen());
-      clubEvent.setYmd(strDate.getYMD());
     }
   }
   

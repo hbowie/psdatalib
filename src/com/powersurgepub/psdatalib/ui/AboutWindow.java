@@ -61,6 +61,29 @@ public class AboutWindow
     setupWindow ();
   }
   
+  /**
+   Constructor specifying optional parameters to tailor the About window. 
+  
+   @param loadFromDisk Should the about file be loaded from disk?
+   @param browserLauncher2Used Does this app use BrowserLauncher2?
+   @param jxlUsed              Does this app use jxl?
+   @param pegdownUsed          Does this app use pegdown?
+   @param copyRightYearFrom    Specify the year first published. 
+  */
+  public AboutWindow (
+      boolean loadFromDisk, 
+      boolean browserLauncher2Used,
+      boolean jxlUsed,
+      boolean pegdownUsed,
+      String  copyRightYearFrom) {
+    this.loadFromDisk = loadFromDisk;
+    this.browserLauncher2Used = browserLauncher2Used;
+    this.jxlUsed = jxlUsed;
+    this.pegdownUsed = pegdownUsed;
+    home.setCopyrightYearFrom(copyRightYearFrom);
+    setupWindow ();
+  }
+  
   public void setBrowserLauncher2Used (boolean browserLauncher2Used) {
     this.browserLauncher2Used = browserLauncher2Used;
     setupWindow();
