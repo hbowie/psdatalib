@@ -53,6 +53,7 @@ public class TextType {
   public static final String DEFINITION_LIST = "dl";
   public static final String DEFINITION_TERM = "dt";
   public static final String DEFINITION_DEF = "dd";
+  public static final String DIV            = "div";
   public static final String EMPHASIS       = "em";
   public static final String FOLDED         = "folded";
   public static final String HEADING_PREFIX = "h";
@@ -71,8 +72,10 @@ public class TextType {
   public static final String IMAGE          = "img";
   public static final String PARAGRAPH      = "p";
   public static final String PRE            = "pre";
+  public static final String SCRIPT         = "script";
   public static final String SPAN           = "span";
   public static final String STRONG         = "strong";
+  public static final String STYLE          = "style";
   public static final String TITLE          = "title";
   public static final String ORDERED_LIST   = "ol";
   public static final String TOC            = "toc";
@@ -97,8 +100,6 @@ public class TextType {
   public static final String TEXTILE_ITALICS        = "__";
   public static final String QUOTE_MACRO    = "{quote}";
 
-  public static final String      STYLE       = "style";
-  public static final String      SCRIPT      = "script";
   public static final String      SRC         = "src";
   public static final String      LINK        = "link";
   public static final String      REL         = "rel";
@@ -120,6 +121,9 @@ public class TextType {
   public static final String      TABLE_DATA  = "td";
   public static final String      COLUMN_SPAN = "colspan";
   public static final String      WIDTH       = "width";
+  
+  public static final String      DATA_TOGGLE = "data-toggle";
+  public static final String      DATA_TARGET = "data-target";
 
   private       boolean                 attribute = false;
 
