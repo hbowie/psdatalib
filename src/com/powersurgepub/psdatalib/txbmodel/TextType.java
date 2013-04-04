@@ -124,6 +124,21 @@ public class TextType {
   
   public static final String      DATA_TOGGLE = "data-toggle";
   public static final String      DATA_TARGET = "data-target";
+  public static final String      CONTAINER   = "container";
+  public static final String      ROW         = "row";
+  public static final String      SPAN1       = "span1";
+  public static final String      SPAN2       = "span2";
+  public static final String      SPAN3       = "span3";
+  public static final String      SPAN4       = "span4";
+  public static final String      SPAN5       = "span5";
+  public static final String      SPAN6       = "span6";
+  public static final String      SPAN7       = "span7";
+  public static final String      SPAN8       = "span8";
+  public static final String      SPAN9       = "span9";
+  public static final String      SPAN10      = "span10";
+  public static final String      SPAN11      = "span11";
+  public static final String      SPAN12      = "span12";
+  
 
   private       boolean                 attribute = false;
 
