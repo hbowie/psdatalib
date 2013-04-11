@@ -16,6 +16,7 @@
 
 package com.powersurgepub.psdatalib.ui;
 
+  import com.powersurgepub.psutils.*;
   import javax.swing.*;
 
 /**
@@ -46,7 +47,8 @@ package com.powersurgepub.psdatalib.ui;
  * @author  hbowie
  */
 public class LogWindow 
-    extends javax.swing.JFrame {
+    extends javax.swing.JFrame
+      implements WindowToManage {
   
   
   /** Creates new form LogWindow */

@@ -31,7 +31,10 @@ package com.powersurgepub.psdatalib.ui;
  */
 public class AboutWindow 
     extends javax.swing.JFrame 
-      implements HyperlinkListener {
+      implements 
+        HyperlinkListener,
+        WindowToManage
+  {
   
   private String  fontBegin = "<font face=\"Arial\" size=\"4\">";
   private String  fontEnd   = "</font>";
