@@ -17,6 +17,9 @@
 package com.powersurgepub.psdatalib.ui;
 
   import com.powersurgepub.psutils.*;
+  import com.powersurgepub.xos2.*;
+  import java.io.*;
+  import java.net.*;
   import javax.swing.*;
 
 /**
@@ -28,6 +31,7 @@ package com.powersurgepub.psdatalib.ui;
 public class LinkLabel 
     extends JPanel {
 
+  private JFrame                frame = null;
   private JTextArea             linkText = null;
   private LinkTweakerInterface  linkTweaker = null;
 
@@ -59,6 +63,10 @@ public class LinkLabel
   public void setLinkTweaker (LinkTweakerInterface linkTweaker) {
     this.linkTweaker = linkTweaker;
   }
+  
+  public void setFrame (JFrame frame) {
+    this.frame = frame;
+  }
 
   /**
    This method is called from within the constructor to initialize the form.
@@ -71,6 +79,7 @@ public class LinkLabel
     java.awt.GridBagConstraints gridBagConstraints;
 
     linkLabel = new javax.swing.JLabel();
+    browseDiskButton = new javax.swing.JButton();
     urlLaunchButton = new javax.swing.JButton();
     tweakButton = new javax.swing.JButton();
     filler = new javax.swing.JLabel();
@@ -82,12 +91,32 @@ public class LinkLabel
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 0;
-    gridBagConstraints.gridwidth = 2;
     gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
     gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
     gridBagConstraints.weightx = 1.0;
-    gridBagConstraints.insets = new java.awt.Insets(8, 8, 4, 4);
+    gridBagConstraints.insets = new java.awt.Insets(14, 8, 4, 4);
     add(linkLabel, gridBagConstraints);
+
+    browseDiskButton.setBackground(new java.awt.Color(51, 51, 51));
+    browseDiskButton.setFont(new java.awt.Font("Zapf Dingbats", 0, 13)); // NOI18N
+    browseDiskButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/powersurgepub/psdatalib/ui/hard-drive.png"))); // NOI18N
+    browseDiskButton.setToolTipText("Select a file or folder from a local drive");
+    browseDiskButton.setBorderPainted(false);
+    browseDiskButton.setContentAreaFilled(false);
+    browseDiskButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+    browseDiskButton.setIconTextGap(0);
+    browseDiskButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+    browseDiskButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        browseDiskButtonActionPerformed(evt);
+      }
+    });
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 1;
+    gridBagConstraints.gridy = 0;
+    gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+    gridBagConstraints.insets = new java.awt.Insets(4, 4, 0, 0);
+    add(browseDiskButton, gridBagConstraints);
 
     urlLaunchButton.setBackground(new java.awt.Color(51, 51, 51));
     urlLaunchButton.setFont(new java.awt.Font("Zapf Dingbats", 0, 13)); // NOI18N
@@ -163,7 +192,31 @@ public class LinkLabel
 
   }//GEN-LAST:event_tweakButtonActionPerformed
 
+  private void browseDiskButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseDiskButtonActionPerformed
+    if (linkText != null) {
+      XFileChooser chooser = new XFileChooser ();
+      chooser.setDialogTitle ("Select File or Folder as URL");
+      chooser.setFileSelectionMode(XFileChooser.FILES_AND_DIRECTORIES);
+      String syncFolderStr = null;
+      File syncFolder = null;
+      File homeDir = Home.getShared().getUserHome();
+      if (homeDir != null) {
+        chooser.setCurrentDirectory (homeDir);
+      }
+      File result = chooser.showOpenDialog (frame);
+      if (result != null) {
+        try {
+          String webPage = result.toURI().toURL().toString();
+          linkText.setText (webPage);
+        } catch (MalformedURLException e) {
+          // do nothing
+        }
+      }    
+    }
+  }//GEN-LAST:event_browseDiskButtonActionPerformed
+
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JButton browseDiskButton;
   private javax.swing.JLabel filler;
   private javax.swing.JLabel linkLabel;
   private javax.swing.JButton tweakButton;
