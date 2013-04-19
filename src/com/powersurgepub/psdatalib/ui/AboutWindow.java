@@ -52,6 +52,8 @@ public class AboutWindow
   private boolean browserLauncher2Used = true;
   private boolean jxlUsed              = true;
   private boolean pegdownUsed          = true;
+  private boolean xercesUsed           = false;
+  private boolean saxonUsed            = false;
   
   /** Creates new form AboutWindow */
   public AboutWindow() {
@@ -71,6 +73,8 @@ public class AboutWindow
    @param browserLauncher2Used Does this app use BrowserLauncher2?
    @param jxlUsed              Does this app use jxl?
    @param pegdownUsed          Does this app use pegdown?
+   @param xercesUsed           Does this app use xerces for xml parsing?
+   @param saxonUsed            Does this app use saxon for xslt processing?
    @param copyRightYearFrom    Specify the year first published. 
   */
   public AboutWindow (
@@ -78,11 +82,15 @@ public class AboutWindow
       boolean browserLauncher2Used,
       boolean jxlUsed,
       boolean pegdownUsed,
+      boolean xercesUsed,
+      boolean saxonUsed,
       String  copyRightYearFrom) {
     this.loadFromDisk = loadFromDisk;
     this.browserLauncher2Used = browserLauncher2Used;
     this.jxlUsed = jxlUsed;
     this.pegdownUsed = pegdownUsed;
+    this.xercesUsed = xercesUsed;
+    this.saxonUsed = saxonUsed;
     home.setCopyrightYearFrom(copyRightYearFrom);
     setupWindow ();
   }
@@ -319,6 +327,58 @@ public class AboutWindow
         t.append("used under the terms of the ");
         t.append("<a href=\"http://www.apache.org/licenses/LICENSE-2.0\">");
         t.append("Apache License, Version 2.0");
+        t.append("</a>");
+        t.append(fontEnd);
+        t.append("</td></tr>");
+      }
+      
+      if (xercesUsed) {
+        t.append("<tr><td columns=2>&nbsp;</td></tr>");
+        t.append("<tr><td width=70 align=left valign=top>");
+        t.append(fontBegin);
+        if (firstCredit) {
+          t.append("Credits:");
+          firstCredit = false;
+        } else {
+          t.append("&nbsp;");
+        }
+        t.append(fontEnd);
+        t.append("</td>");
+        t.append("<td>");
+        t.append(fontBegin);
+        t.append("<a href=\"http://xerces.apache.org\">");
+        t.append("Xerces");
+        t.append("</a>");
+        t.append(" Copyright 1999-2012 The Apache Software Foundation, ");
+        t.append("used under the terms of the ");
+        t.append("<a href=\"http://www.apache.org/licenses/LICENSE-2.0\">");
+        t.append("Apache License, Version 2.0");
+        t.append("</a>");
+        t.append(fontEnd);
+        t.append("</td></tr>");
+      }
+      
+      if (saxonUsed) {
+        t.append("<tr><td columns=2>&nbsp;</td></tr>");
+        t.append("<tr><td width=70 align=left valign=top>");
+        t.append(fontBegin);
+        if (firstCredit) {
+          t.append("Credits:");
+          firstCredit = false;
+        } else {
+          t.append("&nbsp;");
+        }
+        t.append(fontEnd);
+        t.append("</td>");
+        t.append("<td>");
+        t.append(fontBegin);
+        t.append("<a href=\"http://saxon.sourceforge.net\">");
+        t.append("Saxon");
+        t.append("</a>");
+        t.append(" Copyright Michael H. Kay, ");
+        t.append("used under the terms of the ");
+        t.append("<a href=\"http://www.mozilla.org/MPL/\">");
+        t.append("Mozilla Public License, Version 1.0");
         t.append("</a>");
         t.append(fontEnd);
         t.append("</td></tr>");
