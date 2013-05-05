@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 2012 - 2013 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ package com.powersurgepub.psdatalib.clubplanner;
  @author Herb Bowie
  */
 public class ClubEventCalc {
+  
+  public static final String BLANK = "Blank";
   
   private ResourceList statusResource;
    
@@ -91,6 +93,9 @@ public class ClubEventCalc {
     status = "";
     if (folderDepth > 0) {
       String typeOrStatus = inPathFileName.getFolder(folderDepth);
+      if (typeOrStatus.equalsIgnoreCase(BLANK)) {
+        typeOrStatus = "";
+      }
       if (typeList.indexOf(typeOrStatus) >= 0) {
         type = typeOrStatus;
         typeFromFolder = true;
