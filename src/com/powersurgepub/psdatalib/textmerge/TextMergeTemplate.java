@@ -573,7 +573,9 @@ public class TextMergeTemplate {
         && templateCreated
         && psList instanceof DataSource) {
       DataSource source = (DataSource)psList;
-      template.openData (source, psList.getSource().toString());
+      if (psList.getSource() != null) {
+        template.openData (source, psList.getSource().toString());
+      }
       try {
         generateOutputOK = template.generateOutput();
       } catch (IOException e) {

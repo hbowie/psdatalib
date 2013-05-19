@@ -265,7 +265,9 @@ public class Template {
   public boolean generateOutput () 
     throws IOException {
   
-    if ((! templateFileOK) || (! dataFileOK)) {
+    if ((! templateFileOK) 
+        // || (! dataFileOK)
+        ) {
       return false;
     }
     
@@ -281,6 +283,23 @@ public class Template {
     } while ((! templateFile.isAtEnd()) 
       && (! nextLine.getCommand().equals (TemplateLine.NEXTREC)));
       
+    
+    if ((! templateFile.isAtEnd())
+        && (! dataFileOK)) {
+      return false;
+    }
+    
+    // If the template file didn't contain a nextrec command, 
+    // then let's get out of here.
+    if (templateFile.isAtEnd()) {
+      if (templateUtil.isTextFileOutOpen()) {
+        templateUtil.close();
+      }
+      templateFileLineCount = templateFile.getLineNumber();
+      templateFile.close();
+      return true;
+    }
+    
     // table lines between NEXTREC and LOOP
     recLines = new Vector();
 		endGroupLines = new Vector();
