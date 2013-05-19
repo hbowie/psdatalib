@@ -350,6 +350,7 @@ public class ClubEventCalc {
   
   public void calcSeq (ClubEvent clubEvent) {
     String typeLower = clubEvent.getType().toString().toLowerCase();
+    String statusLower = clubEvent.getStatusAsString().toLowerCase();
     if (typeLower.indexOf("open meeting") >= 0) {
       clubEvent.setSeq("1");
     }
@@ -366,7 +367,9 @@ public class ClubEventCalc {
       clubEvent.setSeq("9");
     } 
     else
-    if (clubEvent.hasWhen() && strDate.isInThePast()) {
+    if (clubEvent.hasWhen() 
+        && strDate.isInThePast()
+        && statusLower.indexOf("future") < 0) {
       clubEvent.setSeq("4");
     } else {
       clubEvent.setSeq("5");
