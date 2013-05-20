@@ -72,7 +72,7 @@ public class ClubEventDefaultComparator
         //     + " result = " + String.valueOf(result));
       }
       if (result == 0) {
-        result = event1.getTypeAsString().compareTo(event2.getTypeAsString());
+        result = event1.getCategoryAsString().compareTo(event2.getCategoryAsString());
         // System.out.println ("Comparing types " 
         //     + event1.getTypeAsString() + " to " + event2.getTypeAsString()
         //     + " result = " + String.valueOf(result));

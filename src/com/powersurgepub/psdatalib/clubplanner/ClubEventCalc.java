@@ -35,17 +35,17 @@ public class ClubEventCalc {
    
   private ArrayList statusList = new ArrayList();
   
-  private ResourceList typeResource;
+  private ResourceList categoryResource;
   
-  private ArrayList typeList = new ArrayList();
+  private ArrayList categoryList = new ArrayList();
   
   private    StringDate         strDate = new StringDate();
   private    PegDownProcessor   pegDown;
   
   private    String             status = "";
-  private    String             type = "";
+  private    String             category = "";
   private    boolean            statusFromFolder = false;
-  private    boolean            typeFromFolder = false;
+  private    boolean            categoryFromFolder = false;
   private    String             opYearFolder = "";
   private    String             year = "";
   private    boolean            opYearFound = false;
@@ -59,8 +59,8 @@ public class ClubEventCalc {
     statusResource = new ResourceList(getClass(), "status");
     statusResource.load(statusList);
     
-    typeResource = new ResourceList (getClass(), "type");
-    typeResource.load(typeList);
+    categoryResource = new ResourceList (getClass(), "category");
+    categoryResource.load(categoryList);
   }
   
   public void setStringDate (StringDate strDate) {
@@ -86,23 +86,23 @@ public class ClubEventCalc {
     // Get information from the names of the folders containing this file
     int folderDepth = inPathFileName.getNumberOfFolders();
 
-    // Get the type or status from the deepest folder
-    typeFromFolder = false;
-    type = "";
+    // Get the category or status from the deepest folder
+    categoryFromFolder = false;
+    category = "";
     statusFromFolder = false;
     status = "";
     if (folderDepth > 0) {
-      String typeOrStatus = inPathFileName.getFolder(folderDepth);
-      if (typeOrStatus.equalsIgnoreCase(BLANK)) {
-        typeOrStatus = "";
+      String categoryOrStatus = inPathFileName.getFolder(folderDepth);
+      if (categoryOrStatus.equalsIgnoreCase(BLANK)) {
+        categoryOrStatus = "";
       }
-      if (typeList.indexOf(typeOrStatus) >= 0) {
-        type = typeOrStatus;
-        typeFromFolder = true;
+      if (categoryList.indexOf(categoryOrStatus) >= 0) {
+        category = categoryOrStatus;
+        categoryFromFolder = true;
       }
       else
-      if (statusList.indexOf(typeOrStatus) >= 0) {
-        status = typeOrStatus;
+      if (statusList.indexOf(categoryOrStatus) >= 0) {
+        status = categoryOrStatus;
         setFuture(status);
         statusFromFolder = true;
       }
@@ -112,7 +112,7 @@ public class ClubEventCalc {
     // operating year. Note that the year may be a pair of years, to
     // indicate an operating year starting in July and ending in June. 
     opYearFolder = "";
-    if (typeFromFolder || statusFromFolder) {
+    if (categoryFromFolder || statusFromFolder) {
       folderDepth--;
     }
     opYearFound = false;
@@ -148,17 +148,17 @@ public class ClubEventCalc {
     }
   }
   
-  public boolean ifTypeFromFolder() {
-    return typeFromFolder;
+  public boolean ifCategoryFromFolder() {
+    return categoryFromFolder;
   }
   /**
-   If the type was found in the file path, then return it. 
+   If the category was found in the file path, then return it. 
   
-   @return Type as found in file location, or null, if no type was found. 
+   @return Category as found in file location, or null, if no category was found. 
   */
-  public String getTypeFromFolder() {
-    if (typeFromFolder) {
-      return type;
+  public String getCategoryFromFolder() {
+    if (categoryFromFolder) {
+      return category;
     } else {
       return null;
     }
@@ -224,7 +224,7 @@ public class ClubEventCalc {
    */
   public void calcAll (ClubEvent clubEvent) {
     
-    calcType (clubEvent);
+    calcCategory (clubEvent);
     calcBlurbAsHtml (clubEvent);
     calcNotesAsHtml (clubEvent);
     calcFinanceProjection (clubEvent);
@@ -235,19 +235,19 @@ public class ClubEventCalc {
 
   }
   
-  public void calcType (ClubEvent clubEvent) {
+  public void calcCategory (ClubEvent clubEvent) {
 
-    StringBuilder type = new StringBuilder (clubEvent.getTypeAsString());
-    int pipeIndex = type.indexOf("|");
+    StringBuilder category = new StringBuilder (clubEvent.getCategoryAsString());
+    int pipeIndex = category.indexOf("|");
     if (pipeIndex >= 0) {
       pipeIndex++;
-      while (pipeIndex < type.length()
-          && Character.isWhitespace(type.charAt(pipeIndex))) {
+      while (pipeIndex < category.length()
+          && Character.isWhitespace(category.charAt(pipeIndex))) {
         pipeIndex++;
       }
-      type.delete(0, pipeIndex);
+      category.delete(0, pipeIndex);
     }
-    clubEvent.setType (type.toString());
+    clubEvent.setCategory (category.toString());
   }
   
   public void calcBlurbAsHtml (ClubEvent clubEvent) {
@@ -349,21 +349,21 @@ public class ClubEventCalc {
   }
   
   public void calcSeq (ClubEvent clubEvent) {
-    String typeLower = clubEvent.getType().toString().toLowerCase();
+    String categoryLower = clubEvent.getCategory().toString().toLowerCase();
     String statusLower = clubEvent.getStatusAsString().toLowerCase();
-    if (typeLower.indexOf("open meeting") >= 0) {
+    if (categoryLower.indexOf("open meeting") >= 0) {
       clubEvent.setSeq("1");
     }
     else
-    if (typeLower.indexOf("finance") >= 0) {
+    if (categoryLower.indexOf("finance") >= 0) {
       clubEvent.setSeq("2");
     }
     else
-    if (typeLower.indexOf("communication") >= 0) {
+    if (categoryLower.indexOf("communication") >= 0) {
       clubEvent.setSeq("8");
     }
     else
-    if (typeLower.indexOf("close meeting") >= 0) {
+    if (categoryLower.indexOf("close meeting") >= 0) {
       clubEvent.setSeq("9");
     } 
     else

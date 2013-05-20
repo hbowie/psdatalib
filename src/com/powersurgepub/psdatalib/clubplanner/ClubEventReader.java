@@ -276,8 +276,8 @@ package com.powersurgepub.psdatalib.clubplanner;
     if (clubEventCalc.ifStatusFromFolder()) {
       clubEvent.setStatus(clubEventCalc.getStatusFromFolder());
     }
-    if (clubEventCalc.ifTypeFromFolder()) {
-      clubEvent.setType(clubEventCalc.getTypeFromFolder());
+    if (clubEventCalc.ifCategoryFromFolder()) {
+      clubEvent.setCategory(clubEventCalc.getCategoryFromFolder());
     }
     clubEvent.resetModified();
     clubEvent.setDiskLocation(this);

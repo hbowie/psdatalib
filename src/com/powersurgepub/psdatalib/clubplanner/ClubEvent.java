@@ -72,17 +72,17 @@ public class ClubEvent
   /**
    The category assigned to the event.
    */
-  private String type = null;
+  private String category = null;
  
-  public static final String TYPE_FIELD_NAME = "Type";
+  public static final String CATEGORY_FIELD_NAME = "Category";
  
-  public static final String TYPE_COLUMN_NAME = "Type";
+  public static final String CATEGORY_COLUMN_NAME = "Category";
  
-  public static final String TYPE_COMMON_NAME = "type";
+  public static final String CATEGORY_COMMON_NAME = "category";
  
-  public static final int TYPE_COLUMN_INDEX = 1;
+  public static final int CATEGORY_COLUMN_INDEX = 1;
  
-  public static final int TYPE_COLUMN_WIDTH = 20;
+  public static final int CATEGORY_COLUMN_WIDTH = 20;
  
 
   /**
@@ -846,8 +846,8 @@ public class ClubEvent
     ClubEvent newClubEvent = new ClubEvent();
 		String yearStr = new String(getYearAsString());
 		newClubEvent.setYear(yearStr);
-		String typeStr = new String(getTypeAsString());
-		newClubEvent.setType(typeStr);
+		String categoryStr = new String(getCategoryAsString());
+		newClubEvent.setCategory(categoryStr);
 		String statusStr = new String(getStatusAsString());
 		newClubEvent.setStatus(statusStr);
 		String whenStr = new String(getWhenAsString());
@@ -934,11 +934,11 @@ public class ClubEvent
    @return True if the folder name field for this item is neither null nor blank.
    */
   public boolean hasFolderName() {
-		if (getType() == null) {
+		if (getCategory() == null) {
 			return false;
 		}
 		else
-		if (getType().toString().length() == 0) {
+		if (getCategory().toString().length() == 0) {
 			return false;
 		} else {
 			return true;
@@ -952,14 +952,14 @@ public class ClubEvent
 	         string, if the folder name field is blank or null.
 	 */
 	public String getFolderName() {
-		if (getType() == null) {
+		if (getCategory() == null) {
 			return "";
 		}
 		else
-		if (getType().toString().length() == 0) {
+		if (getCategory().toString().length() == 0) {
 			return "";
 		} else {
-			return StringUtils.makeReadableFileName (getType().toString()) + "/";
+			return StringUtils.makeReadableFileName (getCategory().toString()) + "/";
 		}
 	}
   /**
@@ -1122,7 +1122,7 @@ public class ClubEvent
         setYear ((String)obj2);
       }
     }
-    obj2 = clubEvent2.getType();
+    obj2 = clubEvent2.getCategory();
     if (obj2 == null) {
       // No value available -- leave current value as-is
     } else {
@@ -1130,7 +1130,7 @@ public class ClubEvent
       if (str2.equals ("")) {
         // No value available -- leave current value as-is
       } else {
-        setType ((String)obj2);
+        setCategory ((String)obj2);
       }
     }
     obj2 = clubEvent2.getSeq();
@@ -1518,8 +1518,8 @@ public class ClubEvent
       case YEAR_COLUMN_INDEX:
           setYear (columnValue);
           break;
-      case TYPE_COLUMN_INDEX:
-          setType (columnValue);
+      case CATEGORY_COLUMN_INDEX:
+          setCategory (columnValue);
           break;
       case SEQ_COLUMN_INDEX:
           setSeq (columnValue);
@@ -1637,8 +1637,8 @@ public class ClubEvent
     switch (columnIndex) {
       case YEAR_COLUMN_INDEX:
           return year;
-      case TYPE_COLUMN_INDEX:
-          return type;
+      case CATEGORY_COLUMN_INDEX:
+          return category;
       case SEQ_COLUMN_INDEX:
           return seq;
       case STATUS_COLUMN_INDEX:
@@ -1723,8 +1723,8 @@ public class ClubEvent
     switch (columnIndex) {
       case YEAR_COLUMN_INDEX:
           return YEAR_COLUMN_NAME;
-      case TYPE_COLUMN_INDEX:
-          return TYPE_COLUMN_NAME;
+      case CATEGORY_COLUMN_INDEX:
+          return CATEGORY_COLUMN_NAME;
       case SEQ_COLUMN_INDEX:
           return SEQ_COLUMN_NAME;
       case STATUS_COLUMN_INDEX:
@@ -1810,8 +1810,8 @@ public class ClubEvent
     switch (columnIndex) {
       case YEAR_COLUMN_INDEX:
           return YEAR_COMMON_NAME;
-      case TYPE_COLUMN_INDEX:
-          return TYPE_COMMON_NAME;
+      case CATEGORY_COLUMN_INDEX:
+          return CATEGORY_COMMON_NAME;
       case SEQ_COLUMN_INDEX:
           return SEQ_COMMON_NAME;
       case STATUS_COLUMN_INDEX:
@@ -1896,8 +1896,8 @@ public class ClubEvent
     switch (columnIndex) {
       case YEAR_COLUMN_INDEX:
           return YEAR_COLUMN_WIDTH;
-      case TYPE_COLUMN_INDEX:
-          return TYPE_COLUMN_WIDTH;
+      case CATEGORY_COLUMN_INDEX:
+          return CATEGORY_COLUMN_WIDTH;
       case SEQ_COLUMN_INDEX:
           return SEQ_COLUMN_WIDTH;
       case STATUS_COLUMN_INDEX:
@@ -1982,7 +1982,7 @@ public class ClubEvent
     switch (columnIndex) {
       case YEAR_COLUMN_INDEX:
           return String.class;
-      case TYPE_COLUMN_INDEX:
+      case CATEGORY_COLUMN_INDEX:
           return String.class;
       case SEQ_COLUMN_INDEX:
           return String.class;
@@ -2124,44 +2124,44 @@ public class ClubEvent
   }
  
   /**
-     Sets the type for this club event.
+     Sets the category for this club event.
  
-     @param  type The type for this club event.
+     @param  category The category for this club event.
    */
-  public void setType (String type) {
-    this.type = type;
+  public void setCategory (String category) {
+    this.category = category;
     setModified (true);
   }
 
   /**
-    Returns the type for this club event as a string.
+    Returns the category for this club event as a string.
  
-    @return The type for this club event as a string.
+    @return The category for this club event as a string.
    */
-  public String getTypeAsString () {
-    if (hasType()) {
-      return getType().toString();
+  public String getCategoryAsString () {
+    if (hasCategory()) {
+      return getCategory().toString();
     } else {
       return "";
     }
   }
 
   /**
-    Determines if the type for this club event is null.
+    Determines if the category for this club event is null.
  
-    @return True if the type for this club event is not null.
+    @return True if the category for this club event is not null.
    */
-  public boolean hasType () {
-    return (type != null);
+  public boolean hasCategory () {
+    return (category != null);
   }
 
   /**
-    Returns the type for this club event.
+    Returns the category for this club event.
  
-    @return The type for this club event.
+    @return The category for this club event.
    */
-  public String getType () {
-    return type;
+  public String getCategory () {
+    return category;
   }
  
   /**
