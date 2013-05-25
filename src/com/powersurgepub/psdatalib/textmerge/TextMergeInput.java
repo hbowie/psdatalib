@@ -225,12 +225,9 @@ public class TextMergeInput {
     if (! normalization) {
       File boeing = new File (Home.getShared().getAppFolder(), "boeing.txt");
       if (boeing.exists()) {
-        // System.out.println (
-        //     "File " + boeing.getPath() + " found -- normalization on");
         normalization = true;
       } else {
-        // System.out.println (
-        //     "File " + boeing.getPath() + " not found -- normalization off");
+
       }
     }
     
@@ -668,10 +665,6 @@ public class TextMergeInput {
             true);
         }
         else {
-          // log.recordEvent (LogEvent.NORMAL,
-          //   "PSTextMerge playInputModule openFileOrDirectory",
-          //   false);
-          // System.out.println ("PSTextMerge playInputModule openFileOrDirectory");
           openFileOrDirectory();
           // openDataName.setText (fileNameToDisplay);
         } // end file existence selector
@@ -718,7 +711,7 @@ public class TextMergeInput {
   /**
      Open the tab-delimited data file as an empty data set.
    */
-  public void openEmpty () {
+  private void openEmpty () {
     fileNameToDisplay = "No Input File";
     tabName = "";
     dataDict = new DataDictionary();
@@ -908,7 +901,6 @@ public class TextMergeInput {
         try {
           BoeingDocsNormalizer docs = new BoeingDocsNormalizer (original);
           docs.setDataParent (textMergeScript.getNormalizerPath());
-          // System.out.println ("Normalizer path = " + normalizerPath);
           dataSource = docs;
           log.recordEvent (LogEvent.NORMAL, 
             "BoeingDocsNormalizer successfully constructed",

@@ -261,18 +261,7 @@ public class DataRecList
   
   private void addToFilteredDataSet (int i) {
     DataRecord dataRec = completeDataSet.getRecord(i);
-    /* System.out.println (
-        "=$itemclass$=List.addToFilteredDataSet " 
-        + " # "
-        + String.valueOf(i)
-        + " : "
-        + =$itemclass&clul$=.toString()); */
     if (itemSelected(dataRec)) {
-      /* System.out.println("  item selected");
-      System.out.println("  size of proxy list = " + String.valueOf(size()));
-      if (size() > 0) {
-        System.out.println ("  item at end of list = " + get(size() - 1).toString());
-      } */
       findIndex = size();
       if (size() == 0) {
         // If this is the first =$itemclass$= being added to the proxy list,
