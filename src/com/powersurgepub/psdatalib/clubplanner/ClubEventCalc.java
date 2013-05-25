@@ -224,6 +224,7 @@ public class ClubEventCalc {
    */
   public void calcAll (ClubEvent clubEvent) {
     
+    calcItemType (clubEvent);
     calcCategory (clubEvent);
     calcBlurbAsHtml (clubEvent);
     calcNotesAsHtml (clubEvent);
@@ -233,6 +234,21 @@ public class ClubEventCalc {
     calcSeq (clubEvent);
     calcShortDate (clubEvent);
 
+  }
+  
+  public void calcItemType (ClubEvent clubEvent) {
+    String itemType = clubEvent.getItemType();
+    if (itemType == null
+        || itemType.length() == 0) {
+      String whatLower = clubEvent.getWhat().toLowerCase();
+      String statusLower = clubEvent.getStatusAsString().toLowerCase();
+      if (whatLower.contains("budget")
+          || statusLower.contains("budget")) {
+        clubEvent.setItemType("Budget");
+      } else {
+        clubEvent.setItemType("Member Event");
+      }
+    }
   }
   
   public void calcCategory (ClubEvent clubEvent) {
