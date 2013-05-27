@@ -34,7 +34,7 @@ package com.powersurgepub.psdatalib.textmerge;
   @author Herb Bowie
  */
 public class TextMergeScript 
-    implements PSFileOpener {
+    implements FileSpecOpener {
   
   /** Default file extension for script files. */
   public		static	final String  SCRIPT_EXT       = "tcz";
@@ -94,6 +94,7 @@ public class TextMergeScript
   private			JMenuItem						scriptReplay = null;
   private     JMenuItem           scriptAutoPlay = null;
   private     JMenuItem           scriptEasyPlay = null;
+  private     JMenu               recentScriptsMenu = null;
   
   // Easy Play panel objects
   private     JPanel              easyPlayTab = null;
@@ -115,7 +116,7 @@ public class TextMergeScript
   private			boolean							inActionValueValidInt;
   private			String							inputObject = "";
 	private     boolean             scriptPlaying = false; 
-  private     PSFileList          recentScripts = null; 
+  private     RecentFiles         recentScripts = null; 
   private     boolean             autoplayAllowed = true;
   private     String              autoPlay = "";
   private     String              easyPlay = "";
@@ -211,13 +212,13 @@ public class TextMergeScript
     return normalizerPath;
   }
   
-  public void setMenus(JMenuBar menus) {
+  public void setMenus(JMenuBar menus, String menuText) {
     
     quietMode = false;
     menuSet = true;
     
     this.menus = menus;
-    scriptMenu = new JMenu("Script");
+    scriptMenu = new JMenu(menuText);
     menus.add (scriptMenu);
     
     // Equivalent Menu Item to Record a Script
@@ -309,9 +310,13 @@ public class TextMergeScript
       } // end action listener
     );
     
-    recentScripts = new PSFileList ("Play Recent", "recentscript", this);
-    recentScripts.setMax (10);
-    scriptMenu.add (recentScripts.getFileMenu());
+    // Initialize Recent Scripts
+    recentScriptsMenu = new JMenu ("Recent Scripts");
+    scriptMenu.add(recentScriptsMenu);
+    recentScripts = new RecentFiles("recentscript");
+    recentScripts.loadFromPrefs();
+    recentScripts.setRecentFilesMax(10);
+    recentScripts.registerMenu(recentScriptsMenu, this);
     
   } // end method setMenus
   
@@ -849,9 +854,12 @@ public class TextMergeScript
     } // end if script recording
   } // end stopScriptRecording method
   
-  public void closeRecentScripts () {
+  /**
+   Save user preferences before shutting down. 
+  */
+  public void savePrefs () {
     if (recentScripts != null) {
-      recentScripts.close();
+      recentScripts.savePrefs();
     }
   }
   
@@ -860,8 +868,8 @@ public class TextMergeScript
    
     @param file File to be opened by this application.
    */
-  public void handleOpenFile (PSFile file) {
-    playScript (file);
+  public void handleOpenFile (FileSpec fileSpec) {
+    playScript (fileSpec.getFile());
   }
   
   public void playScript (File sFile) {
@@ -901,7 +909,7 @@ public class TextMergeScript
     scriptText.append ("Playing script "
       + inScript.getFileName() + GlobalConstants.LINE_FEED_STRING);
     if (! quietMode && recentScripts != null) {
-      recentScripts.reference (inScriptFile);
+      recentScripts.addRecentFile (inScriptFile);
     }
     while (! inScript.isAtEnd()) {
       try {
