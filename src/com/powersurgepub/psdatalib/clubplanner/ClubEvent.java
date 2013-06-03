@@ -307,7 +307,7 @@ public class ClubEvent
  
   public static final int PURCHASE_COLUMN_INDEX = 15;
  
-  public static final int PURCHASE_COLUMN_WIDTH = 30;
+  public static final int PURCHASE_COLUMN_WIDTH = 40;
  
 
   /**

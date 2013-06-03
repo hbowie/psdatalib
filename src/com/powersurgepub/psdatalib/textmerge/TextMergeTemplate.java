@@ -89,7 +89,10 @@ public class TextMergeTemplate {
   private     String              outputFileName   = "                         ";
   
   private static final String     TEMPLATE_LIBRARY_KEY = "templatelib";
-  private     File                templateLibrary = null;
+  private     File                templateLibraryUserPref = null;
+  private     File                templateLibraryAppFolder = null;
+  private     File                templateLibraryFileSpec = null;
+  private     File                templateLibraryButton = null;
   
   public TextMergeTemplate (PSList psList, TextMergeScript scriptRecorder) {
     this.psList = psList;
@@ -97,12 +100,9 @@ public class TextMergeTemplate {
     
     // Initialize template library based on app preferences
     // These may be overridden later by list preferences
-    templateLibrary = new File (UserPrefs.getShared().getPref (TEMPLATE_LIBRARY_KEY));
-    if ((! templateLibrary.exists())
-        || (! templateLibrary.canRead())
-        || (! templateLibrary.isDirectory())) {
-      templateLibrary = new File (Home.getShared().getAppFolder().getPath(),  "templates");
-    }
+    templateLibraryUserPref = new File (UserPrefs.getShared().getPref (TEMPLATE_LIBRARY_KEY));
+    templateLibraryAppFolder = new File 
+          (Home.getShared().getAppFolder().getPath(),  "templates");
     
     setListOptions();
   }
@@ -114,7 +114,7 @@ public class TextMergeTemplate {
   
   private void setListOptions() {
     
-    templateLibrary = null;
+    templateLibraryFileSpec = null;
     
     if (psList != null) {
       FileSpec source = psList.getSource();
@@ -126,25 +126,54 @@ public class TextMergeTemplate {
       }
       if (templateLibraryPath != null
           && templateLibraryPath.length() > 0) {
-        templateLibrary = new File (templateLibraryPath);
-        if (! templateLibrary.exists()) {
-          templateLibrary = null;
+        templateLibraryFileSpec = new File (templateLibraryPath);
+        if (! validLibrary (templateLibraryFileSpec)) {
+          templateLibraryFileSpec = null;
         }
       } 
-    }
-    if (templateLibrary == null) {
-      templateLibrary = new File (
-          Home.getShared().getAppFolder().getPath(),  
-          "templates");
     }
   }
   
   public void setTemplateLibrary (File templateLibrary) {
-    this.templateLibrary = templateLibrary;
+    templateLibraryFileSpec = templateLibrary;
   }
   
+  /**
+   Do we have a valid template library?
+  
+   @return True if current template library variable points to a valid folder. 
+  */
+  public boolean validTemplateLibrary() {
+    return (validLibrary (getTemplateLibrary()));
+  }
+  
+  /**
+   Return the first valid template library available, checking in this order
+   of precedence:
+   <ol>
+     <li>the template library previously identified for the current source file;
+     <li>the template library previously stored as a preference for this user;
+     <li>the template library supplied with the application package. 
+   </ol>
+  @return A valid template library if one exists, otherwise null.
+  */
   public File getTemplateLibrary() {
-    return templateLibrary;
+    if (validLibrary (templateLibraryFileSpec)) {
+      return templateLibraryFileSpec;
+    }
+    else
+    if (validLibrary (templateLibraryUserPref)) {
+      return templateLibraryUserPref;
+    } else {
+      return templateLibraryAppFolder;
+    }
+  }
+  
+  private boolean validLibrary (File library) {
+    return (library != null
+        && library.exists()
+        && library.isDirectory()
+        && library.canRead());
   }
   
   private boolean fileAvailable() {
@@ -224,8 +253,10 @@ public class TextMergeTemplate {
     
     // Create SetTemplate Library Button 
     setTemplateLibraryButton = new JButton ("Set Template Library");
-    setTemplateLibraryButton.setToolTipText
-      (templateLibrary.toString());
+    if (validTemplateLibrary()) {
+      setTemplateLibraryButton.setToolTipText
+        (getTemplateLibrary().toString());
+    }
     setTemplateLibraryButton.addActionListener (new ActionListener()
 		  {
 		    public void actionPerformed (ActionEvent event) {
@@ -273,8 +304,12 @@ public class TextMergeTemplate {
     generateOutputLabel.setBorder (etched);
     
     // Create Dynamic Labels to hold Current Values
-    templateLibraryName = new JLabel 
-        (templateLibrary.getName(), JLabel.CENTER);
+    templateLibraryName = new JLabel();
+    templateLibraryName.setAlignmentX(JLabel.CENTER);
+    if (validTemplateLibrary()) {
+      templateLibraryName.setText
+        (getTemplateLibrary().toString());
+    }
     templateLibraryName.setBorder (etched);
     
     openTemplateName = new JLabel (templateFileName, JLabel.CENTER);
@@ -346,6 +381,8 @@ public class TextMergeTemplate {
     tabs.add("Template", templatePanel);
   
   }
+    
+  
   
   /**
    Select the tab for this panel. 
@@ -395,8 +432,8 @@ public class TextMergeTemplate {
     templateFileOK = false;
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-    if (templateLibrary != null) {
-      fileChooser.setCurrentDirectory(templateLibrary);
+    if (validTemplateLibrary()) {
+      fileChooser.setCurrentDirectory(getTemplateLibrary());
     }
     int fileChooserReturn 
       = fileChooser.showOpenDialog (openTemplateButton);
@@ -432,7 +469,7 @@ public class TextMergeTemplate {
           ScriptConstants.TEXT_MODIFIER, 
           ScriptConstants.NO_OBJECT, 
           templateFile.getAbsolutePath());
-      setTemplateDirectoryFromFile (templateFile);
+      // setTemplateDirectoryFromFile (templateFile);
     } else {
       Logger.getShared().recordEvent (LogEvent.MEDIUM, 
         templateFileName + " could not be opened as a valid Template File",
@@ -475,18 +512,23 @@ public class TextMergeTemplate {
   private void setTemplateLibrary () {
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setFileSelectionMode (JFileChooser.DIRECTORIES_ONLY);
-    if (templateLibrary.exists()) {
-      fileChooser.setCurrentDirectory (templateLibrary);
-    }
     int fileChooserReturn 
       = fileChooser.showOpenDialog (openTemplateFromLibraryButton);
     if (fileChooserReturn
         == JFileChooser.APPROVE_OPTION) {
-      templateLibrary = fileChooser.getSelectedFile();
+      templateLibraryFileSpec = fileChooser.getSelectedFile();
+      
       templateLibraryName.setText 
-        (templateLibrary.getName());
+        (templateLibraryFileSpec.getName());
       setTemplateLibraryButton.setToolTipText
-      (templateLibrary.toString());
+        (templateLibraryFileSpec.toString());
+      saveTemplateDirectory();
+      if (psList != null) {
+        FileSpec source = psList.getSource();
+        if (source != null) {
+          source.setTemplatesFolder(templateLibraryFileSpec);
+        }
+      }
     }
   }
   
@@ -497,8 +539,8 @@ public class TextMergeTemplate {
     templateFileOK = false;
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-    if (templateLibrary.exists()) {
-      fileChooser.setCurrentDirectory (templateLibrary);
+    if (validTemplateLibrary()) {
+      fileChooser.setCurrentDirectory (getTemplateLibrary());
     } 
     int fileChooserReturn 
       = fileChooser.showOpenDialog (openTemplateButton);
@@ -612,12 +654,12 @@ public class TextMergeTemplate {
   } // end method templateGenerate
   
   private void setTemplateDirectoryFromFile (File inFile) {
-    templateLibrary = new File(inFile.getParent());
+    templateLibraryFileSpec = new File(inFile.getParent());
     saveTemplateDirectory();
   }
   
   private void setTemplateDirectoryFromDir (File inFile) {
-    templateLibrary = inFile;
+    templateLibraryFileSpec = inFile;
     saveTemplateDirectory();
   }
   
@@ -625,14 +667,14 @@ public class TextMergeTemplate {
     if (psList != null) {
       FileSpec source = psList.getSource();
       if (source != null) {
-        source.setTemplatesFolder(templateLibrary);
+        source.setTemplatesFolder(templateLibraryFileSpec);
       }
     }
   }
   
   public void savePrefs() {
-    UserPrefs.getShared().setPref 
-        (TEMPLATE_LIBRARY_KEY, templateLibrary.toString());
+    // UserPrefs.getShared().setPref 
+    //     (TEMPLATE_LIBRARY_KEY, templateLibrary.toString());
   }
 
 }

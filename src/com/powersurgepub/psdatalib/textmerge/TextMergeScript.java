@@ -92,6 +92,7 @@ public class TextMergeScript
   private			JMenuItem						scriptEndRecording = null;
   private			JMenuItem						scriptPlay = null;
   private			JMenuItem						scriptReplay = null;
+  private     JMenuItem           scriptClear = null;
   private     JMenuItem           scriptAutoPlay = null;
   private     JMenuItem           scriptEasyPlay = null;
   private     JMenu               recentScriptsMenu = null;
@@ -120,7 +121,7 @@ public class TextMergeScript
   private     boolean             autoplayAllowed = true;
   private     String              autoPlay = "";
   private     String              easyPlay = "";
-  private     File                easyPlayFile = null;
+  private     File                easyPlayFolder = null;
   
   public TextMergeScript (PSList psList) {
     this.psList = psList;
@@ -145,7 +146,7 @@ public class TextMergeScript
         File autoPlayFile = new File (autoPlay);
         if (autoPlayFile.exists() && autoPlayFile.canRead()) {
           inScriptFile = autoPlayFile;
-          inScript = new ScriptFile (inScriptFile, templateLibrary.toString());
+          inScript = new ScriptFile (inScriptFile, getTemplateLibrary().toString());
           playScript();
           played = true;
         } // end if input script file is available
@@ -173,6 +174,14 @@ public class TextMergeScript
   
   public void setTemplateModule (TextMergeTemplate templateModule) {
     this.templateModule = templateModule;
+  }
+  
+  private File getTemplateLibrary() {
+    if (templateModule == null) {
+      return templateLibrary;
+    } else {
+      return templateModule.getTemplateLibrary();
+    }
   }
   
   public void setOutputModule (TextMergeOutput outputModule) {
@@ -278,6 +287,18 @@ public class TextMergeScript
       } // end action listener
     );
     
+    // Menu Item to Clear Sort and Filter settings
+    scriptClear = new JMenuItem ("Clear");
+    scriptClear.setToolTipText("Clear sort and filter settings");
+    scriptMenu.add (scriptClear);
+    scriptClear.addActionListener (new ActionListener() 
+      {
+        public void actionPerformed (ActionEvent event) {
+          clearSortAndFilterSettings();	    
+        } // end ActionPerformed method
+      } // end action listener
+    );
+    
     // Equivalent Menu Item to AutoPlay a Script
     if (autoplayAllowed) {
       if (autoPlay.length() == 0) {
@@ -311,7 +332,7 @@ public class TextMergeScript
     );
     
     // Initialize Recent Scripts
-    recentScriptsMenu = new JMenu ("Recent Scripts");
+    recentScriptsMenu = new JMenu ("Play Recent Script");
     scriptMenu.add(recentScriptsMenu);
     recentScripts = new RecentFiles("recentscript");
     recentScripts.loadFromPrefs();
@@ -537,7 +558,7 @@ public class TextMergeScript
               = new File (outScriptFileName.getPath(), 
                   outScriptFileName.replaceExt (SCRIPT_EXT));
         }
-        outScript = new ScriptFile (outScriptFile, templateLibrary.toString());
+        outScript = new ScriptFile (outScriptFile, getTemplateLibrary().toString());
         // setCurrentDirectoryFromFile (outScriptFile);
         setScriptDirectoryFromFile (outScriptFile);
         normalizerPath = scriptDirectory.getPath();
@@ -604,7 +625,7 @@ public class TextMergeScript
       inScriptFile = fileChooser.getSelectedFile();
       // setCurrentDirectoryFromFile (inScriptFile);
       setScriptDirectoryFromFile (inScriptFile);
-      inScript = new ScriptFile (inScriptFile, templateLibrary.toString());
+      inScript = new ScriptFile (inScriptFile, getTemplateLibrary().toString());
       playScript();
     } // end if file approved
   }
@@ -695,9 +716,9 @@ public class TextMergeScript
         = fileChooser.showOpenDialog (scriptEasyPlayButton);
       if (fileChooserReturn 
           == JFileChooser.APPROVE_OPTION) {
-        easyPlayFile = fileChooser.getSelectedFile();
-        this.setScriptDirectoryFromDir(easyPlayFile);
-        easyPlay = easyPlayFile.getPath();
+        easyPlayFolder = fileChooser.getSelectedFile();
+        this.setScriptDirectoryFromDir(easyPlayFolder);
+        easyPlay = easyPlayFolder.getPath();
         saveEasyPlay();
         if (menuSet) {
           scriptEasyPlay.setText("Turn Easy Play Off");
@@ -733,10 +754,10 @@ public class TextMergeScript
     
     Dimension minButtonSize = new Dimension(200, 28);
     
-    easyPlayFile = new File (easyPlay);
-    String[] scripts = easyPlayFile.list();
+    easyPlayFolder = new File (easyPlay);
+    String[] scripts = easyPlayFolder.list();
     for (int i = 0; i < scripts.length; i++) {
-      File scriptFile = new File (easyPlayFile, scripts[i]);
+      File scriptFile = new File (easyPlayFolder, scripts[i]);
       FileName scriptName = new FileName(scriptFile);
       if (scriptName.getExt().equalsIgnoreCase(SCRIPT_EXT)) {
         JButton easyPlayButton = new JButton(scriptName.getBase());
@@ -748,8 +769,8 @@ public class TextMergeScript
         {
           public void actionPerformed (ActionEvent event) {
             inScriptFile = new File
-                (easyPlayFile, event.getActionCommand() + "." + SCRIPT_EXT);
-            inScript = new ScriptFile (inScriptFile, templateLibrary.toString());
+                (easyPlayFolder, event.getActionCommand() + "." + SCRIPT_EXT);
+            inScript = new ScriptFile (inScriptFile, getTemplateLibrary().toString());
             playScript();
           }
         });
@@ -863,6 +884,31 @@ public class TextMergeScript
     }
   }
   
+  void clearSortAndFilterSettings() {
+    if (sortModule != null) {
+      sortModule.playSortModule(
+          ScriptConstants.CLEAR_ACTION, 
+          ScriptConstants.NO_MODIFIER, 
+          ScriptConstants.NO_OBJECT);
+      sortModule.playSortModule(
+          ScriptConstants.SET_ACTION, 
+          ScriptConstants.NO_MODIFIER, 
+          ScriptConstants.PARAMS_OBJECT);
+    }
+    if (filterModule != null) {
+      filterModule.playScript(
+          ScriptConstants.CLEAR_ACTION, 
+          ScriptConstants.NO_MODIFIER, 
+          ScriptConstants.NO_OBJECT,
+          ScriptConstants.NO_VALUE);
+      filterModule.playScript(
+          ScriptConstants.SET_ACTION, 
+          ScriptConstants.NO_MODIFIER, 
+          ScriptConstants.PARAMS_OBJECT,
+          ScriptConstants.NO_VALUE);
+    }
+  }
+  
   /**      
     Standard way to respond to a request to open a file.
    
@@ -876,7 +922,7 @@ public class TextMergeScript
     inScriptFile = sFile;
     // setCurrentDirectoryFromFile (inScriptFile);
     setScriptDirectoryFromFile (inScriptFile);
-    inScript = new ScriptFile (inScriptFile, templateLibrary.toString());
+    inScript = new ScriptFile (inScriptFile, getTemplateLibrary().toString());
     playScript();
   }
   
