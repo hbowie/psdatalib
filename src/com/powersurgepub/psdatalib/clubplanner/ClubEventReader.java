@@ -82,6 +82,9 @@ package com.powersurgepub.psdatalib.clubplanner;
   public static final int     PLANNER_TYPE = 1;
   public static final int     NOTES_TYPE = 2;
   
+  /** Is this a minutes file? */
+  private    boolean          minutesFile = false;
+  
   
   /** The number of directories in the top directory to be read. */
   private		 int							directoryNumberOfFolders;
@@ -107,12 +110,12 @@ package com.powersurgepub.psdatalib.clubplanner;
   private    ClubEvent        clubEvent;
   private    EventNote        eventNote;
   private    int              noteIndex = 0;
+  private    boolean          endOfEvent = false;
+  private    boolean          atEnd = false;
   
   private    int              fieldAsHTMLNumber = -1;
   private    TextLineReader   reader = null;
   private    FileName         inPathFileName;
-  
-  private    boolean          atEnd = false;
   
   private    boolean          blockComment = false;
   
@@ -155,6 +158,14 @@ package com.powersurgepub.psdatalib.clubplanner;
     super (inPathFile.getAbsolutePath());
     this.inPath = this.getAbsolutePath();
     this.inType = inType;
+    initialize();
+  }
+  
+  public ClubEventReader (File inFile, int inType, boolean minutesFile) {
+    super(inFile.getAbsolutePath());
+    this.inPath = this.getAbsolutePath();
+    this.inType = inType;
+    this.minutesFile = minutesFile;
     initialize();
   }
   
@@ -257,41 +268,16 @@ package com.powersurgepub.psdatalib.clubplanner;
     ensureLog();
     
     recordNumber = 0;
-    atEnd = false;
     fieldNumber = -1;
 
     reader = new FileLineReader (this);
     ensureClubEventCalc();
-    clubEventCalc.setFileName(this);
+    if (! minutesFile) {
+      clubEventCalc.setFileName(this);
+    }
+    atEnd = false;
     reader.open();
-
-    // Now gather field values from the input file
-    blockComment = false;
-    
-    eventNote = new EventNote();
-    if (clubEventCalc.ifOpYearFromFolder()) {
-      clubEvent.setYear(clubEventCalc.getOpYearFromFolder());
-    }
-    // clubEvent.setFileName(inPathFileName.getBase());
-    if (clubEventCalc.ifStatusFromFolder()) {
-      clubEvent.setStatus(clubEventCalc.getStatusFromFolder());
-    }
-    if (clubEventCalc.ifCategoryFromFolder()) {
-      clubEvent.setCategory(clubEventCalc.getCategoryFromFolder());
-    }
-    clubEvent.resetModified();
-    clubEvent.setDiskLocation(this);
-
-    while (reader != null
-        && reader.isOK()
-        && (! reader.isAtEnd())) {
-      readAndEvaluateNextLine();
-      processNextLine();
-    } // end while reader has more lines
-    setLastNoteFieldValue();
-    setLastEventFieldValue();
-    clubEventCalc.calcAll(clubEvent);
-    noteIndex = 0;
+    readNextEvent();
   }
   
   /**
@@ -300,11 +286,14 @@ package com.powersurgepub.psdatalib.clubplanner;
    @return Next ClubEvent object, or null if no more to return.
   */
   public ClubEvent nextClubEvent() {
-    if (recordNumber == 0 
+    if (clubEvent != null
         && clubEvent.isModified() 
+        && clubEvent.getWhat() != null
         && clubEvent.getWhat().length() > 0) {
       recordNumber++;
-      return clubEvent;
+      ClubEvent nextEvent = clubEvent;
+      readNextEvent();
+      return nextEvent;
     } else {
       atEnd = true;
       return null;
@@ -337,16 +326,56 @@ package com.powersurgepub.psdatalib.clubplanner;
      @return Next directory entry as a data record.
    */
   private DataRecord nextEventRecordIn () {
-    if (recordNumber == 0 
-        && clubEvent.isModified() 
+    if (clubEvent.isModified() 
         && clubEvent.getWhat().length() > 0) {
       recordNumber++;
-      return clubEvent.getDataRec();
+      ClubEvent nextEvent = clubEvent;
+      readNextEvent();
+      return nextEvent.getDataRec();
     } else {
       atEnd = true;
       return null;
     }
   } // end of nextRecordIn method
+  
+  private void readNextEvent() {
+    
+    clubEvent = new ClubEvent();
+    endOfEvent = false;
+    // Now gather field values from the input file
+    blockComment = false;
+    
+    eventNote = new EventNote();
+    if (clubEventCalc.ifOpYearFromFolder()) {
+      clubEvent.setYear(clubEventCalc.getOpYearFromFolder());
+    }
+    // clubEvent.setFileName(inPathFileName.getBase());
+    if (clubEventCalc.ifStatusFromFolder()) {
+      clubEvent.setStatus(clubEventCalc.getStatusFromFolder());
+    }
+    if (clubEventCalc.ifCategoryFromFolder()) {
+      clubEvent.setCategory(clubEventCalc.getCategoryFromFolder());
+    }
+    clubEvent.resetModified();
+    if (! minutesFile) {
+      clubEvent.setDiskLocation(this);
+    }
+
+    while (reader != null
+        && reader.isOK()
+        && (! reader.isAtEnd())
+        && (! endOfEvent)) {
+      readAndEvaluateNextLine();
+      processNextLine();
+    } // end while reader has more lines
+    setLastNoteFieldValue();
+    setLastEventFieldValue();
+    if (clubEvent.hasWhat()
+        && clubEvent.getWhat().length() > 0) {
+      clubEventCalc.calcAll(clubEvent);
+    }
+    noteIndex = 0;
+  }
   
   /**
    Returns the next minutes entry as a record. 
@@ -440,7 +469,31 @@ package com.powersurgepub.psdatalib.clubplanner;
       }
       slashIndex = line.indexOf('/', slashScanStart);
     }
-    int colonPos = line.indexOf(':', lineStart);
+    
+    // Check for markdown heading
+    int headingLevel = 0;
+    int colonPos = -1;
+    while ((lineStart + headingLevel) < lineEnd
+        && line.charAt(lineStart + headingLevel) == '#') {
+      headingLevel++;
+    }
+    if (headingLevel > 0
+        && (lineStart + headingLevel) < lineEnd
+        && line.charAt(lineStart + headingLevel) == ' ') {
+      // Looks like a markdown heading
+      lineEnd = 0;
+    } else {
+      headingLevel = 0;
+      colonPos = line.indexOf(':', lineStart);
+    }
+    
+    // Check for end of event
+    if ((lineEnd - lineStart) >= 3
+        && line.substring(lineStart, lineStart + 3).equals("...")) {
+      lineEnd = 0;
+      endOfEvent = true;
+    }
+    
     valueStart = lineStart;
 
     int commonNameIndex = -1;
