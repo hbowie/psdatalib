@@ -19,26 +19,26 @@ package com.powersurgepub.psdatalib.clubplanner;
   import java.util.*;
 
 /**
-  The default comparator for event notes. 
+  The default comparator for event transactions. 
 
   @author Herb Bowie.
  */
-public class EventNoteDefaultComparator 
+public class EventTransactionDefaultComparator 
     implements
       Comparator {
   
-  private final static String noteClassName
-      = "com.powersurgeppub.psdatalib.clubplanner.EventNote";
+  private final static String transactionClassName
+      = "com.powersurgeppub.psdatalib.clubplanner.EventTransaction";
   
-  public EventNoteDefaultComparator() {
+  public EventTransactionDefaultComparator() {
     
   }
   
   /**
    Compare the two events and return the result. 
   
-   @param note1 The first event note to be compared. 
-   @param note2 The second event note to be compared. 
+   @param transaction1 The first event transaction to be compared. 
+   @param transaction2 The second event transaction to be compared. 
   
    @return -1 if the first event is lower than the second, 
            +1 of the first event is higher than the second, or
@@ -48,23 +48,23 @@ public class EventNoteDefaultComparator
     
     int result = 0;
     
-    if (! obj1.getClass().getName().equals(noteClassName)) {
+    if (! obj1.getClass().getName().equals(transactionClassName)) {
       result = 1;
     } 
     else
-    if (! obj2.getClass().getName().equals(noteClassName)) {
+    if (! obj2.getClass().getName().equals(transactionClassName)) {
       result = -1;
     }
     
     if (result == 0) {
-      EventNote note1 = (EventNote)obj1;
-      EventNote note2 = (EventNote)obj2;
-      result = note1.getNoteForYmd().compareTo(note2.getNoteForYmd());
+      EventTransaction transaction1 = (EventTransaction)obj1;
+      EventTransaction transaction2 = (EventTransaction)obj2;
+      result = transaction1.getDate().compareTo(transaction2.getDate());
       if (result == 0) {
-        result = note1.getNoteFrom().compareTo(note2.getNoteFrom());
+        result = transaction1.getFromTo().compareTo(transaction2.getFromTo());
       }
       if (result == 0) {
-        result = note1.getNoteVia().compareTo(note2.getNoteVia());
+        result = transaction1.getPaidFor().compareTo(transaction2.getPaidFor());
       }
     } 
     return result;
@@ -73,8 +73,8 @@ public class EventNoteDefaultComparator
   /**
    Determine whether the two events have equal keys.
   
-   @param note1 The first event note to be compared. 
-   @param note2 The second event note to be compared. 
+   @param transaction1 The first event transaction to be compared. 
+   @param transaction2 The second event transaction to be compared. 
   
    @return True if the two events have equal keys. 
   */
