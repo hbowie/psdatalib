@@ -974,6 +974,16 @@ public class TemplateLine {
       } // end processing when starting delimiters found
     } // end processing of all variables in line
     
+    // Check for a back slash at the end of the line
+    // If found, replace with a space, to ensure two spaces
+    // Which will generat a line break when converting Markdown to HTML
+    if (str.length() > 2
+        && str.charAt(str.length() - 1) == '\\'
+        && str.charAt(str.length() - 2) == ' ') {
+      str.deleteCharAt(str.length() - 1);
+      str.append(' ');
+    }
+    
     return str.toString();
   }
   
