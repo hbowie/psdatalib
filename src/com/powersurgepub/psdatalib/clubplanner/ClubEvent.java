@@ -644,6 +644,9 @@ public class ClubEvent
   /** Master-detail list for EventNotes. */
   private ArrayList<EventNote> eventNoteList = new ArrayList();
 
+  /** Master-detail list for EventTransactions. */
+  private ArrayList<EventTransaction> eventTransactionList = new ArrayList();
+
   private boolean modified = false;
  
   private String  diskLocation = "";
@@ -1035,16 +1038,6 @@ public class ClubEvent
 		}
 		else
 		if (getWhat().toString() == "") {
-			// No key here
-		} else {
-			hasKey = true;
-		}
-
-		if (getSeq() == null) {
-			// No key here
-		}
-		else
-		if (getSeq().toString() == "") {
 			// No key here
 		} else {
 			hasKey = true;
@@ -2918,7 +2911,8 @@ public class ClubEvent
     @return The planned income for this club event as a BigDecimal.
    */
   public BigDecimal getPlannedIncomeAsBigDecimal () {
-    return StringUtils.calc(plannedIncome);
+    CalcParser parser = new CalcParser(plannedIncome);
+    return parser.getResult();
   }
  
   /**
@@ -2967,7 +2961,8 @@ public class ClubEvent
     @return The actual income for this club event as a BigDecimal.
    */
   public BigDecimal getActualIncomeAsBigDecimal () {
-    return StringUtils.calc(actualIncome);
+    CalcParser parser = new CalcParser(actualIncome);
+    return parser.getResult();
   }
  
   /**
@@ -3016,7 +3011,8 @@ public class ClubEvent
     @return The planned expense for this club event as a BigDecimal.
    */
   public BigDecimal getPlannedExpenseAsBigDecimal () {
-    return StringUtils.calc(plannedExpense);
+    CalcParser parser = new CalcParser(plannedExpense);
+    return parser.getResult();
   }
  
   /**
@@ -3065,7 +3061,8 @@ public class ClubEvent
     @return The actual expense for this club event as a BigDecimal.
    */
   public BigDecimal getActualExpenseAsBigDecimal () {
-    return StringUtils.calc(actualExpense);
+    CalcParser parser = new CalcParser(actualExpense);
+    return parser.getResult();
   }
  
   /**
@@ -3196,7 +3193,8 @@ public class ClubEvent
     @return The over under for this club event as a BigDecimal.
    */
   public BigDecimal getOverUnderAsBigDecimal () {
-    return StringUtils.calc(overUnder);
+    CalcParser parser = new CalcParser(overUnder);
+    return parser.getResult();
   }
  
   /**
@@ -3245,7 +3243,8 @@ public class ClubEvent
     @return The finance projection for this club event as a BigDecimal.
    */
   public BigDecimal getFinanceProjectionAsBigDecimal () {
-    return StringUtils.calc(financeProjection);
+    CalcParser parser = new CalcParser(financeProjection);
+    return parser.getResult();
   }
  
   /**
@@ -3786,6 +3785,60 @@ public class ClubEvent
   */
   public int sizeEventNoteList () {
     return eventNoteList.size();
+  }
+  /**
+   Adds a new EventTransaction to the end of the internal detail list.
+ 
+   @param eventTransaction The EventTransaction to be added.
+ 
+   @return True if the list was modified.
+  */
+  public boolean addEventTransaction (EventTransaction eventTransaction) {
+    return eventTransactionList.add(eventTransaction);
+  }
+ 
+  /**
+   Adds a new EventTransaction at the specified location.
+ 
+   @param index The index position at which the EventTransaction should be added.
+ 
+   @param eventTransaction The EventTransaction to be added.
+  */
+  public void addEventTransaction (int index, EventTransaction eventTransaction) {
+    eventTransactionList.add(index, eventTransaction);
+  }
+ 
+  /**
+   Gets the EventTransaction at the specified location.
+ 
+   @param index The desired location.
+ 
+   @return The EventTransaction stored at that location.
+  */
+  public EventTransaction getEventTransaction (int index) {
+    return eventTransactionList.get(index);
+  }
+ 
+  /**
+   Sets a new EventTransaction at the specified list location.
+ 
+   @param index The index location in the internal table.
+ 
+   @param eventTransaction The new EventTransaction to be placed there.
+ 
+   @return The EventTransaction previously stored at that location.
+  */
+  public EventTransaction setEventTransaction (int index, EventTransaction eventTransaction) {
+    return eventTransactionList.set(index, eventTransaction);
+  }
+ 
+  /**
+   Returns the size of the internal EventTransaction list.
+ 
+   @return The size of the internal list of details.
+  */
+  public int sizeEventTransactionList () {
+    return eventTransactionList.size();
   }
 
 }
