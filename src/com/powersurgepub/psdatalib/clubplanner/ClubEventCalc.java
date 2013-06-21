@@ -240,7 +240,10 @@ public class ClubEventCalc {
     String itemType = clubEvent.getItemType();
     if (itemType == null
         || itemType.length() == 0) {
-      String whatLower = clubEvent.getWhat().toLowerCase();
+      String whatLower = "";
+      if (clubEvent.hasWhat()) {
+        whatLower = clubEvent.getWhat().toLowerCase();
+      }
       String statusLower = clubEvent.getStatusAsString().toLowerCase();
       if (whatLower.contains("budget")
           || statusLower.contains("budget")) {
@@ -412,6 +415,27 @@ public class ClubEventCalc {
         && eventNote.getNote().length() > 0) {
       eventNote.setNoteAsHtml(pegDown.markdownToHtml(eventNote.getNote()));
     }
+  }
+  
+  public String calcNoteHeaderLine (EventNote eventNote) {
+    StringBuilder header = new StringBuilder();
+    header.append ("-- ");
+    if (eventNote.hasNoteFrom() && eventNote.getNoteFrom().length() > 0) {
+      header.append("from " + eventNote.getNoteFrom());
+    }
+    if (eventNote.hasNoteFor() && eventNote.getNoteFor().length() > 0) {
+      if (header.length() > 3) {
+        header.append(", ");
+      }
+      header.append("on " + eventNote.getNoteFor());
+    }
+    if (eventNote.hasNoteVia() && eventNote.getNoteVia().length() > 0) {
+      if (header.length() > 3) {
+        header.append(", ");
+      }
+      header.append("via " + eventNote.getNoteVia());
+    }
+    return header.toString();
   }
 
 }
