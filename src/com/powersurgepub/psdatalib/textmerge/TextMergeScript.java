@@ -884,7 +884,7 @@ public class TextMergeScript
     }
   }
   
-  void clearSortAndFilterSettings() {
+  public void clearSortAndFilterSettings() {
     if (sortModule != null) {
       sortModule.playSortModule(
           ScriptConstants.CLEAR_ACTION, 
