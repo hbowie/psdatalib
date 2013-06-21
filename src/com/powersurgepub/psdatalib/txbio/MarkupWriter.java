@@ -1513,12 +1513,12 @@ public class MarkupWriter
     switch (markupFormat) {
       case MARKDOWN_FORMAT:
         writer.ensureBlankLine();
-        if (level > 2) {
+        // if (level > 2) {
           for (int i = 0; i < level; i++) {
             writer.write ('#');
           }
           writer.write(' ');
-        }
+        // }
         break;
       case TEXTILE_SYNTAX_1_FORMAT:       
       case TEXTILE_SYNTAX_2_FORMAT: 
@@ -1555,7 +1555,7 @@ public class MarkupWriter
   public void endHeading (int level) {
     switch (markupFormat) {
       case MARKDOWN_FORMAT:
-        if (level > 2) {
+        /* if (level > 2) {
           writer.write(' ');
           for (int i = 0; i < level; i++) {
             writer.write ('#');
@@ -1569,7 +1569,7 @@ public class MarkupWriter
           while (writer.getLineLength() < writer.getLastLineLength()) {
             writer.write (underchar);
           }
-        }
+        } */
         writer.newLine();
         writer.ensureBlankLine ();
         break;
