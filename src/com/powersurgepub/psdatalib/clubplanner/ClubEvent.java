@@ -3731,6 +3731,13 @@ public class ClubEvent
      template:  master-detail-methods.java
      data file: /Users/hbowie/Java/projects/nbproj/clubplanner/javagen/fields.xls
    */
+  
+  /**
+   Allocate a new array list.  
+  */
+  public void newEventNoteList () {
+    eventNoteList = new ArrayList();
+  }
  
   /**
    Adds a new EventNote to the end of the internal detail list.

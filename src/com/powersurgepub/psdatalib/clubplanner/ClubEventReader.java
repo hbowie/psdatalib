@@ -91,21 +91,9 @@ package com.powersurgepub.psdatalib.clubplanner;
   
   private    ClubEventCalc    clubEventCalc = null;
   
-  private    StringBuilder    headerWord;
-  
-  private    int              headerPosition;
-  private static final int    NOTES_FROM = 1;
-  private static final int    NOTES_FOR  = 2;
-  private static final int    NOTES_VIA  = 3;
-  private static final int    NOTES_MIN  = NOTES_FROM;
-  private static final int    NOTES_MAX  = NOTES_VIA;
-  
-  private    StringBuilder    headerElement;
-  
   private    boolean          endOfNotesBlock = false;
   
   private    StringBuilder    eventFieldValue = new StringBuilder();
-  private    StringBuilder    noteFieldValue = new StringBuilder();
   
   private    ClubEvent        clubEvent;
   private    EventNote        eventNote;
@@ -345,7 +333,6 @@ package com.powersurgepub.psdatalib.clubplanner;
     // Now gather field values from the input file
     blockComment = false;
     
-    eventNote = new EventNote();
     if (clubEventCalc.ifOpYearFromFolder()) {
       clubEvent.setYear(clubEventCalc.getOpYearFromFolder());
     }
@@ -368,7 +355,6 @@ package com.powersurgepub.psdatalib.clubplanner;
       readAndEvaluateNextLine();
       processNextLine();
     } // end while reader has more lines
-    setLastNoteFieldValue();
     setLastEventFieldValue();
     if (clubEvent.hasWhat()
         && clubEvent.getWhat().length() > 0) {
@@ -518,21 +504,6 @@ package com.powersurgepub.psdatalib.clubplanner;
       fieldNumber = commonNameIndex;
     }
     
-    if (fieldNumber == ClubEvent.NOTES_COLUMN_INDEX) {
-      // This line is part of the Notes field
-      notesHeaderDashStart = 0;
-      while (notesHeaderDashStart < appendValue.length() 
-          && Character.isWhitespace(appendValue.charAt(notesHeaderDashStart))) {
-        notesHeaderDashStart++;
-      }
-      int k = notesHeaderDashStart + 1;
-      if (notesHeaderDashStart < appendValue.length() 
-          && appendValue.charAt(notesHeaderDashStart) == '-'
-          && k < appendValue.length() && appendValue.charAt(k) == '-') {
-        notesHeaderLine = true;
-        setLastNoteFieldValue();        
-      } // end if notes line starts with two hyphens
-    } // end if field is part of the notes
   } // end method readAndEvaluateNextLine
   
   /**
@@ -544,22 +515,6 @@ package com.powersurgepub.psdatalib.clubplanner;
         && eventFieldValue.length() > 0) {
       clubEvent.setColumnValue(fieldNumber, eventFieldValue.toString());
       eventFieldValue = new StringBuilder();
-    }
-  }
-  
-  /**
-   At the start of a new note header, or at the end of a file, take the 
-   accumulated note text found, apply it to the last note, and add the 
-   note to the event. 
-  */
-  private void setLastNoteFieldValue() {
-    if (clubEvent != null
-        && eventNote != null
-        && noteFieldValue.length() > 0) {
-      eventNote.setNote(noteFieldValue.toString());
-      clubEventCalc.calcAll(eventNote);
-      clubEvent.addEventNote(eventNote);
-      noteFieldValue = new StringBuilder();
     }
   }
   
@@ -585,110 +540,8 @@ package com.powersurgepub.psdatalib.clubplanner;
         if (ClubEvent.isMarkdownFormat(fieldNumber)) {
           eventFieldValue.append(GlobalConstants.LINE_FEED);
         }
-        if (fieldNumber == ClubEvent.NOTES_COLUMN_INDEX) {
-          // This line is part of the Notes field
-          if (notesHeaderLine) {
-            processNotesHeader(appendValue, notesHeaderDashStart);
-          } else {
-            if (appendValue.length() == 0) {
-              noteFieldValue.append(GlobalConstants.LINE_FEED);
-            } else {
-              if (noteFieldValue.length() > 0
-                  && noteFieldValue.charAt(noteFieldValue.length() - 1) 
-                    != GlobalConstants.LINE_FEED) {
-                noteFieldValue.append(" ");
-              }
-              noteFieldValue.append(appendValue);
-              noteFieldValue.append(GlobalConstants.LINE_FEED);
-            } // end if we have a non-blank append value
-          } // end if we have a non-header notes line
-        } // end if processing a notes line
       } // end if processing a line with a non-blank value
     } // end if we have found a valid field identifier for this line    
-  }
-  
-  /**
-  Process a notes header line identified by two leading hyphens. 
-  
-  @param header    The content of the notes line. 
-  @param dashStart The starting location for the two dashes within the header. 
-  */
-  private void processNotesHeader(String header, int dashStart) {
-
-    eventNote = new EventNote();
-    int i = dashStart;
-    i = i + 2;
-    headerPosition = NOTES_MIN;
-    char c;
-    headerWord = new StringBuilder();
-    headerElement = new StringBuilder();
-    while (i < header.length()) {
-      c = header.charAt(i);
-      if (Character.isWhitespace(c)) {
-        processHeaderWord();
-      }
-      else
-      if (c == ',') {
-        processHeaderWord();
-        processHeaderElement();
-        headerPosition++;
-      } else {
-        headerWord.append(c);
-      }
-      i++;
-    } // end while more header components to process
-    processHeaderWord();
-    processHeaderElement();
-  } // end processNotesHeader method
-  
-  /**
-   Process the next word after running into a space or a comma or end of line. 
-   */
-  private void processHeaderWord() {
-
-    if (headerWord.toString().equalsIgnoreCase("from")) {
-      processHeaderElement();
-      headerPosition = NOTES_FROM;
-    }
-    else
-    if (headerWord.toString().equalsIgnoreCase("on")
-        || headerWord.toString().equalsIgnoreCase("of")) {
-      processHeaderElement();
-      headerPosition = NOTES_FOR;
-    }
-    else
-    if (headerWord.toString().equalsIgnoreCase("via")) {
-      processHeaderElement();
-      headerPosition = NOTES_VIA;
-    }
-    else
-    if (headerWord.length() > 0) {
-      if (headerElement.length() > 0) {
-        headerElement.append(' ');
-      }
-      headerElement.append(headerWord);
-    }
-    headerWord = new StringBuilder();
-  }
-  
-  private void processHeaderElement() {
-
-    if (headerElement.length() > 0) {
-      switch(headerPosition) {
-        case NOTES_FROM:
-          eventNote.setNoteFrom(headerElement.toString());
-          break;
-        case NOTES_FOR:
-          eventNote.setNoteFor(headerElement.toString());
-          clubEventCalc.getStringDate().parse(headerElement.toString());
-          eventNote.setNoteForYmd (clubEventCalc.getStringDate().getYMD());
-          break;
-        case NOTES_VIA:
-          eventNote.setNoteVia(headerElement.toString());
-          break;
-      }
-    }
-    headerElement = new StringBuilder();
   }
 
   /**

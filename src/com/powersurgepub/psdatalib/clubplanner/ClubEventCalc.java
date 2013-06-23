@@ -16,6 +16,7 @@
 
 package com.powersurgepub.psdatalib.clubplanner;
 
+  import com.powersurgepub.psdatalib.pstextio.*;
   import com.powersurgepub.psutils.*;
   import java.io.*;
   import java.math.*;
@@ -49,6 +50,19 @@ public class ClubEventCalc {
   private    String             opYearFolder = "";
   private    String             year = "";
   private    boolean            opYearFound = false;
+  
+  private    boolean            blockComment = false;
+  
+  private    StringBuilder    headerWord;
+  
+  private    int              headerPosition;
+  private static final int    NOTES_FROM = 1;
+  private static final int    NOTES_FOR  = 2;
+  private static final int    NOTES_VIA  = 3;
+  private static final int    NOTES_MIN  = NOTES_FROM;
+  private static final int    NOTES_MAX  = NOTES_VIA;
+  
+  private    StringBuilder    headerElement;
   
   public ClubEventCalc () {
     
@@ -233,7 +247,7 @@ public class ClubEventCalc {
     calcYmd (clubEvent);
     calcSeq (clubEvent);
     calcShortDate (clubEvent);
-
+    calcEventNotes (clubEvent);
   }
   
   public void calcItemType (ClubEvent clubEvent) {
@@ -404,6 +418,240 @@ public class ClubEventCalc {
       clubEvent.setShortDate(strDate.getShort());
     }
     
+  }
+  
+  
+  /**
+   Build all of the event's event objects from the notes text. 
+  
+   @param clubEvent 
+  */
+  public void calcEventNotes (ClubEvent clubEvent) {
+    TextLineReader reader = new StringLineReader (clubEvent.getNotes());
+    clubEvent.newEventNoteList();
+    EventNote eventNote = new EventNote();
+    StringBuilder noteFieldValue = new StringBuilder();
+    reader.open();
+    while (reader != null
+        && reader.isOK()
+        && (! reader.isAtEnd())) {
+      readAndProcessNextLine(reader, clubEvent, eventNote, noteFieldValue);
+    } // end while reader has more lines
+    setLastNoteFieldValue(clubEvent, eventNote, noteFieldValue);
+    reader.close();
+  }
+  
+  /**
+    Read the next line and see what we've got. 
+   */
+  private void readAndProcessNextLine (
+      TextLineReader reader,
+      ClubEvent clubEvent,
+      EventNote eventNote,
+      StringBuilder noteFieldValue) {
+    
+    String line = reader.readLine();
+    int lineStart = 0;
+    int lineEnd = line.length();
+
+    // Check for comments
+    int blockCommentStart = -1;
+    int blockCommentEnd = -1;
+    int lineCommentStart = -1;
+    
+    boolean notesHeaderLine = false;
+
+    if (blockComment) {
+      lineEnd = 0;
+    }
+
+    int slashScanStart;
+    int slashIndex = line.indexOf('/');
+    while (slashIndex >= 0 && slashIndex < line.length()) {
+      slashScanStart = slashIndex + 1;
+
+      // Get characters before and after slash
+      char beforeSlash = ' ';
+      if (slashIndex > 0) {
+        beforeSlash = line.charAt(slashIndex - 1);
+      }
+      char afterSlash = ' ';
+      if (slashIndex < (line.length() - 1)) {
+        afterSlash = line.charAt(slashIndex + 1);
+      }
+
+      if (blockComment) {
+        if (beforeSlash == '*') {
+          lineStart = slashIndex + 1;
+          lineEnd = line.length();
+          blockComment = false;
+        }
+      } else {
+        if (afterSlash == '*') {
+          lineEnd = slashIndex;
+          blockComment = true;
+        }
+        else
+        if (beforeSlash == ' ' && afterSlash == '/') {
+          lineEnd = slashIndex;
+          slashScanStart++;
+        }
+      }
+      slashIndex = line.indexOf('/', slashScanStart);
+    }
+    
+    // Check for markdown heading
+    int headingLevel = 0;
+    while ((lineStart + headingLevel) < lineEnd
+        && line.charAt(lineStart + headingLevel) == '#') {
+      headingLevel++;
+    }
+    if (headingLevel > 0
+        && (lineStart + headingLevel) < lineEnd
+        && line.charAt(lineStart + headingLevel) == ' ') {
+      // Looks like a markdown heading
+      lineEnd = 0;
+    } else {
+      headingLevel = 0;
+    }
+    
+    String appendValue = line.substring(lineStart, lineEnd).trim();
+    
+    int notesHeaderDashStart = 0;
+    while (notesHeaderDashStart < appendValue.length() 
+        && Character.isWhitespace(appendValue.charAt(notesHeaderDashStart))) {
+      notesHeaderDashStart++;
+    }
+    int k = notesHeaderDashStart + 1;
+    if (notesHeaderDashStart < appendValue.length() 
+        && appendValue.charAt(notesHeaderDashStart) == '-'
+        && k < appendValue.length() && appendValue.charAt(k) == '-') {
+      notesHeaderLine = true;
+      setLastNoteFieldValue(clubEvent, eventNote, noteFieldValue);        
+    } // end if notes line starts with two hyphens
+
+    if (notesHeaderLine) {
+      processNotesHeader(eventNote, appendValue, notesHeaderDashStart);
+    } else {
+      if (appendValue.length() == 0) {
+        noteFieldValue.append(GlobalConstants.LINE_FEED);
+      } else {
+        if (noteFieldValue.length() > 0
+            && noteFieldValue.charAt(noteFieldValue.length() - 1) 
+              != GlobalConstants.LINE_FEED) {
+          noteFieldValue.append(" ");
+        }
+        noteFieldValue.append(appendValue);
+        noteFieldValue.append(GlobalConstants.LINE_FEED);
+      } // end if we have a non-blank append value
+    } // end if we have a non-header notes line
+  
+  } // end method readAndProcessNextLine
+  
+  /**
+  Process a notes header line identified by two leading hyphens. 
+  
+  @param header    The content of the notes line. 
+  @param dashStart The starting location for the two dashes within the header. 
+  */
+  private void processNotesHeader(
+      EventNote eventNote, 
+      String header, 
+      int dashStart) {
+
+    eventNote = new EventNote();
+    int i = dashStart;
+    i = i + 2;
+    headerPosition = NOTES_MIN;
+    char c;
+    headerWord = new StringBuilder();
+    headerElement = new StringBuilder();
+    while (i < header.length()) {
+      c = header.charAt(i);
+      if (Character.isWhitespace(c)) {
+        processHeaderWord(eventNote);
+      }
+      else
+      if (c == ',') {
+        processHeaderWord(eventNote);
+        processHeaderElement(eventNote);
+        headerPosition++;
+      } else {
+        headerWord.append(c);
+      }
+      i++;
+    } // end while more header components to process
+    processHeaderWord(eventNote);
+    processHeaderElement(eventNote);
+  } // end processNotesHeader method
+  
+  /**
+   Process the next word after running into a space or a comma or end of line. 
+   */
+  private void processHeaderWord(EventNote eventNote) {
+
+    if (headerWord.toString().equalsIgnoreCase("from")) {
+      processHeaderElement(eventNote);
+      headerPosition = NOTES_FROM;
+    }
+    else
+    if (headerWord.toString().equalsIgnoreCase("on")
+        || headerWord.toString().equalsIgnoreCase("of")) {
+      processHeaderElement(eventNote);
+      headerPosition = NOTES_FOR;
+    }
+    else
+    if (headerWord.toString().equalsIgnoreCase("via")) {
+      processHeaderElement(eventNote);
+      headerPosition = NOTES_VIA;
+    }
+    else
+    if (headerWord.length() > 0) {
+      if (headerElement.length() > 0) {
+        headerElement.append(' ');
+      }
+      headerElement.append(headerWord);
+    }
+    headerWord = new StringBuilder();
+  }
+  
+  private void processHeaderElement(EventNote eventNote) {
+
+    if (headerElement.length() > 0) {
+      switch(headerPosition) {
+        case NOTES_FROM:
+          eventNote.setNoteFrom(headerElement.toString());
+          break;
+        case NOTES_FOR:
+          eventNote.setNoteFor(headerElement.toString());
+          getStringDate().parse(headerElement.toString());
+          eventNote.setNoteForYmd (getStringDate().getYMD());
+          break;
+        case NOTES_VIA:
+          eventNote.setNoteVia(headerElement.toString());
+          break;
+      }
+    }
+    headerElement = new StringBuilder();
+  }
+  
+  /**
+   At the start of a new note header, or at the end of a file, take the 
+   accumulated note text found, apply it to the last note, and add the 
+   note to the event. 
+  */
+  private void setLastNoteFieldValue(
+      ClubEvent clubEvent, 
+      EventNote eventNote, 
+      StringBuilder noteFieldValue) {
+    if (clubEvent != null
+        && eventNote != null
+        && noteFieldValue.length() > 0) {
+      eventNote.setNote(noteFieldValue.toString());
+      calcAll(eventNote);
+      clubEvent.addEventNote(eventNote);
+      noteFieldValue = new StringBuilder();
+    }
   }
   
   public void calcAll (EventNote eventNote) {
