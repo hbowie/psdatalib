@@ -112,7 +112,7 @@ public class StringLineReader
   }
   
   public boolean isAtEnd() {
-    return (i >= s.length());
+    return (s == null || i >= s.length());
   }
 
 }
