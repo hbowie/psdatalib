@@ -381,6 +381,12 @@ public class ClubEventCalc {
     }
   }
   
+  /**
+   Calculate the sequence number used to sequence agenda items. 
+  
+   @param clubEvent The event for which the sequence number is to be 
+                    calculated. 
+  */
   public void calcSeq (ClubEvent clubEvent) {
     String categoryLower = clubEvent.getCategory().toString().toLowerCase();
     String statusLower = clubEvent.getStatusAsString().toLowerCase();
@@ -402,7 +408,10 @@ public class ClubEventCalc {
     else
     if (clubEvent.hasWhen() 
         && strDate.isInThePast()
-        && statusLower.indexOf("future") < 0) {
+        && statusLower.indexOf("future") < 0
+        && statusLower.indexOf("discards") < 0
+        && statusLower.indexOf("ideas") < 0
+        && statusLower.indexOf("next year") < 0) {
       clubEvent.setSeq("4");
     } else {
       clubEvent.setSeq("5");
@@ -427,18 +436,20 @@ public class ClubEventCalc {
    @param clubEvent 
   */
   public void calcEventNotes (ClubEvent clubEvent) {
-    TextLineReader reader = new StringLineReader (clubEvent.getNotes());
     clubEvent.newEventNoteList();
-    EventNote eventNote = new EventNote();
-    StringBuilder noteFieldValue = new StringBuilder();
-    reader.open();
-    while (reader != null
-        && reader.isOK()
-        && (! reader.isAtEnd())) {
-      readAndProcessNextLine(reader, clubEvent, eventNote, noteFieldValue);
-    } // end while reader has more lines
-    setLastNoteFieldValue(clubEvent, eventNote, noteFieldValue);
-    reader.close();
+    if (clubEvent.hasNotes()) {
+      TextLineReader reader = new StringLineReader (clubEvent.getNotes());
+      EventNote eventNote = new EventNote();
+      StringBuilder noteFieldValue = new StringBuilder();
+      reader.open();
+      while (reader != null
+          && reader.isOK()
+          && (! reader.isAtEnd())) {
+        readAndProcessNextLine(reader, clubEvent, eventNote, noteFieldValue);
+      } // end while reader has more lines
+      setLastNoteFieldValue(clubEvent, eventNote, noteFieldValue);
+      reader.close();
+    }
   }
   
   /**
