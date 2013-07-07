@@ -228,6 +228,30 @@ public class Tags
       s2 = indexOfNextWordStart (tags2, e2, slashToSeparate);
     }
   }
+  
+  /**
+   Does the passed tag exist within this item's tags?
+  
+   @param from The tag we're looking for.
+  
+   @return True if found, false if not. 
+  */
+  public boolean tagFound (String from) {
+    boolean found = (from.length() == 0);
+    int e = 0;
+    int s = indexOfNextWordStart (tags, e, slashToSeparate);
+
+    // Go through tags, looking for complete tags
+    while (s < tags.length() && (! found)) {
+      e = indexOfNextSeparator (tags, s, false, true, slashToSeparate);
+      if (from.equalsIgnoreCase (tags.substring (s, e))) {
+        found = true;
+      } else {
+        s = indexOfNextWordStart (tags, e, slashToSeparate);
+      }
+    }
+    return found;
+  }
 
   /**
    Perform a mass change operation, changing all occurrences of the

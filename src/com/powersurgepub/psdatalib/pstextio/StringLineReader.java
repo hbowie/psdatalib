@@ -114,5 +114,9 @@ public class StringLineReader
   public boolean isAtEnd() {
     return (s == null || i >= s.length());
   }
+  
+  public int length() {
+    return s.length();
+  }
 
 }
