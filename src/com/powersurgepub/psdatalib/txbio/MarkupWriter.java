@@ -1677,6 +1677,64 @@ public class MarkupWriter
     } 
   }
   
+  public void startDiv (String style, String id) {
+    switch (markupFormat) {
+      case MARKDOWN_FORMAT:
+        writer.ensureBlankLine();
+        break;
+      case TEXTILE_SYNTAX_1_FORMAT:
+      case TEXTILE_SYNTAX_2_FORMAT: 
+        writer.ensureBlankLine();
+        break;
+      case HTML_FORMAT:
+      case HTML_FRAGMENT_FORMAT:
+      case NETSCAPE_BOOKMARKS_FORMAT:
+      case XML_FORMAT:
+        startXML (TextType.DIV, 
+            TextType.CLASS, style, 
+            TextType.ID, id, 
+            true, true, false);
+        break;
+      case OPML_FORMAT:
+        startStoringText();
+        break;
+      case STRUCTURED_TEXT_FORMAT:
+        writer.ensureBlankLine();
+        break;
+      default:
+        break;
+    } 
+  }
+  
+  public void endDiv () {
+    switch (markupFormat) {
+      case MARKDOWN_FORMAT:
+        writer.newLine();
+        writer.ensureBlankLine();
+        break;
+      case TEXTILE_SYNTAX_1_FORMAT:
+      case TEXTILE_SYNTAX_2_FORMAT: 
+        needExplicitParagraph = false;
+        writer.newLine();
+        writer.ensureBlankLine();
+        break;
+      case HTML_FORMAT:
+      case HTML_FRAGMENT_FORMAT:
+      case NETSCAPE_BOOKMARKS_FORMAT:
+      case XML_FORMAT:
+        endXML (TextType.DIV, true, true);
+        break;
+      case OPML_FORMAT:
+        startOutline (TextType.PARAGRAPH, text.toString(), "", true);
+        stopStoringText();
+      case STRUCTURED_TEXT_FORMAT:
+        writer.ensureNewLine();
+        break;
+      default:
+        break;
+    } 
+  }
+  
   public void writeParagraph (String text, String style, boolean multiple) {
     startParagraph (style, multiple);
     write (text);
