@@ -18,6 +18,7 @@ package com.powersurgepub.psdatalib.ui;
 
 	import com.powersurgepub.psutils.*;
   import com.powersurgepub.xos2.*;
+  import java.awt.*;
   import java.io.*;
   import java.net.*;
   import javax.swing.*;
@@ -36,24 +37,30 @@ public class AboutWindow
         WindowToManage
   {
   
-  private String  fontBegin = "<font face=\"Arial\" size=\"4\">";
-  private String  fontEnd   = "</font>";
+  public  static final String COPYRIGHT_YEAR_THRU = "2013";
   
-  private Home    home       = Home.getShared();
-  private File    appFolder  = null;
-  private URL     pageURL;
-  private URL     aboutURL;
-  private String  aboutFileName = "about.html";
-  private Trouble trouble = Trouble.getShared();
-  private XOS     xos        = XOS.getShared();
+  private String    copyRightYears = "";
+  private String    fontBegin = "<font face=\"Arial\" size=\"4\">";
+  private String    fontEnd   = "</font>";
   
-  private boolean loadFromDisk = true;
+  private Home      home       = Home.getShared();
+  private File      appFolder  = null;
+  private URL       pageURL;
+  private URL       aboutURL;
+  private String    aboutFileName = "about.html";
+  private Trouble   trouble = Trouble.getShared();
+  private XOS       xos        = XOS.getShared();
   
-  private boolean browserLauncher2Used = true;
-  private boolean jxlUsed              = true;
-  private boolean pegdownUsed          = true;
-  private boolean xercesUsed           = false;
-  private boolean saxonUsed            = false;
+  private boolean   loadFromDisk = true;
+  
+  private boolean   browserLauncher2Used = true;
+  private boolean   jxlUsed              = true;
+  private boolean   pegdownUsed          = true;
+  private boolean   xercesUsed           = false;
+  private boolean   saxonUsed            = false;
+  
+  private Component refComponent         = null;
+  private int       locationStyle        = WindowMenuManager.LOCATE_UPPER_LEFT;
   
   /** Creates new form AboutWindow */
   public AboutWindow() {
@@ -164,7 +171,12 @@ public class AboutWindow
       t.append("<p>");
       t.append(fontBegin);
       t.append("Copyright &copy; ");
-      t.append(home.getCopyrightYearFrom());
+      if (home.getCopyrightYearFrom().equals(COPYRIGHT_YEAR_THRU)) {
+        copyRightYears = COPYRIGHT_YEAR_THRU;
+      } else {
+        copyRightYears = home.getCopyrightYearFrom() + " - " + COPYRIGHT_YEAR_THRU;
+      }
+      t.append(copyRightYears);
       t.append(" - 2013 Herb Bowie");
       t.append(fontEnd);
       t.append("</p>");
@@ -418,6 +430,24 @@ public class AboutWindow
         JOptionPane.ERROR_MESSAGE);
   }
   
+  
+  public void setRefComponent (Component refComponent) {
+    this.refComponent = refComponent;
+  }
+  
+  public Component getRefComponent() {
+    return refComponent;
+  }
+  
+  public void setLocationStyle(int locationStyle) {
+    this.locationStyle = locationStyle;
+  }
+  
+  public int getLocationStyle() {
+    return locationStyle;
+  }
+  
+  
   /** This method is called from within the constructor to
    * initialize the form.
    * WARNING: Do NOT modify this code. The content of this method is
@@ -522,6 +552,7 @@ private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event
 }//GEN-LAST:event_formWindowClosed
 
 private void formComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentHidden
+  System.out.println ("AboutWindow.formComponentHidden");
   WindowMenuManager.getShared().hide(this);
 }//GEN-LAST:event_formComponentHidden
   
