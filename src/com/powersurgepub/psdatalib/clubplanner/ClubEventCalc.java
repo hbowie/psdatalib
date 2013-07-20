@@ -233,6 +233,17 @@ public class ClubEventCalc {
   }
   
   /**
+   Clear actuals. 
+  
+   @param clubEvent The event whose actuals are to be cleared. 
+  */
+  public void clearActuals(ClubEvent clubEvent) {
+    clubEvent.setActualAttendance("");
+    clubEvent.setActualExpense("");
+    clubEvent.setActualIncome("");
+  }
+  
+  /**
    Calculate fields that are not stored in the text files, but derived from
    other fields. 
    */
@@ -368,6 +379,8 @@ public class ClubEventCalc {
 
     if (anyActuals) {
       clubEvent.setOverUnder (overUnder.toPlainString());
+    } else {
+      clubEvent.setOverUnder("");
     }
   }
   
