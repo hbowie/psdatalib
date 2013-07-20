@@ -473,6 +473,9 @@ public class TextMergeScript
     scriptDirectory = null;
     templateLibrary = null;
     easyPlay = "";
+    if (tabs != null && easyPlayTab != null) {
+      removeEasyPlayTab();
+    }
     
     if (psList == null) {
       // System.out.println ("  psList is null");
@@ -717,7 +720,7 @@ public class TextMergeScript
       if (fileChooserReturn 
           == JFileChooser.APPROVE_OPTION) {
         easyPlayFolder = fileChooser.getSelectedFile();
-        this.setScriptDirectoryFromDir(easyPlayFolder);
+        setScriptDirectoryFromDir(easyPlayFolder);
         easyPlay = easyPlayFolder.getPath();
         saveEasyPlay();
         if (menuSet) {
@@ -762,7 +765,9 @@ public class TextMergeScript
       if (scriptName.getExt().equalsIgnoreCase(SCRIPT_EXT)) {
         JButton easyPlayButton = new JButton(scriptName.getBase());
         easyPlayButton.setActionCommand(scriptName.getBase());
-        easyPlayButton.setToolTipText("Play the named script");
+        easyPlayButton.setToolTipText
+            ("Play " + scriptName.getBase() + "." + SCRIPT_EXT
+            + " from " + easyPlay);
         easyPlayButton.setMinimumSize(minButtonSize);
         easyPlayButton.setVisible(true);
         easyPlayButton.addActionListener(new ActionListener()
