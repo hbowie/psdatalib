@@ -59,9 +59,6 @@ public class AboutWindow
   private boolean   xercesUsed           = false;
   private boolean   saxonUsed            = false;
   
-  private Component refComponent         = null;
-  private int       locationStyle        = WindowMenuManager.LOCATE_UPPER_LEFT;
-  
   /** Creates new form AboutWindow */
   public AboutWindow() {
     this.loadFromDisk = true;
@@ -429,24 +426,6 @@ public class AboutWindow
         "About File Error",
         JOptionPane.ERROR_MESSAGE);
   }
-  
-  
-  public void setRefComponent (Component refComponent) {
-    this.refComponent = refComponent;
-  }
-  
-  public Component getRefComponent() {
-    return refComponent;
-  }
-  
-  public void setLocationStyle(int locationStyle) {
-    this.locationStyle = locationStyle;
-  }
-  
-  public int getLocationStyle() {
-    return locationStyle;
-  }
-  
   
   /** This method is called from within the constructor to
    * initialize the form.
