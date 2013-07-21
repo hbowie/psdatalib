@@ -50,7 +50,6 @@ public class LogWindow
     extends javax.swing.JFrame
       implements WindowToManage {
   
-  
   /** Creates new form LogWindow */
   public LogWindow() {
     initComponents();
@@ -61,7 +60,7 @@ public class LogWindow
   public JTextArea getTextArea () {
     return logTextArea;
   }
-  
+    
   /** This method is called from within the constructor to
    * initialize the form.
    * WARNING: Do NOT modify this code. The content of this method is
