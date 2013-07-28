@@ -513,7 +513,7 @@ package com.powersurgepub.psdatalib.clubplanner;
   private void setLastEventFieldValue() {
     if (fieldNumber >= 0
         && eventFieldValue.length() > 0) {
-      clubEvent.setColumnValue(fieldNumber, eventFieldValue.toString());
+      clubEvent.setColumnValue(fieldNumber, eventFieldValue.toString().trim());
       eventFieldValue = new StringBuilder();
     }
   }
