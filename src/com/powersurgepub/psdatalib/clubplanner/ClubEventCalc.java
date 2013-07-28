@@ -64,6 +64,9 @@ public class ClubEventCalc {
   
   private    StringBuilder    headerElement;
   
+  private    EventNote        eventNote = new EventNote();
+  private    StringBuilder    noteFieldValue = new StringBuilder();
+  
   public ClubEventCalc () {
     
     int pegDownOptions = 0;
@@ -452,15 +455,15 @@ public class ClubEventCalc {
     clubEvent.newEventNoteList();
     if (clubEvent.hasNotes()) {
       TextLineReader reader = new StringLineReader (clubEvent.getNotes());
-      EventNote eventNote = new EventNote();
-      StringBuilder noteFieldValue = new StringBuilder();
+      eventNote = new EventNote();
+      noteFieldValue = new StringBuilder();
       reader.open();
       while (reader != null
           && reader.isOK()
           && (! reader.isAtEnd())) {
-        readAndProcessNextLine(reader, clubEvent, eventNote, noteFieldValue);
+        readAndProcessNextLine(reader, clubEvent);
       } // end while reader has more lines
-      setLastNoteFieldValue(clubEvent, eventNote, noteFieldValue);
+      setLastNoteFieldValue(clubEvent);
       reader.close();
     }
   }
@@ -470,9 +473,7 @@ public class ClubEventCalc {
    */
   private void readAndProcessNextLine (
       TextLineReader reader,
-      ClubEvent clubEvent,
-      EventNote eventNote,
-      StringBuilder noteFieldValue) {
+      ClubEvent clubEvent) {
     
     String line = reader.readLine();
     int lineStart = 0;
@@ -551,11 +552,11 @@ public class ClubEventCalc {
         && appendValue.charAt(notesHeaderDashStart) == '-'
         && k < appendValue.length() && appendValue.charAt(k) == '-') {
       notesHeaderLine = true;
-      setLastNoteFieldValue(clubEvent, eventNote, noteFieldValue);        
+      setLastNoteFieldValue(clubEvent);        
     } // end if notes line starts with two hyphens
 
     if (notesHeaderLine) {
-      processNotesHeader(eventNote, appendValue, notesHeaderDashStart);
+      processNotesHeader(appendValue, notesHeaderDashStart);
     } else {
       if (appendValue.length() == 0) {
         noteFieldValue.append(GlobalConstants.LINE_FEED);
@@ -579,7 +580,6 @@ public class ClubEventCalc {
   @param dashStart The starting location for the two dashes within the header. 
   */
   private void processNotesHeader(
-      EventNote eventNote, 
       String header, 
       int dashStart) {
 
@@ -593,40 +593,40 @@ public class ClubEventCalc {
     while (i < header.length()) {
       c = header.charAt(i);
       if (Character.isWhitespace(c)) {
-        processHeaderWord(eventNote);
+        processHeaderWord();
       }
       else
       if (c == ',') {
-        processHeaderWord(eventNote);
-        processHeaderElement(eventNote);
+        processHeaderWord();
+        processHeaderElement();
         headerPosition++;
       } else {
         headerWord.append(c);
       }
       i++;
     } // end while more header components to process
-    processHeaderWord(eventNote);
-    processHeaderElement(eventNote);
+    processHeaderWord();
+    processHeaderElement();
   } // end processNotesHeader method
   
   /**
    Process the next word after running into a space or a comma or end of line. 
    */
-  private void processHeaderWord(EventNote eventNote) {
+  private void processHeaderWord() {
 
     if (headerWord.toString().equalsIgnoreCase("from")) {
-      processHeaderElement(eventNote);
+      processHeaderElement();
       headerPosition = NOTES_FROM;
     }
     else
     if (headerWord.toString().equalsIgnoreCase("on")
         || headerWord.toString().equalsIgnoreCase("of")) {
-      processHeaderElement(eventNote);
+      processHeaderElement();
       headerPosition = NOTES_FOR;
     }
     else
     if (headerWord.toString().equalsIgnoreCase("via")) {
-      processHeaderElement(eventNote);
+      processHeaderElement();
       headerPosition = NOTES_VIA;
     }
     else
@@ -639,7 +639,7 @@ public class ClubEventCalc {
     headerWord = new StringBuilder();
   }
   
-  private void processHeaderElement(EventNote eventNote) {
+  private void processHeaderElement() {
 
     if (headerElement.length() > 0) {
       switch(headerPosition) {
@@ -664,13 +664,10 @@ public class ClubEventCalc {
    accumulated note text found, apply it to the last note, and add the 
    note to the event. 
   */
-  private void setLastNoteFieldValue(
-      ClubEvent clubEvent, 
-      EventNote eventNote, 
-      StringBuilder noteFieldValue) {
+  private void setLastNoteFieldValue(ClubEvent clubEvent) {
     if (clubEvent != null
         && eventNote != null
-        && noteFieldValue.length() > 0) {
+        && noteFieldValue.toString().trim().length() > 0) {
       eventNote.setNote(noteFieldValue.toString());
       calcAll(eventNote);
       clubEvent.addEventNote(eventNote);
