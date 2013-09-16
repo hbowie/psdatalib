@@ -8,4 +8,5 @@ Future
 Ideas
 News
 Next Year
+Rotate
 Save
