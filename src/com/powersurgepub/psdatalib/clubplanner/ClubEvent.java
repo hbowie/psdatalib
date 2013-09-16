@@ -215,6 +215,54 @@ public class ClubEvent
  
 
   /**
+   Identification of any issues to be discussed at an upcoming board meeting.
+   */
+  private String discuss = null;
+ 
+  public static final String DISCUSS_FIELD_NAME = "Discuss";
+ 
+  public static final String DISCUSS_COLUMN_NAME = "Discuss";
+ 
+  public static final String DISCUSS_COMMON_NAME = "discuss";
+ 
+  public static final int DISCUSS_COLUMN_INDEX = 10;
+ 
+  public static final int DISCUSS_COLUMN_WIDTH = 40;
+ 
+
+  /**
+   Identification of any action items to be worked.
+   */
+  private String actions = null;
+ 
+  public static final String ACTIONS_FIELD_NAME = "Actions";
+ 
+  public static final String ACTIONS_COLUMN_NAME = "Actions";
+ 
+  public static final String ACTIONS_COMMON_NAME = "actions";
+ 
+  public static final int ACTIONS_COLUMN_INDEX = 11;
+ 
+  public static final int ACTIONS_COLUMN_WIDTH = 40;
+ 
+
+  /**
+   The action items, formatted as HTML.
+   */
+  private String actionsAsHtml = null;
+ 
+  public static final String ACTIONS_AS_HTML_FIELD_NAME = "Actions as HTML";
+ 
+  public static final String ACTIONS_AS_HTML_COLUMN_NAME = "Actions as HTML";
+ 
+  public static final String ACTIONS_AS_HTML_COMMON_NAME = "actionsashtml";
+ 
+  public static final int ACTIONS_AS_HTML_COLUMN_INDEX = 12;
+ 
+  public static final int ACTIONS_AS_HTML_COLUMN_WIDTH = 50;
+ 
+
+  /**
    Why does the club think it would be a good idea to host the event? If applying for Strategic Priority Funds, then why do we think this is a deserving event?
    */
   private String why = null;
@@ -225,7 +273,7 @@ public class ClubEvent
  
   public static final String WHY_COMMON_NAME = "why";
  
-  public static final int WHY_COLUMN_INDEX = 10;
+  public static final int WHY_COLUMN_INDEX = 13;
  
   public static final int WHY_COLUMN_WIDTH = 40;
  
@@ -241,7 +289,7 @@ public class ClubEvent
  
   public static final String TEASER_COMMON_NAME = "teaser";
  
-  public static final int TEASER_COLUMN_INDEX = 11;
+  public static final int TEASER_COLUMN_INDEX = 14;
  
   public static final int TEASER_COLUMN_WIDTH = 40;
  
@@ -257,7 +305,7 @@ public class ClubEvent
  
   public static final String BLURB_COMMON_NAME = "blurb";
  
-  public static final int BLURB_COLUMN_INDEX = 12;
+  public static final int BLURB_COLUMN_INDEX = 15;
  
   public static final int BLURB_COLUMN_WIDTH = 40;
  
@@ -273,7 +321,7 @@ public class ClubEvent
  
   public static final String BLURB_AS_HTML_COMMON_NAME = "blurbashtml";
  
-  public static final int BLURB_AS_HTML_COLUMN_INDEX = 13;
+  public static final int BLURB_AS_HTML_COLUMN_INDEX = 16;
  
   public static final int BLURB_AS_HTML_COLUMN_WIDTH = 50;
  
@@ -289,7 +337,7 @@ public class ClubEvent
  
   public static final String COST_COMMON_NAME = "cost";
  
-  public static final int COST_COLUMN_INDEX = 14;
+  public static final int COST_COLUMN_INDEX = 17;
  
   public static final int COST_COLUMN_WIDTH = 15;
  
@@ -305,7 +353,7 @@ public class ClubEvent
  
   public static final String PURCHASE_COMMON_NAME = "purchase";
  
-  public static final int PURCHASE_COLUMN_INDEX = 15;
+  public static final int PURCHASE_COLUMN_INDEX = 18;
  
   public static final int PURCHASE_COLUMN_WIDTH = 40;
  
@@ -321,7 +369,7 @@ public class ClubEvent
  
   public static final String TICKETS_COMMON_NAME = "tickets";
  
-  public static final int TICKETS_COLUMN_INDEX = 16;
+  public static final int TICKETS_COLUMN_INDEX = 19;
  
   public static final int TICKETS_COLUMN_WIDTH = 30;
  
@@ -337,7 +385,7 @@ public class ClubEvent
  
   public static final String QUANTITY_COMMON_NAME = "quantity";
  
-  public static final int QUANTITY_COLUMN_INDEX = 17;
+  public static final int QUANTITY_COLUMN_INDEX = 20;
  
   public static final int QUANTITY_COLUMN_WIDTH = 8;
  
@@ -353,7 +401,7 @@ public class ClubEvent
  
   public static final String PLANNED_INCOME_COMMON_NAME = "plannedincome";
  
-  public static final int PLANNED_INCOME_COLUMN_INDEX = 18;
+  public static final int PLANNED_INCOME_COLUMN_INDEX = 21;
  
   public static final int PLANNED_INCOME_COLUMN_WIDTH = 40;
  
@@ -369,7 +417,7 @@ public class ClubEvent
  
   public static final String ACTUAL_INCOME_COMMON_NAME = "actualincome";
  
-  public static final int ACTUAL_INCOME_COLUMN_INDEX = 19;
+  public static final int ACTUAL_INCOME_COLUMN_INDEX = 22;
  
   public static final int ACTUAL_INCOME_COLUMN_WIDTH = 40;
  
@@ -385,7 +433,7 @@ public class ClubEvent
  
   public static final String PLANNED_EXPENSE_COMMON_NAME = "plannedexpense";
  
-  public static final int PLANNED_EXPENSE_COLUMN_INDEX = 20;
+  public static final int PLANNED_EXPENSE_COLUMN_INDEX = 23;
  
   public static final int PLANNED_EXPENSE_COLUMN_WIDTH = 40;
  
@@ -401,7 +449,7 @@ public class ClubEvent
  
   public static final String ACTUAL_EXPENSE_COMMON_NAME = "actualexpense";
  
-  public static final int ACTUAL_EXPENSE_COLUMN_INDEX = 21;
+  public static final int ACTUAL_EXPENSE_COLUMN_INDEX = 24;
  
   public static final int ACTUAL_EXPENSE_COLUMN_WIDTH = 40;
  
@@ -417,7 +465,7 @@ public class ClubEvent
  
   public static final String PLANNED_ATTENDANCE_COMMON_NAME = "plannedattendance";
  
-  public static final int PLANNED_ATTENDANCE_COLUMN_INDEX = 22;
+  public static final int PLANNED_ATTENDANCE_COLUMN_INDEX = 25;
  
   public static final int PLANNED_ATTENDANCE_COLUMN_WIDTH = 8;
  
@@ -433,7 +481,7 @@ public class ClubEvent
  
   public static final String ACTUAL_ATTENDANCE_COMMON_NAME = "actualattendance";
  
-  public static final int ACTUAL_ATTENDANCE_COLUMN_INDEX = 23;
+  public static final int ACTUAL_ATTENDANCE_COLUMN_INDEX = 26;
  
   public static final int ACTUAL_ATTENDANCE_COLUMN_WIDTH = 8;
  
@@ -449,7 +497,7 @@ public class ClubEvent
  
   public static final String OVER_UNDER_COMMON_NAME = "overunder";
  
-  public static final int OVER_UNDER_COLUMN_INDEX = 24;
+  public static final int OVER_UNDER_COLUMN_INDEX = 27;
  
   public static final int OVER_UNDER_COLUMN_WIDTH = 8;
  
@@ -465,7 +513,7 @@ public class ClubEvent
  
   public static final String FINANCE_PROJECTION_COMMON_NAME = "financeprojection";
  
-  public static final int FINANCE_PROJECTION_COLUMN_INDEX = 25;
+  public static final int FINANCE_PROJECTION_COLUMN_INDEX = 28;
  
   public static final int FINANCE_PROJECTION_COLUMN_WIDTH = 8;
  
@@ -481,7 +529,7 @@ public class ClubEvent
  
   public static final String RECAP_COMMON_NAME = "recap";
  
-  public static final int RECAP_COLUMN_INDEX = 26;
+  public static final int RECAP_COLUMN_INDEX = 29;
  
   public static final int RECAP_COLUMN_WIDTH = 40;
  
@@ -497,7 +545,7 @@ public class ClubEvent
  
   public static final String ID_COMMON_NAME = "id";
  
-  public static final int ID_COLUMN_INDEX = 27;
+  public static final int ID_COLUMN_INDEX = 30;
  
   public static final int ID_COLUMN_WIDTH = 4;
  
@@ -513,7 +561,7 @@ public class ClubEvent
  
   public static final String LINK_COMMON_NAME = "link";
  
-  public static final int LINK_COLUMN_INDEX = 28;
+  public static final int LINK_COLUMN_INDEX = 31;
  
   public static final int LINK_COLUMN_WIDTH = 30;
  
@@ -529,7 +577,7 @@ public class ClubEvent
  
   public static final String VENUE_COMMON_NAME = "venue";
  
-  public static final int VENUE_COLUMN_INDEX = 29;
+  public static final int VENUE_COLUMN_INDEX = 32;
  
   public static final int VENUE_COLUMN_WIDTH = 30;
  
@@ -545,7 +593,7 @@ public class ClubEvent
  
   public static final String IMAGE_COMMON_NAME = "image";
  
-  public static final int IMAGE_COLUMN_INDEX = 30;
+  public static final int IMAGE_COLUMN_INDEX = 33;
  
   public static final int IMAGE_COLUMN_WIDTH = 30;
  
@@ -561,7 +609,7 @@ public class ClubEvent
  
   public static final String NEWS_IMAGE_COMMON_NAME = "newsimage";
  
-  public static final int NEWS_IMAGE_COLUMN_INDEX = 31;
+  public static final int NEWS_IMAGE_COLUMN_INDEX = 34;
  
   public static final int NEWS_IMAGE_COLUMN_WIDTH = 30;
  
@@ -577,25 +625,9 @@ public class ClubEvent
  
   public static final String SHORT_DATE_COMMON_NAME = "shortdate";
  
-  public static final int SHORT_DATE_COLUMN_INDEX = 32;
+  public static final int SHORT_DATE_COLUMN_INDEX = 35;
  
   public static final int SHORT_DATE_COLUMN_WIDTH = 12;
- 
-
-  /**
-   Identification of any issues to be discussed at an upcoming board meeting.
-   */
-  private String discuss = null;
- 
-  public static final String DISCUSS_FIELD_NAME = "Discuss";
- 
-  public static final String DISCUSS_COLUMN_NAME = "Discuss";
- 
-  public static final String DISCUSS_COMMON_NAME = "discuss";
- 
-  public static final int DISCUSS_COLUMN_INDEX = 33;
- 
-  public static final int DISCUSS_COLUMN_WIDTH = 40;
  
 
   /**
@@ -609,7 +641,7 @@ public class ClubEvent
  
   public static final String NOTES_COMMON_NAME = "notes";
  
-  public static final int NOTES_COLUMN_INDEX = 34;
+  public static final int NOTES_COLUMN_INDEX = 36;
  
   public static final int NOTES_COLUMN_WIDTH = 40;
  
@@ -625,12 +657,12 @@ public class ClubEvent
  
   public static final String NOTES_AS_HTML_COMMON_NAME = "notesashtml";
  
-  public static final int NOTES_AS_HTML_COLUMN_INDEX = 35;
+  public static final int NOTES_AS_HTML_COLUMN_INDEX = 37;
  
   public static final int NOTES_AS_HTML_COLUMN_WIDTH = 50;
  
 
-  public static final int COLUMN_COUNT = 36;
+  public static final int COLUMN_COUNT = 38;
 
 
   /*
@@ -879,6 +911,10 @@ public class ClubEvent
 		newClubEvent.setWhere(whereStr);
 		String whoStr = new String(getWhoAsString());
 		newClubEvent.setWho(whoStr);
+		String discussStr = new String(getDiscussAsString());
+		newClubEvent.setDiscuss(discussStr);
+		String actionsStr = new String(getActionsAsString());
+		newClubEvent.setActions(actionsStr);
 		String whyStr = new String(getWhyAsString());
 		newClubEvent.setWhy(whyStr);
 		String teaserStr = new String(getTeaserAsString());
@@ -917,8 +953,6 @@ public class ClubEvent
 		newClubEvent.setImage(imageStr);
 		String newsImageStr = new String(getNewsImageAsString());
 		newClubEvent.setNewsImage(newsImageStr);
-		String discussStr = new String(getDiscussAsString());
-		newClubEvent.setDiscuss(discussStr);
 		String notesStr = new String(getNotesAsString());
 		newClubEvent.setNotes(notesStr);
 		return newClubEvent;
@@ -1232,6 +1266,39 @@ public class ClubEvent
         setWho ((String)obj2);
       }
     }
+    obj2 = clubEvent2.getDiscuss();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setDiscuss ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getActions();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setActions ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getActionsAsHtml();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setActionsAsHtml ((String)obj2);
+      }
+    }
     obj2 = clubEvent2.getWhy();
     if (obj2 == null) {
       // No value available -- leave current value as-is
@@ -1485,17 +1552,6 @@ public class ClubEvent
         setShortDate ((String)obj2);
       }
     }
-    obj2 = clubEvent2.getDiscuss();
-    if (obj2 == null) {
-      // No value available -- leave current value as-is
-    } else {
-      str2 = obj2.toString();
-      if (str2.equals ("")) {
-        // No value available -- leave current value as-is
-      } else {
-        setDiscuss ((String)obj2);
-      }
-    }
     obj2 = clubEvent2.getNotes();
     if (obj2 == null) {
       // No value available -- leave current value as-is
@@ -1567,6 +1623,15 @@ public class ClubEvent
       case WHO_COLUMN_INDEX:
           setWho (columnValue);
           break;
+      case DISCUSS_COLUMN_INDEX:
+          setDiscuss (columnValue);
+          break;
+      case ACTIONS_COLUMN_INDEX:
+          setActions (columnValue);
+          break;
+      case ACTIONS_AS_HTML_COLUMN_INDEX:
+          setActionsAsHtml (columnValue);
+          break;
       case WHY_COLUMN_INDEX:
           setWhy (columnValue);
           break;
@@ -1636,9 +1701,6 @@ public class ClubEvent
       case SHORT_DATE_COLUMN_INDEX:
           setShortDate (columnValue);
           break;
-      case DISCUSS_COLUMN_INDEX:
-          setDiscuss (columnValue);
-          break;
       case NOTES_COLUMN_INDEX:
           setNotes (columnValue);
           break;
@@ -1680,6 +1742,12 @@ public class ClubEvent
           return where;
       case WHO_COLUMN_INDEX:
           return who;
+      case DISCUSS_COLUMN_INDEX:
+          return discuss;
+      case ACTIONS_COLUMN_INDEX:
+          return actions;
+      case ACTIONS_AS_HTML_COLUMN_INDEX:
+          return actionsAsHtml;
       case WHY_COLUMN_INDEX:
           return why;
       case TEASER_COLUMN_INDEX:
@@ -1726,8 +1794,6 @@ public class ClubEvent
           return newsImage;
       case SHORT_DATE_COLUMN_INDEX:
           return shortDate;
-      case DISCUSS_COLUMN_INDEX:
-          return discuss;
       case NOTES_COLUMN_INDEX:
           return notes;
       case NOTES_AS_HTML_COLUMN_INDEX:
@@ -1768,6 +1834,12 @@ public class ClubEvent
           return WHERE_COLUMN_NAME;
       case WHO_COLUMN_INDEX:
           return WHO_COLUMN_NAME;
+      case DISCUSS_COLUMN_INDEX:
+          return DISCUSS_COLUMN_NAME;
+      case ACTIONS_COLUMN_INDEX:
+          return ACTIONS_COLUMN_NAME;
+      case ACTIONS_AS_HTML_COLUMN_INDEX:
+          return ACTIONS_AS_HTML_COLUMN_NAME;
       case WHY_COLUMN_INDEX:
           return WHY_COLUMN_NAME;
       case TEASER_COLUMN_INDEX:
@@ -1814,8 +1886,6 @@ public class ClubEvent
           return NEWS_IMAGE_COLUMN_NAME;
       case SHORT_DATE_COLUMN_INDEX:
           return SHORT_DATE_COLUMN_NAME;
-      case DISCUSS_COLUMN_INDEX:
-          return DISCUSS_COLUMN_NAME;
       case NOTES_COLUMN_INDEX:
           return NOTES_COLUMN_NAME;
       case NOTES_AS_HTML_COLUMN_INDEX:
@@ -1857,6 +1927,12 @@ public class ClubEvent
           return WHERE_COMMON_NAME;
       case WHO_COLUMN_INDEX:
           return WHO_COMMON_NAME;
+      case DISCUSS_COLUMN_INDEX:
+          return DISCUSS_COMMON_NAME;
+      case ACTIONS_COLUMN_INDEX:
+          return ACTIONS_COMMON_NAME;
+      case ACTIONS_AS_HTML_COLUMN_INDEX:
+          return ACTIONS_AS_HTML_COMMON_NAME;
       case WHY_COLUMN_INDEX:
           return WHY_COMMON_NAME;
       case TEASER_COLUMN_INDEX:
@@ -1903,8 +1979,6 @@ public class ClubEvent
           return NEWS_IMAGE_COMMON_NAME;
       case SHORT_DATE_COLUMN_INDEX:
           return SHORT_DATE_COMMON_NAME;
-      case DISCUSS_COLUMN_INDEX:
-          return DISCUSS_COMMON_NAME;
       case NOTES_COLUMN_INDEX:
           return NOTES_COMMON_NAME;
       case NOTES_AS_HTML_COLUMN_INDEX:
@@ -1945,6 +2019,12 @@ public class ClubEvent
           return WHERE_COLUMN_WIDTH;
       case WHO_COLUMN_INDEX:
           return WHO_COLUMN_WIDTH;
+      case DISCUSS_COLUMN_INDEX:
+          return DISCUSS_COLUMN_WIDTH;
+      case ACTIONS_COLUMN_INDEX:
+          return ACTIONS_COLUMN_WIDTH;
+      case ACTIONS_AS_HTML_COLUMN_INDEX:
+          return ACTIONS_AS_HTML_COLUMN_WIDTH;
       case WHY_COLUMN_INDEX:
           return WHY_COLUMN_WIDTH;
       case TEASER_COLUMN_INDEX:
@@ -1991,8 +2071,6 @@ public class ClubEvent
           return NEWS_IMAGE_COLUMN_WIDTH;
       case SHORT_DATE_COLUMN_INDEX:
           return SHORT_DATE_COLUMN_WIDTH;
-      case DISCUSS_COLUMN_INDEX:
-          return DISCUSS_COLUMN_WIDTH;
       case NOTES_COLUMN_INDEX:
           return NOTES_COLUMN_WIDTH;
       case NOTES_AS_HTML_COLUMN_INDEX:
@@ -2032,6 +2110,12 @@ public class ClubEvent
       case WHERE_COLUMN_INDEX:
           return String.class;
       case WHO_COLUMN_INDEX:
+          return String.class;
+      case DISCUSS_COLUMN_INDEX:
+          return String.class;
+      case ACTIONS_COLUMN_INDEX:
+          return String.class;
+      case ACTIONS_AS_HTML_COLUMN_INDEX:
           return String.class;
       case WHY_COLUMN_INDEX:
           return String.class;
@@ -2079,8 +2163,6 @@ public class ClubEvent
           return String.class;
       case SHORT_DATE_COLUMN_INDEX:
           return String.class;
-      case DISCUSS_COLUMN_INDEX:
-          return String.class;
       case NOTES_COLUMN_INDEX:
           return String.class;
       case NOTES_AS_HTML_COLUMN_INDEX:
@@ -2101,6 +2183,8 @@ public class ClubEvent
    */
   public static boolean isMarkdownFormat (int columnIndex) {
     switch (columnIndex) {
+      case ACTIONS_COLUMN_INDEX:
+          return true;
       case BLURB_COLUMN_INDEX:
           return true;
       case NOTES_COLUMN_INDEX:
@@ -2535,6 +2619,129 @@ public class ClubEvent
    */
   public String getWho () {
     return who;
+  }
+ 
+  /**
+     Sets the discuss for this club event.
+ 
+     @param  discuss The discuss for this club event.
+   */
+  public void setDiscuss (String discuss) {
+    this.discuss = discuss;
+    setModified (true);
+  }
+
+  /**
+    Returns the discuss for this club event as a string.
+ 
+    @return The discuss for this club event as a string.
+   */
+  public String getDiscussAsString () {
+    if (hasDiscuss()) {
+      return getDiscuss().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the discuss for this club event is null.
+ 
+    @return True if the discuss for this club event is not null.
+   */
+  public boolean hasDiscuss () {
+    return (discuss != null);
+  }
+
+  /**
+    Returns the discuss for this club event.
+ 
+    @return The discuss for this club event.
+   */
+  public String getDiscuss () {
+    return discuss;
+  }
+ 
+  /**
+     Sets the actions for this club event.
+ 
+     @param  actions The actions for this club event.
+   */
+  public void setActions (String actions) {
+    this.actions = actions;
+    setModified (true);
+  }
+
+  /**
+    Returns the actions for this club event as a string.
+ 
+    @return The actions for this club event as a string.
+   */
+  public String getActionsAsString () {
+    if (hasActions()) {
+      return getActions().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the actions for this club event is null.
+ 
+    @return True if the actions for this club event is not null.
+   */
+  public boolean hasActions () {
+    return (actions != null);
+  }
+
+  /**
+    Returns the actions for this club event.
+ 
+    @return The actions for this club event.
+   */
+  public String getActions () {
+    return actions;
+  }
+ 
+  /**
+     Sets the actions as html for this club event.
+ 
+     @param  actionsAsHtml The actions as html for this club event.
+   */
+  public void setActionsAsHtml (String actionsAsHtml) {
+    this.actionsAsHtml = actionsAsHtml;
+    setModified (true);
+  }
+
+  /**
+    Returns the actions as html for this club event as a string.
+ 
+    @return The actions as html for this club event as a string.
+   */
+  public String getActionsAsHtmlAsString () {
+    if (hasActionsAsHtml()) {
+      return getActionsAsHtml().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the actions as html for this club event is null.
+ 
+    @return True if the actions as html for this club event is not null.
+   */
+  public boolean hasActionsAsHtml () {
+    return (actionsAsHtml != null);
+  }
+
+  /**
+    Returns the actions as html for this club event.
+ 
+    @return The actions as html for this club event.
+   */
+  public String getActionsAsHtml () {
+    return actionsAsHtml;
   }
  
   /**
@@ -3532,47 +3739,6 @@ public class ClubEvent
    */
   public String getShortDate () {
     return shortDate;
-  }
- 
-  /**
-     Sets the discuss for this club event.
- 
-     @param  discuss The discuss for this club event.
-   */
-  public void setDiscuss (String discuss) {
-    this.discuss = discuss;
-    setModified (true);
-  }
-
-  /**
-    Returns the discuss for this club event as a string.
- 
-    @return The discuss for this club event as a string.
-   */
-  public String getDiscussAsString () {
-    if (hasDiscuss()) {
-      return getDiscuss().toString();
-    } else {
-      return "";
-    }
-  }
-
-  /**
-    Determines if the discuss for this club event is null.
- 
-    @return True if the discuss for this club event is not null.
-   */
-  public boolean hasDiscuss () {
-    return (discuss != null);
-  }
-
-  /**
-    Returns the discuss for this club event.
- 
-    @return The discuss for this club event.
-   */
-  public String getDiscuss () {
-    return discuss;
   }
  
   /**
