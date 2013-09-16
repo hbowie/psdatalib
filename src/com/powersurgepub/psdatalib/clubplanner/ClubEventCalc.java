@@ -255,6 +255,7 @@ public class ClubEventCalc {
     calcItemType (clubEvent);
     calcCategory (clubEvent);
     calcBlurbAsHtml (clubEvent);
+    calcActionsAsHtml (clubEvent);
     calcNotesAsHtml (clubEvent);
     calcFinanceProjection (clubEvent);
     calcOverUnder (clubEvent);
@@ -295,6 +296,15 @@ public class ClubEventCalc {
       category.delete(0, pipeIndex);
     }
     clubEvent.setCategory (category.toString());
+  }
+  
+  public void calcActionsAsHtml (ClubEvent clubEvent) {
+
+    if (clubEvent.getActions() != null
+        && clubEvent.getActions().length() > 0) {
+      clubEvent.setActionsAsHtml
+          (pegDown.markdownToHtml(clubEvent.getActions()));
+    }
   }
   
   public void calcBlurbAsHtml (ClubEvent clubEvent) {
@@ -412,6 +422,10 @@ public class ClubEventCalc {
     else
     if (categoryLower.indexOf("finance") >= 0) {
       clubEvent.setSeq("2");
+    }
+    else
+    if (categoryLower.indexOf("board") >= 0) {
+      clubEvent.setSeq("3");
     }
     else
     if (categoryLower.indexOf("communication") >= 0) {
@@ -620,12 +634,16 @@ public class ClubEventCalc {
     }
     else
     if (headerWord.toString().equalsIgnoreCase("on")
-        || headerWord.toString().equalsIgnoreCase("of")) {
+        || headerWord.toString().equalsIgnoreCase("of")
+        || headerWord.toString().equalsIgnoreCase("dated")) {
       processHeaderElement();
       headerPosition = NOTES_FOR;
     }
     else
-    if (headerWord.toString().equalsIgnoreCase("via")) {
+    if (headerWord.toString().equalsIgnoreCase("via")
+        || headerWord.toString().equalsIgnoreCase("in")
+        || headerWord.toString().equalsIgnoreCase("an")
+        || headerWord.toString().equalsIgnoreCase("a")) {
       processHeaderElement();
       headerPosition = NOTES_VIA;
     }
