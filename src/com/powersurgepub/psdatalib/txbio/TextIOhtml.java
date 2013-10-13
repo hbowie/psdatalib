@@ -16,7 +16,6 @@
 
 package com.powersurgepub.psdatalib.txbio;
 
-import com.powersurgepub.psdatalib.txbmodel.TocEntry;
   import com.powersurgepub.psdatalib.txbmodel.*;
   import com.powersurgepub.psdatalib.pstextio.*;
   import com.powersurgepub.psutils.*;
@@ -238,10 +237,7 @@ public class TextIOhtml
     Enumeration attributes = tag.getAttributes();
     
     // Harvest TOC entries
-    if (tag.isHeadingTag() 
-        && tocFound
-        && tag.getHeadingLevel() >= tocFrom
-        && tag.getHeadingLevel() <= tocThrough) {
+    if (tag.isHeadingTag()) {
       tocEntry = new TocEntry();
       tocEntry.setLevel(tag.getHeadingLevel());
       if (tag.containsAttribute("id")) {
@@ -303,17 +299,17 @@ public class TextIOhtml
     }
     
     if (tag.isHeadingTag() 
-        && tocFound
-        && tag.getHeadingLevel() >= tocFrom
-        && tag.getHeadingLevel() <= tocThrough
         && tocEntry != null
         && headingNode != null) {
-
       if (tocEntry.lacksID()) {
         tocEntry.deriveID();
         headingNode.addAttribute ("id", tocEntry.getID());
       }
-      tree.addTocEntry(tocEntry);
+      if (tocFound
+          && tag.getHeadingLevel() >= tocFrom
+          && tag.getHeadingLevel() <= tocThrough) {
+        tree.addTocEntry(tocEntry);
+      }
       tocEntry = null;
       headingNode = null;
       captureHeading = false;

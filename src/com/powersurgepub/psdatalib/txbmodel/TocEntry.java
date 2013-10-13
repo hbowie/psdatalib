@@ -72,7 +72,8 @@ public class TocEntry {
   }
   
   public void deriveID() {
-    id = StringUtils.makeFileName(heading.toString(), false);
+    // Modified for consistency with Marked app.
+    id = StringUtils.makeID(heading.toString());
   }
   
   public String getID () {

@@ -413,6 +413,34 @@ public class TextType {
       return true;
     }
   }
+  
+  /**
+   Should we write a blank line after the closing tag?
+
+   @return True if we should write a blank line.
+   */
+  public boolean blankLineAfterClosingTag () {
+    return blankLineAfterClosingTag (type);
+  }
+
+  /**
+   Should we start a new line after the closing tag?
+
+   @return True if we should start a new line.
+   */
+  public static boolean blankLineAfterClosingTag (String tag) {
+    if (tag.equalsIgnoreCase (PARAGRAPH)
+        || isHeading(tag)
+        || tag.equalsIgnoreCase (UNORDERED_LIST)
+        || tag.equalsIgnoreCase (ORDERED_LIST)
+        || tag.equalsIgnoreCase (DEFINITION_LIST)
+        || tag.equalsIgnoreCase (BLOCK_QUOTE)
+        || tag.equalsIgnoreCase (DIV)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   /**
    Should we assume that the opening tag is also the closing tag?
