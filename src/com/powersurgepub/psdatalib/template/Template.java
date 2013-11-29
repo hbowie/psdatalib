@@ -16,8 +16,8 @@
 
 package com.powersurgepub.psdatalib.template;
 
+import com.powersurgepub.pstextio.TextLineWriter;
   import com.powersurgepub.psdatalib.tabdelim.*;
-  import com.powersurgepub.psdatalib.pstextio.*;
   import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psutils.*;
   import com.powersurgepub.xos2.*;

@@ -673,6 +673,9 @@ public class ClubEvent
    */
  
 
+  /** Master-detail list for EventActions. */
+  private ArrayList<EventAction> eventActionList = new ArrayList();
+
   /** Master-detail list for EventNotes. */
   private ArrayList<EventNote> eventNoteList = new ArrayList();
 
@@ -2234,6 +2237,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the year for this club event
+    is null or is empty.
+ 
+    @return True if the year for this club event
+    is not null and not empty.
+   */
+  public boolean hasYearWithData () {
+    return (year != null && year.length() > 0);
+  }
+
+  /**
     Returns the year for this club event.
  
     @return The year for this club event.
@@ -2272,6 +2286,17 @@ public class ClubEvent
    */
   public boolean hasItemType () {
     return (itemType != null);
+  }
+
+  /**
+    Determines if the item type for this club event
+    is null or is empty.
+ 
+    @return True if the item type for this club event
+    is not null and not empty.
+   */
+  public boolean hasItemTypeWithData () {
+    return (itemType != null && itemType.length() > 0);
   }
 
   /**
@@ -2316,6 +2341,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the category for this club event
+    is null or is empty.
+ 
+    @return True if the category for this club event
+    is not null and not empty.
+   */
+  public boolean hasCategoryWithData () {
+    return (category != null && category.length() > 0);
+  }
+
+  /**
     Returns the category for this club event.
  
     @return The category for this club event.
@@ -2354,6 +2390,17 @@ public class ClubEvent
    */
   public boolean hasSeq () {
     return (seq != null);
+  }
+
+  /**
+    Determines if the seq for this club event
+    is null or is empty.
+ 
+    @return True if the seq for this club event
+    is not null and not empty.
+   */
+  public boolean hasSeqWithData () {
+    return (seq != null && seq.length() > 0);
   }
 
   /**
@@ -2408,6 +2455,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the status for this club event
+    is null or is empty.
+ 
+    @return True if the status for this club event
+    is not null and not empty.
+   */
+  public boolean hasStatusWithData () {
+    return (status != null && status.length() > 0);
+  }
+
+  /**
     Returns the status for this club event.
  
     @return The status for this club event.
@@ -2446,6 +2504,17 @@ public class ClubEvent
    */
   public boolean hasWhen () {
     return (when != null);
+  }
+
+  /**
+    Determines if the when for this club event
+    is null or is empty.
+ 
+    @return True if the when for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhenWithData () {
+    return (when != null && when.length() > 0);
   }
 
   /**
@@ -2490,6 +2559,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the ymd for this club event
+    is null or is empty.
+ 
+    @return True if the ymd for this club event
+    is not null and not empty.
+   */
+  public boolean hasYmdWithData () {
+    return (ymd != null && ymd.length() > 0);
+  }
+
+  /**
     Returns the ymd for this club event.
  
     @return The ymd for this club event.
@@ -2528,6 +2608,17 @@ public class ClubEvent
    */
   public boolean hasWhat () {
     return (what != null);
+  }
+
+  /**
+    Determines if the what for this club event
+    is null or is empty.
+ 
+    @return True if the what for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhatWithData () {
+    return (what != null && what.length() > 0);
   }
 
   /**
@@ -2572,6 +2663,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the where for this club event
+    is null or is empty.
+ 
+    @return True if the where for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhereWithData () {
+    return (where != null && where.length() > 0);
+  }
+
+  /**
     Returns the where for this club event.
  
     @return The where for this club event.
@@ -2610,6 +2712,17 @@ public class ClubEvent
    */
   public boolean hasWho () {
     return (who != null);
+  }
+
+  /**
+    Determines if the who for this club event
+    is null or is empty.
+ 
+    @return True if the who for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhoWithData () {
+    return (who != null && who.length() > 0);
   }
 
   /**
@@ -2654,6 +2767,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the discuss for this club event
+    is null or is empty.
+ 
+    @return True if the discuss for this club event
+    is not null and not empty.
+   */
+  public boolean hasDiscussWithData () {
+    return (discuss != null && discuss.length() > 0);
+  }
+
+  /**
     Returns the discuss for this club event.
  
     @return The discuss for this club event.
@@ -2692,6 +2816,17 @@ public class ClubEvent
    */
   public boolean hasActions () {
     return (actions != null);
+  }
+
+  /**
+    Determines if the actions for this club event
+    is null or is empty.
+ 
+    @return True if the actions for this club event
+    is not null and not empty.
+   */
+  public boolean hasActionsWithData () {
+    return (actions != null && actions.length() > 0);
   }
 
   /**
@@ -2736,6 +2871,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the actions as html for this club event
+    is null or is empty.
+ 
+    @return True if the actions as html for this club event
+    is not null and not empty.
+   */
+  public boolean hasActionsAsHtmlWithData () {
+    return (actionsAsHtml != null && actionsAsHtml.length() > 0);
+  }
+
+  /**
     Returns the actions as html for this club event.
  
     @return The actions as html for this club event.
@@ -2774,6 +2920,17 @@ public class ClubEvent
    */
   public boolean hasWhy () {
     return (why != null);
+  }
+
+  /**
+    Determines if the why for this club event
+    is null or is empty.
+ 
+    @return True if the why for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhyWithData () {
+    return (why != null && why.length() > 0);
   }
 
   /**
@@ -2818,6 +2975,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the teaser for this club event
+    is null or is empty.
+ 
+    @return True if the teaser for this club event
+    is not null and not empty.
+   */
+  public boolean hasTeaserWithData () {
+    return (teaser != null && teaser.length() > 0);
+  }
+
+  /**
     Returns the teaser for this club event.
  
     @return The teaser for this club event.
@@ -2856,6 +3024,17 @@ public class ClubEvent
    */
   public boolean hasBlurb () {
     return (blurb != null);
+  }
+
+  /**
+    Determines if the blurb for this club event
+    is null or is empty.
+ 
+    @return True if the blurb for this club event
+    is not null and not empty.
+   */
+  public boolean hasBlurbWithData () {
+    return (blurb != null && blurb.length() > 0);
   }
 
   /**
@@ -2900,6 +3079,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the blurb as html for this club event
+    is null or is empty.
+ 
+    @return True if the blurb as html for this club event
+    is not null and not empty.
+   */
+  public boolean hasBlurbAsHtmlWithData () {
+    return (blurbAsHtml != null && blurbAsHtml.length() > 0);
+  }
+
+  /**
     Returns the blurb as html for this club event.
  
     @return The blurb as html for this club event.
@@ -2938,6 +3128,17 @@ public class ClubEvent
    */
   public boolean hasCost () {
     return (cost != null);
+  }
+
+  /**
+    Determines if the cost for this club event
+    is null or is empty.
+ 
+    @return True if the cost for this club event
+    is not null and not empty.
+   */
+  public boolean hasCostWithData () {
+    return (cost != null && cost.length() > 0);
   }
 
   /**
@@ -2982,6 +3183,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the purchase for this club event
+    is null or is empty.
+ 
+    @return True if the purchase for this club event
+    is not null and not empty.
+   */
+  public boolean hasPurchaseWithData () {
+    return (purchase != null && purchase.length() > 0);
+  }
+
+  /**
     Returns the purchase for this club event.
  
     @return The purchase for this club event.
@@ -3020,6 +3232,17 @@ public class ClubEvent
    */
   public boolean hasTickets () {
     return (tickets != null);
+  }
+
+  /**
+    Determines if the tickets for this club event
+    is null or is empty.
+ 
+    @return True if the tickets for this club event
+    is not null and not empty.
+   */
+  public boolean hasTicketsWithData () {
+    return (tickets != null && tickets.length() > 0);
   }
 
   /**
@@ -3064,6 +3287,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the quantity for this club event
+    is null or is empty.
+ 
+    @return True if the quantity for this club event
+    is not null and not empty.
+   */
+  public boolean hasQuantityWithData () {
+    return (quantity != null && quantity.length() > 0);
+  }
+
+  /**
     Returns the quantity for this club event.
  
     @return The quantity for this club event.
@@ -3102,6 +3336,17 @@ public class ClubEvent
    */
   public boolean hasPlannedIncome () {
     return (plannedIncome != null);
+  }
+
+  /**
+    Determines if the planned income for this club event
+    is null or is empty.
+ 
+    @return True if the planned income for this club event
+    is not null and not empty.
+   */
+  public boolean hasPlannedIncomeWithData () {
+    return (plannedIncome != null && plannedIncome.length() > 0);
   }
 
   /**
@@ -3155,6 +3400,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the actual income for this club event
+    is null or is empty.
+ 
+    @return True if the actual income for this club event
+    is not null and not empty.
+   */
+  public boolean hasActualIncomeWithData () {
+    return (actualIncome != null && actualIncome.length() > 0);
+  }
+
+  /**
     Returns the actual income for this club event.
  
     @return The actual income for this club event.
@@ -3202,6 +3458,17 @@ public class ClubEvent
    */
   public boolean hasPlannedExpense () {
     return (plannedExpense != null);
+  }
+
+  /**
+    Determines if the planned expense for this club event
+    is null or is empty.
+ 
+    @return True if the planned expense for this club event
+    is not null and not empty.
+   */
+  public boolean hasPlannedExpenseWithData () {
+    return (plannedExpense != null && plannedExpense.length() > 0);
   }
 
   /**
@@ -3255,6 +3522,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the actual expense for this club event
+    is null or is empty.
+ 
+    @return True if the actual expense for this club event
+    is not null and not empty.
+   */
+  public boolean hasActualExpenseWithData () {
+    return (actualExpense != null && actualExpense.length() > 0);
+  }
+
+  /**
     Returns the actual expense for this club event.
  
     @return The actual expense for this club event.
@@ -3305,6 +3583,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the planned attendance for this club event
+    is null or is empty.
+ 
+    @return True if the planned attendance for this club event
+    is not null and not empty.
+   */
+  public boolean hasPlannedAttendanceWithData () {
+    return (plannedAttendance != null && plannedAttendance.length() > 0);
+  }
+
+  /**
     Returns the planned attendance for this club event.
  
     @return The planned attendance for this club event.
@@ -3346,6 +3635,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the actual attendance for this club event
+    is null or is empty.
+ 
+    @return True if the actual attendance for this club event
+    is not null and not empty.
+   */
+  public boolean hasActualAttendanceWithData () {
+    return (actualAttendance != null && actualAttendance.length() > 0);
+  }
+
+  /**
     Returns the actual attendance for this club event.
  
     @return The actual attendance for this club event.
@@ -3384,6 +3684,17 @@ public class ClubEvent
    */
   public boolean hasOverUnder () {
     return (overUnder != null);
+  }
+
+  /**
+    Determines if the over under for this club event
+    is null or is empty.
+ 
+    @return True if the over under for this club event
+    is not null and not empty.
+   */
+  public boolean hasOverUnderWithData () {
+    return (overUnder != null && overUnder.length() > 0);
   }
 
   /**
@@ -3437,6 +3748,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the finance projection for this club event
+    is null or is empty.
+ 
+    @return True if the finance projection for this club event
+    is not null and not empty.
+   */
+  public boolean hasFinanceProjectionWithData () {
+    return (financeProjection != null && financeProjection.length() > 0);
+  }
+
+  /**
     Returns the finance projection for this club event.
  
     @return The finance projection for this club event.
@@ -3487,6 +3809,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the recap for this club event
+    is null or is empty.
+ 
+    @return True if the recap for this club event
+    is not null and not empty.
+   */
+  public boolean hasRecapWithData () {
+    return (recap != null && recap.length() > 0);
+  }
+
+  /**
     Returns the recap for this club event.
  
     @return The recap for this club event.
@@ -3525,6 +3858,17 @@ public class ClubEvent
    */
   public boolean hasId () {
     return (id != null);
+  }
+
+  /**
+    Determines if the id for this club event
+    is null or is empty.
+ 
+    @return True if the id for this club event
+    is not null and not empty.
+   */
+  public boolean hasIdWithData () {
+    return (id != null && id.length() > 0);
   }
 
   /**
@@ -3569,6 +3913,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the link for this club event
+    is null or is empty.
+ 
+    @return True if the link for this club event
+    is not null and not empty.
+   */
+  public boolean hasLinkWithData () {
+    return (link != null && link.length() > 0);
+  }
+
+  /**
     Returns the link for this club event.
  
     @return The link for this club event.
@@ -3607,6 +3962,17 @@ public class ClubEvent
    */
   public boolean hasVenue () {
     return (venue != null);
+  }
+
+  /**
+    Determines if the venue for this club event
+    is null or is empty.
+ 
+    @return True if the venue for this club event
+    is not null and not empty.
+   */
+  public boolean hasVenueWithData () {
+    return (venue != null && venue.length() > 0);
   }
 
   /**
@@ -3651,6 +4017,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the image for this club event
+    is null or is empty.
+ 
+    @return True if the image for this club event
+    is not null and not empty.
+   */
+  public boolean hasImageWithData () {
+    return (image != null && image.length() > 0);
+  }
+
+  /**
     Returns the image for this club event.
  
     @return The image for this club event.
@@ -3689,6 +4066,17 @@ public class ClubEvent
    */
   public boolean hasNewsImage () {
     return (newsImage != null);
+  }
+
+  /**
+    Determines if the news image for this club event
+    is null or is empty.
+ 
+    @return True if the news image for this club event
+    is not null and not empty.
+   */
+  public boolean hasNewsImageWithData () {
+    return (newsImage != null && newsImage.length() > 0);
   }
 
   /**
@@ -3733,6 +4121,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the short date for this club event
+    is null or is empty.
+ 
+    @return True if the short date for this club event
+    is not null and not empty.
+   */
+  public boolean hasShortDateWithData () {
+    return (shortDate != null && shortDate.length() > 0);
+  }
+
+  /**
     Returns the short date for this club event.
  
     @return The short date for this club event.
@@ -3774,6 +4173,17 @@ public class ClubEvent
   }
 
   /**
+    Determines if the notes for this club event
+    is null or is empty.
+ 
+    @return True if the notes for this club event
+    is not null and not empty.
+   */
+  public boolean hasNotesWithData () {
+    return (notes != null && notes.length() > 0);
+  }
+
+  /**
     Returns the notes for this club event.
  
     @return The notes for this club event.
@@ -3812,6 +4222,17 @@ public class ClubEvent
    */
   public boolean hasNotesAsHtml () {
     return (notesAsHtml != null);
+  }
+
+  /**
+    Determines if the notes as html for this club event
+    is null or is empty.
+ 
+    @return True if the notes as html for this club event
+    is not null and not empty.
+   */
+  public boolean hasNotesAsHtmlWithData () {
+    return (notesAsHtml != null && notesAsHtml.length() > 0);
   }
 
   /**
@@ -3898,6 +4319,68 @@ public class ClubEvent
      data file: /Users/hbowie/Java/projects/nbproj/clubplanner/javagen/fields.xls
    */
  
+
+  /**
+   Allocate a new array list.
+  */
+  public void newEventActionList () {
+    eventActionList = new ArrayList();
+  }
+ 
+  /**
+   Adds a new EventAction to the end of the internal detail list.
+ 
+   @param eventAction The EventAction to be added.
+ 
+   @return True if the list was modified.
+  */
+  public boolean addEventAction (EventAction eventAction) {
+    return eventActionList.add(eventAction);
+  }
+ 
+  /**
+   Adds a new EventAction at the specified location.
+ 
+   @param index The index position at which the EventAction should be added.
+ 
+   @param eventAction The EventAction to be added.
+  */
+  public void addEventAction (int index, EventAction eventAction) {
+    eventActionList.add(index, eventAction);
+  }
+ 
+  /**
+   Gets the EventAction at the specified location.
+ 
+   @param index The desired location.
+ 
+   @return The EventAction stored at that location.
+  */
+  public EventAction getEventAction (int index) {
+    return eventActionList.get(index);
+  }
+ 
+  /**
+   Sets a new EventAction at the specified list location.
+ 
+   @param index The index location in the internal table.
+ 
+   @param eventAction The new EventAction to be placed there.
+ 
+   @return The EventAction previously stored at that location.
+  */
+  public EventAction setEventAction (int index, EventAction eventAction) {
+    return eventActionList.set(index, eventAction);
+  }
+ 
+  /**
+   Returns the size of the internal EventAction list.
+ 
+   @return The size of the internal list of details.
+  */
+  public int sizeEventActionList () {
+    return eventActionList.size();
+  }
 
   /**
    Allocate a new array list.

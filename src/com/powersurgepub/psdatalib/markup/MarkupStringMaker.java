@@ -16,7 +16,7 @@
 
 package com.powersurgepub.psdatalib.markup;
 
-  import com.powersurgepub.psdatalib.pstextio.TextLineWriter;
+  import com.powersurgepub.pstextio.TextLineWriter;
 
 /**
  *

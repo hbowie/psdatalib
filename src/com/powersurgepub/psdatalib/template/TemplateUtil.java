@@ -16,9 +16,11 @@
 
 package com.powersurgepub.psdatalib.template;
 
+import com.powersurgepub.pstextio.FileLineReader;
+import com.powersurgepub.pstextio.TextLineWriter;
+import com.powersurgepub.pstextio.FileMaker;
   import com.powersurgepub.psdatalib.txbio.*;
   import com.powersurgepub.psdatalib.txbmodel.*;
-  import com.powersurgepub.psdatalib.pstextio.*;
   import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psutils.*;
   import java.io.*;

@@ -17,7 +17,7 @@
 package com.powersurgepub.psdatalib.markup;
 
 import com.powersurgepub.psdatalib.txbio.MarkupWriter;
-  import com.powersurgepub.psdatalib.pstextio.TextLineWriter;
+  import com.powersurgepub.pstextio.TextLineWriter;
   import com.powersurgepub.psutils.*;
   import java.util.*;
   import org.xml.sax.*;

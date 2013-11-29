@@ -16,8 +16,8 @@
 
 package com.powersurgepub.psdatalib.txbio;
   
+  import com.powersurgepub.pstextio.*;
   import com.powersurgepub.psdatalib.txbmodel.*;
-  import com.powersurgepub.psdatalib.pstextio.*;
   import com.powersurgepub.psutils.*;
   import java.io.*;
   import java.net.*;
@@ -717,6 +717,45 @@ public class MarkupWriter
     return ok;
   }
   
+  /**
+   Write a new outline node for an OPML document. The outline element will 
+   be closed, so no children are expected. 
+  
+   @param text The text of the outline node. 
+  */
+  public void writeOutline (String text) {
+    String t;
+    if (text == null || text.length() == 0) {
+      t = " ";
+    } else {
+      t = formatTextForMarkup (text);
+    }
+    startXML (TextType.OUTLINE,
+        TextType.TEXT, t,
+        true, true, true);
+  }
+  
+  /**
+   Start a new outline node for an OPML document. 
+  
+   @param text The text of the outline node. 
+  */
+  public void startOutline (String text) {
+    startXML (TextType.OUTLINE,
+        TextType.TEXT, formatTextForMarkup (text),
+        true, true, false);
+  }
+  
+  /**
+   Start a new outline node for an OPML document. 
+  
+   @param type Type of node
+   @param text The text that makes up this outline entry. 
+   @param link An optional link. 
+   @param emptyTag Is this an empty tag? True means close it, false means
+                   leave it open so that it may include children. 
+   @return True if no I/O errors. 
+  */
   public boolean startOutline 
       (String type, String text, String link, boolean emptyTag) {
     boolean ok = true;
@@ -2230,6 +2269,12 @@ public class MarkupWriter
       ok = writer.write (str);
     }
     return ok;
+  }
+  
+  public void writeTitle(String title) {
+    startTitle();
+    writeText(title);
+    endTitle();
   }
   
   public void startTitle () {

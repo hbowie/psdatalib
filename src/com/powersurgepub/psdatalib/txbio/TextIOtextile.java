@@ -19,7 +19,7 @@ package com.powersurgepub.psdatalib.txbio;
 import com.powersurgepub.psdatalib.txbmodel.TextType;
 import com.powersurgepub.psdatalib.txbmodel.TextNode;
 import com.powersurgepub.psdatalib.txbmodel.TextTree;
-import com.powersurgepub.psdatalib.pstextio.TextWriter;
+import com.powersurgepub.pstextio.TextWriter;
   import java.net.*;
   import java.util.*;
 

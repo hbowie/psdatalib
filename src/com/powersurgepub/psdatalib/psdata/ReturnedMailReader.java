@@ -16,7 +16,7 @@
 
 package com.powersurgepub.psdatalib.psdata;
 
-  import com.powersurgepub.psdatalib.pstextio.*;
+  import com.powersurgepub.pstextio.ReturnedMailParser;
   import com.powersurgepub.psutils.*;
   import java.io.*;
 

@@ -782,6 +782,17 @@ public class EventNote
   }
 
   /**
+    Determines if the note for for this event note
+    is null or is empty.
+ 
+    @return True if the note for for this event note
+    is not null and not empty.
+   */
+  public boolean hasNoteForWithData () {
+    return (noteFor != null && noteFor.length() > 0);
+  }
+
+  /**
     Returns the note for for this event note.
  
     @return The note for for this event note.
@@ -820,6 +831,17 @@ public class EventNote
    */
   public boolean hasNoteForYmd () {
     return (noteForYmd != null);
+  }
+
+  /**
+    Determines if the note for ymd for this event note
+    is null or is empty.
+ 
+    @return True if the note for ymd for this event note
+    is not null and not empty.
+   */
+  public boolean hasNoteForYmdWithData () {
+    return (noteForYmd != null && noteForYmd.length() > 0);
   }
 
   /**
@@ -864,6 +886,17 @@ public class EventNote
   }
 
   /**
+    Determines if the note from for this event note
+    is null or is empty.
+ 
+    @return True if the note from for this event note
+    is not null and not empty.
+   */
+  public boolean hasNoteFromWithData () {
+    return (noteFrom != null && noteFrom.length() > 0);
+  }
+
+  /**
     Returns the note from for this event note.
  
     @return The note from for this event note.
@@ -902,6 +935,17 @@ public class EventNote
    */
   public boolean hasNoteVia () {
     return (noteVia != null);
+  }
+
+  /**
+    Determines if the note via for this event note
+    is null or is empty.
+ 
+    @return True if the note via for this event note
+    is not null and not empty.
+   */
+  public boolean hasNoteViaWithData () {
+    return (noteVia != null && noteVia.length() > 0);
   }
 
   /**
@@ -946,6 +990,17 @@ public class EventNote
   }
 
   /**
+    Determines if the note for this event note
+    is null or is empty.
+ 
+    @return True if the note for this event note
+    is not null and not empty.
+   */
+  public boolean hasNoteWithData () {
+    return (note != null && note.length() > 0);
+  }
+
+  /**
     Returns the note for this event note.
  
     @return The note for this event note.
@@ -984,6 +1039,17 @@ public class EventNote
    */
   public boolean hasNoteAsHtml () {
     return (noteAsHtml != null);
+  }
+
+  /**
+    Determines if the note as html for this event note
+    is null or is empty.
+ 
+    @return True if the note as html for this event note
+    is not null and not empty.
+   */
+  public boolean hasNoteAsHtmlWithData () {
+    return (noteAsHtml != null && noteAsHtml.length() > 0);
   }
 
   /**

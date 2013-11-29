@@ -17,8 +17,8 @@
 package com.powersurgepub.psdatalib.txbio;
 
 import com.powersurgepub.psdatalib.txbmodel.TextTree;
-  import com.powersurgepub.psdatalib.pstextio.TextLineWriter;
-import com.powersurgepub.psdatalib.pstextio.TextWriter;
+  import com.powersurgepub.pstextio.TextLineWriter;
+import com.powersurgepub.pstextio.TextWriter;
   import com.powersurgepub.psutils.*;
   import java.net.*;
   import java.util.*;

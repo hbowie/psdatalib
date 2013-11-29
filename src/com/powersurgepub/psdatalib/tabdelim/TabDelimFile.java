@@ -16,7 +16,8 @@
 
 package com.powersurgepub.psdatalib.tabdelim;
 
-  import com.powersurgepub.psdatalib.pstextio.*;
+  import com.powersurgepub.pstextio.TextLineWriter;
+import com.powersurgepub.pstextio.FileMaker;
   import com.powersurgepub.psdatalib.psdata.*;
   import java.io.*;
   import java.net.*;

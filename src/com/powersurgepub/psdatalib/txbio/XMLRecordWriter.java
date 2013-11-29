@@ -16,8 +16,8 @@
 
 package com.powersurgepub.psdatalib.txbio;
 
-import com.powersurgepub.psdatalib.pstextio.XMLWriter;
-import com.powersurgepub.psdatalib.pstextio.TextLineWriter;
+import com.powersurgepub.pstextio.XMLWriter;
+import com.powersurgepub.pstextio.TextLineWriter;
   import com.powersurgepub.psdatalib.psdata.DataDictionary;
 import com.powersurgepub.psdatalib.psdata.DataRecord;
 import com.powersurgepub.psdatalib.psdata.RecordDefinition;

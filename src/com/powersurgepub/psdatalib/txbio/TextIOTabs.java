@@ -22,7 +22,7 @@ import com.powersurgepub.psdatalib.txbmodel.TextTree;
 import com.powersurgepub.psdatalib.tabdelim.TabDelimFile;
 import com.powersurgepub.psdatalib.psexcel.ExcelFile;
 import com.powersurgepub.psdatalib.psexcel.ExcelTable;
-import com.powersurgepub.psdatalib.pstextio.TextWriter;
+import com.powersurgepub.pstextio.TextWriter;
 import com.powersurgepub.psdatalib.psdata.DataRecord;
 import com.powersurgepub.psdatalib.psdata.DataField;
 import com.powersurgepub.psdatalib.psdata.DataSource;

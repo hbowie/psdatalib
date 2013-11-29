@@ -16,7 +16,8 @@
 
 package com.powersurgepub.psdatalib.clubplanner;
 
-  import com.powersurgepub.psdatalib.pstextio.*;
+  import com.powersurgepub.pstextio.TextLineReader;
+import com.powersurgepub.pstextio.StringLineReader;
   import com.powersurgepub.psutils.*;
   import java.io.*;
   import java.math.*;
@@ -66,6 +67,12 @@ public class ClubEventCalc {
   
   private    EventNote        eventNote = new EventNote();
   private    StringBuilder    noteFieldValue = new StringBuilder();
+  
+  private    EventAction      eventAction = new EventAction();
+  private    TextBuilder      actionField 
+      = new TextBuilder();
+  private    TextBuilder      actionLineField
+      = new TextBuilder();
   
   public ClubEventCalc () {
     
@@ -263,6 +270,7 @@ public class ClubEventCalc {
     calcSeq (clubEvent);
     calcShortDate (clubEvent);
     calcEventNotes (clubEvent);
+    calcEventActions (clubEvent);
   }
   
   public void calcItemType (ClubEvent clubEvent) {
@@ -693,6 +701,149 @@ public class ClubEventCalc {
     }
   }
   
+  /**
+   Build all of the event's action objects from the actions text. 
+  
+   @param clubEvent 
+  */
+  public void calcEventActions (ClubEvent clubEvent) {
+    clubEvent.newEventActionList();
+    if (clubEvent.hasActionsWithData()) {
+      eventAction = new EventAction();
+      actionField = new TextBuilder();
+      TextLineReader reader = new StringLineReader (clubEvent.getActions());
+      reader.open();
+      while (reader != null
+          && reader.isOK()
+          && (! reader.isAtEnd())) {
+        readAndProcessNextActionLine(reader, clubEvent);
+      } // end while reader has more lines
+      finishLastAction(clubEvent);
+      reader.close();
+    }
+  }
+  
+  /**
+    Read the next line and see what we've got. 
+   */
+  private void readAndProcessNextActionLine (
+      TextLineReader reader,
+      ClubEvent clubEvent) {
+    
+    String line = reader.readLine();
+    if (line == null) {
+      line = "";
+    }
+    
+    actionLineField = new TextBuilder();
+    
+    int lineEnd = line.length();
+    int lineStart = 0;
+    
+    // Skip past any leading whitespace
+    while (lineStart < lineEnd
+        && Character.isWhitespace(line.charAt(lineStart))) {
+      lineStart++;
+    }
+    
+    if (lineStart >= lineEnd) {
+      // Blank Line
+      finishLastAction(clubEvent);
+    } else {
+      // non-blank line
+      int lineIndex = lineStart;
+      char c, c2, c0, c3;
+      c0 = ' ';
+      while (lineIndex < lineEnd) {
+        c = line.charAt(lineIndex);
+        c2 = ' ';
+        if ((lineIndex + 1) < lineEnd) {
+          c2 = line.charAt(lineIndex + 1);
+        }
+        c3 = ' ';
+        if ((lineIndex + 2) < lineEnd) {
+          c3 = line.charAt(lineIndex + 2);
+        }
+        if (c == '.'
+            && ((lineIndex - lineStart) <= actionLineField.length())
+            && actionLineField.length() > 0
+            && actionLineField.isAllDigits()) {
+          // Start of an ordered list item
+          finishLastAction(clubEvent);
+          eventAction.setNumbered(true);
+          actionLineField = new TextBuilder();
+        }
+        else
+        if (actionLineField.isEmpty()
+            && (lineIndex == lineStart)
+            && (c == '*' || c == '-' || c == '+')) {
+          // Start of an unordered list item
+          finishLastAction(clubEvent);
+          eventAction.setNumbered(false);
+          actionLineField = new TextBuilder();
+        } 
+        else
+        if (c == ':' 
+            && (! eventAction.hasActioneeWithData())
+            && (! eventAction.hasActionWithData())
+            && actionLineField.length() > 0) {
+          actionField.append(actionLineField);
+          eventAction.setActionee(actionField.toString());
+          actionField = new TextBuilder();
+          actionLineField = new TextBuilder();
+        }
+        else
+        if (c == 't' 
+            && c2 == 'o'
+            && c3 == ' '
+            && c0 == ' '
+            && (! eventAction.hasActioneeWithData())
+            && (! eventAction.hasActionWithData())
+            && actionLineField.length() > 0) {
+          actionField.append(actionLineField);
+          eventAction.setActionee(actionField.toString());
+          actionField = new TextBuilder();
+          actionLineField = new TextBuilder();
+          lineIndex++;
+        }
+        else
+        if (c == '-'
+            && c2 == '-'
+            && (! eventAction.hasActioneeWithData())) {
+          actionField.append(actionLineField);
+          eventAction.setAction(actionField.toString());
+          actionField = new TextBuilder();
+          actionLineField = new TextBuilder();
+          lineIndex++;
+        } else {
+          actionLineField.append(c);
+        }
+        c0 = c;
+        lineIndex++;
+      } // end while more characters on line
+      actionField.append(actionLineField);
+      actionField.append(' ');
+    } // end if line not blank
+  } // end method readAndProcessNextActionLine
+  
+  private void finishLastAction(ClubEvent clubEvent) {
+    if (actionField.length() > 0) {
+      if (! eventAction.hasActionWithData()) {
+        eventAction.setAction(actionField.toString());
+      } else {
+        eventAction.setActionee(actionField.toString());
+      }
+    }
+    
+    if (eventAction != null
+        && eventAction.hasActionWithData()) {
+      clubEvent.addEventAction(eventAction);
+    }
+    
+    eventAction = new EventAction();
+    actionField = new TextBuilder();
+  }
+  
   public void calcAll (EventNote eventNote) {
     calcNoteAsHtml (eventNote);
   }
@@ -704,7 +855,7 @@ public class ClubEventCalc {
     }
   }
   
-  public String calcNoteHeaderLine (EventNote eventNote) {
+  public static String calcNoteHeaderLine (EventNote eventNote) {
     StringBuilder header = new StringBuilder();
     header.append ("-- ");
     if (eventNote.hasNoteFrom() && eventNote.getNoteFrom().length() > 0) {

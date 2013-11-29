@@ -16,8 +16,10 @@
 
 package com.powersurgepub.psdatalib.txbio;
 
+  import com.powersurgepub.pstextio.*;
+import com.powersurgepub.psmkdown.MarkdownDoc;
+import com.powersurgepub.psmkdown.MarkdownLine;
   import com.powersurgepub.psdatalib.elements.*;
-  import com.powersurgepub.psdatalib.pstextio.*;
   import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psdatalib.pstags.*;
   import com.powersurgepub.psutils.*;
@@ -46,9 +48,6 @@ public class MetaMarkdownReader
   public static final String    FILE_EXT        = "File Ext";
   public static final String    LAST_MOD_DATE   = "Last Mod Date";
   public static final String    FILE_SIZE       = "File Size";
-  public static final String    TITLE           = "Title";
-  public static final String    AUTHOR          = "Author";
-  public static final String    DATE            = "Date";
   public static final String    STATUS          = "Status";
   public static final String    BREADCRUMBS     = "Breadcrumbs";
   public static final String    TAGS            = "Tags";
@@ -77,10 +76,6 @@ public class MetaMarkdownReader
   private    String             fileNameBase = "";
   private    String             fileExt = "";
   private    String             lastModDate = "";
-  private    int                fileSize = 0;
-  private    String             title = "";
-  private    String             author = "";
-  private    String             date = "";
   private    ActionStatus       status = new ActionStatus();
   private    ArrayList<String>  parents = new ArrayList();
   private    StringBuilder      breadcrumbs = new StringBuilder();
@@ -94,6 +89,9 @@ public class MetaMarkdownReader
       = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss zzz");
   
   private    PegDownProcessor   pegDown;
+  
+  private    MarkdownDoc        mdDoc;
+  private    MarkdownLine       mdLine;
   
   /** The data dictionary to be used by this record. */
   private    DataDictionary     dict = new DataDictionary();
@@ -283,9 +281,9 @@ public class MetaMarkdownReader
     recDef.addColumn (FILE_EXT);
     recDef.addColumn (LAST_MOD_DATE);
     recDef.addColumn (FILE_SIZE);
-    recDef.addColumn (TITLE);
-    recDef.addColumn (AUTHOR);
-    recDef.addColumn (DATE);
+    recDef.addColumn (MarkdownDoc.TITLE);
+    recDef.addColumn (MarkdownDoc.AUTHOR);
+    recDef.addColumn (MarkdownDoc.DATE);
     recDef.addColumn (STATUS);
     recDef.addColumn (BREADCRUMBS);
 
@@ -337,6 +335,8 @@ public class MetaMarkdownReader
     dict = inDict;
     
     initRecDef();
+    
+    mdDoc = new MarkdownDoc();
     
     completePath = lineReader.toString();
     
@@ -409,7 +409,7 @@ public class MetaMarkdownReader
     fileName = completePath.substring(slash + 1);
     fileNameBase = completePath.substring(slash + 1, period);
     fileExt = completePath.substring(period + 1);
-    title = completePath.substring(slash + 1, period);
+    mdDoc.setTitle(completePath.substring(slash + 1, period));
     
     if (inFile != null && inFile.exists()) {
       Date lastMod = new Date (inFile.lastModified());
@@ -418,133 +418,44 @@ public class MetaMarkdownReader
     
     // Now let's read the file
     md = new StringBuilder();
-    boolean metadata = true;
-    int lineNumber = 0;
-    fileSize = 0;
-    String line1 = "";
     
     boolean ok = lineReader.open();
     if (ok) {
       String line = lineReader.readLine();
-      String key;
-      String data;
-      while (lineReader.isOK() && (! lineReader.isAtEnd())) {
-        if (line != null && lineReader.isOK() && (! lineReader.isAtEnd())) {
-          lineNumber++;
-          fileSize = fileSize + line.length() + 1;
-          
-          // Collect metadata from the front of the file
-          if (metadata) {
+      while (line != null
+          && lineReader.isOK() 
+          && (! lineReader.isAtEnd())) {  
+        mdLine = new MarkdownLine (mdDoc, line);
             
-            // Look for colon and beginning and end of nonblank data
-            int colon = line.indexOf(":");
-            int first = 0;
-            while (first < line.length() 
-                && Character.isWhitespace(line.charAt(first))) {
-              first++;
-            }
-            int last = line.length() - 1;
-            while (last >= 0 && Character.isWhitespace(line.charAt(last))) {
-              last--;
-            }
-            
-            // See if this is a blank line
-            boolean blankLine = (last < first);
-            
-            // See if this line underlines the previous one, indicating 
-            // a heading. 
-            boolean underlines = false;
-            if (colon < 0 && last >= first) {
-              underlines = true;
-              int j = first;
-              while (underlines && j <= last) {
-                if (line.charAt(j) == '-' || line.charAt(j) == '=') {
-                  j++;
-                } else {
-                  underlines = false;
-                }
-              }
-            }
-            
-            // Find end of first word
-            int endOfFirstWord = first;
-            while (endOfFirstWord < line.length()
-               && (! Character.isWhitespace(line.charAt(endOfFirstWord)))) {
-              endOfFirstWord++;
-            }
-            
-            // Now process potential metadata based on type of line
-            if (blankLine) {
-              markdownLine (line);
-            }
-            else
-            if (underlines) {
-              markdownLine (line);
-              if (line1.length() > 0) {
-                title = line1;
-              }
-            }
-            else
-            if (colon >= 0) {
-              key = line.substring(first, colon).trim();
-              data = line.substring(colon + 1, last + 1).trim();
-              if (key.equalsIgnoreCase(TITLE)) {
-                title = data;
-              }
-              else
-              if (key.equalsIgnoreCase(AUTHOR)
-                  || key.equalsIgnoreCase("By")
-                  || key.equalsIgnoreCase("Creator")) {
-                author = data;
-              }
-              else
-              if (key.equalsIgnoreCase(DATE)) {
-                StringDate strDate = new StringDate();
-                strDate.parse(data);
-                date = strDate.getYMD();
-              }
-              else
-              if (key.equalsIgnoreCase(STATUS)) {
-                status.setValue(data);
-              }
-              else
-              if (key.equalsIgnoreCase(TAGS)
-                  || key.equalsIgnoreCase("Keywords")
-                  || key.equalsIgnoreCase("Category")) {
-                tagStr = data;
-                tags.setValue(tagStr);
-              }
-              // System.out.println("MetaMarkdownReader.openForInput");
-              // System.out.println("  line = " + line);
-              // System.out.println("  metadataAsMarkdown? "
-              //   + String.valueOf(metadataAsMarkdown));
-              if (metadataAsMarkdown) {
-                markdownLine (line);
-              }
-            }
-            else
-            if (line.substring(first, endOfFirstWord).trim().equalsIgnoreCase("by")) {
-              author = line.substring(endOfFirstWord + 1, last + 1).trim();
-              markdownLine (line);
-            }
-            else
-            if (lineNumber == 1) {
-              line1 = line.substring(first, last + 1);
-              markdownLine (line);
-            } 
-            else {
-              metadata = false;
-            }
-            
-          }
-          
-          if (! metadata) {
-            markdownLine (line);
-          }
+        // Now process potential metadata based on type of line
+        if (mdLine.isBlankLine()) {
+          markdownLine (line);
         }
+        else
+        if (mdLine.isUnderlines()) {
+          markdownLine (line);
+        }
+        else
+        if (mdLine.isMetadata()) {
+          if (mdLine.getMetaKey().equalsIgnoreCase(STATUS)) {
+            status.setValue(mdLine.getMetaData());
+          }
+          else
+          if (mdLine.getMetaKey().equalsIgnoreCase(TAGS)
+              || mdLine.getMetaKey().equalsIgnoreCase("Keywords")
+              || mdLine.getMetaKey().equalsIgnoreCase("Category")) {
+            tagStr = mdLine.getMetaData();
+            tags.setValue(tagStr);
+          }
+        } // end if metadata
+        else {
+          markdownLine (line);
+        }
+
         line = lineReader.readLine();
       } // end while more input lines are available
     } // end if opened ok
+  
     if (ok) {
       lineReader.close();
       atEnd = false;
@@ -597,15 +508,15 @@ public class MetaMarkdownReader
   }
   
   public String getTitle() {
-    return title;
+    return mdDoc.getTitle();
   }
   
   public String getAuthor() {
-    return author;
+    return mdDoc.getAuthor();
   }
   
   public String getDate() {
-    return date;
+    return mdDoc.getDate();
   }
   
   public String getTags() {
@@ -641,10 +552,10 @@ public class MetaMarkdownReader
       dataRec.storeField(recDef, FILE_NAME_BASE, fileNameBase);
       dataRec.storeField(recDef, FILE_EXT, fileExt);
       dataRec.storeField(recDef, LAST_MOD_DATE, lastModDate);
-      dataRec.storeField(recDef, FILE_SIZE, String.valueOf(fileSize));
-      dataRec.storeField(recDef, TITLE, title);
-      dataRec.storeField(recDef, AUTHOR, author);
-      dataRec.storeField(recDef, DATE, date);
+      dataRec.storeField(recDef, FILE_SIZE, String.valueOf(mdDoc.getFileSize()));
+      dataRec.storeField(recDef, MarkdownDoc.TITLE, mdDoc.getTitle());
+      dataRec.storeField(recDef, MarkdownDoc.AUTHOR, mdDoc.getAuthor());
+      dataRec.storeField(recDef, MarkdownDoc.DATE, mdDoc.getDate());
       dataRec.storeField(recDef, STATUS, String.valueOf(status.getValueAsInt()));
       dataRec.storeField(recDef, BREADCRUMBS, breadcrumbs.toString());
       dataRec.storeField(recDef, TAGS, tagStr);
@@ -677,9 +588,9 @@ public class MetaMarkdownReader
         dataRec.storeField(recDef, FILE_NAME_BASE, fileNameBase);
         dataRec.storeField(recDef, FILE_EXT, fileExt);
         dataRec.storeField(recDef, LAST_MOD_DATE, lastModDate);
-        dataRec.storeField(recDef, FILE_SIZE, String.valueOf(fileSize));
-        dataRec.storeField(recDef, TITLE, title);
-        dataRec.storeField(recDef, AUTHOR, author);
+        dataRec.storeField(recDef, FILE_SIZE, String.valueOf(mdDoc.getFileSize()));
+        dataRec.storeField(recDef, MarkdownDoc.TITLE, mdDoc.getTitle());
+        dataRec.storeField(recDef, MarkdownDoc.AUTHOR, mdDoc.getAuthor());
         dataRec.storeField(recDef, BREADCRUMBS, breadcrumbs.toString());
         dataRec.storeField(recDef, SINGLE_TAG, nextTag);
         tagIndex++;
