@@ -282,7 +282,7 @@ public class DateEditor
     okButton.setFocusable(false);
     okButton.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        hide();
+        setVisible(false);
       }
     });
     gb3.add(okButton);

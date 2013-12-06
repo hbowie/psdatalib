@@ -53,7 +53,6 @@ public class AboutWindow
   
   private boolean   loadFromDisk = true;
   
-  private boolean   browserLauncher2Used = true;
   private boolean   jxlUsed              = true;
   private boolean   pegdownUsed          = true;
   private boolean   xercesUsed           = false;
@@ -74,7 +73,6 @@ public class AboutWindow
    Constructor specifying optional parameters to tailor the About window. 
   
    @param loadFromDisk Should the about file be loaded from disk?
-   @param browserLauncher2Used Does this app use BrowserLauncher2?
    @param jxlUsed              Does this app use jxl?
    @param pegdownUsed          Does this app use pegdown?
    @param xercesUsed           Does this app use xerces for xml parsing?
@@ -83,25 +81,18 @@ public class AboutWindow
   */
   public AboutWindow (
       boolean loadFromDisk, 
-      boolean browserLauncher2Used,
       boolean jxlUsed,
       boolean pegdownUsed,
       boolean xercesUsed,
       boolean saxonUsed,
       String  copyRightYearFrom) {
     this.loadFromDisk = loadFromDisk;
-    this.browserLauncher2Used = browserLauncher2Used;
     this.jxlUsed = jxlUsed;
     this.pegdownUsed = pegdownUsed;
     this.xercesUsed = xercesUsed;
     this.saxonUsed = saxonUsed;
     home.setCopyrightYearFrom(copyRightYearFrom);
     setupWindow ();
-  }
-  
-  public void setBrowserLauncher2Used (boolean browserLauncher2Used) {
-    this.browserLauncher2Used = browserLauncher2Used;
-    setupWindow();
   }
   
   public void setJXLUsed (boolean jxlUsed) {
@@ -238,32 +229,6 @@ public class AboutWindow
       t.append("</td></tr>");
       
       boolean firstCredit = true;
-        
-      if (browserLauncher2Used) {
-        t.append("<tr><td columns=2>&nbsp;</td></tr>");
-        t.append("<tr><td width=70 align=left valign=top>");
-        t.append(fontBegin);
-        if (firstCredit) {
-          t.append("Credits:");
-          firstCredit = false;
-        } else {
-          t.append("&nbsp;");
-        }
-        t.append(fontEnd);
-        t.append("</td>");
-        t.append("<td>");
-        t.append(fontBegin);
-        t.append("<a href=\"http://sourceforge.net/projects/browserlaunch2\">");
-        t.append("BrowserLauncher2");
-        t.append("</a>");
-        t.append(" Copyright 2004 - 2007 Markus Gebhard, Jeff Chapman, ");
-        t.append("used under the terms of the ");
-        t.append("<a href=\"http://www.gnu.org/licenses/lgpl.html\">");
-        t.append("GNU Lesser General Public License");
-        t.append("</a>");
-        t.append(fontEnd);
-        t.append("</td></tr>");
-      }
       
       if (jxlUsed) {
         t.append("<tr><td columns=2>&nbsp;</td></tr>");
