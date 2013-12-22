@@ -465,6 +465,8 @@ public class TextMergeScript
 		gb.add (scriptTextScrollPane);
     
     tabs.add("Script", scriptPanel);
+    
+    addEasyPlayTabIfRequested();
   }
   
   private void setListOptions() {
@@ -530,9 +532,17 @@ public class TextMergeScript
         } else {
           scriptEasyPlayButton.setText("Turn Easy Play Off");
           addEasyPlayTab(easyPlay);
-        }
-      }
+        } // end if easy play folder
+      } // end if tabset
     }
+  }
+  
+  private void addEasyPlayTabIfRequested() {
+    if (tabSet) {
+      if (easyPlay.length() > 0) { 
+        addEasyPlayTab(easyPlay);
+      } // end if easy play folder
+    } // end if tabset
   }
   
   /**
