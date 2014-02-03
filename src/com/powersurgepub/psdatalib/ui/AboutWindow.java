@@ -28,7 +28,9 @@ package com.powersurgepub.psdatalib.ui;
 
 /**
    A panel to display information about the version of the 
-   software being executed. 
+   software being executed.  Note that COPYRIGHT_YEAR_THRU
+   should be updated to the current year at the beginning 
+   of each new year. 
  */
 public class AboutWindow 
     extends javax.swing.JFrame 
@@ -37,7 +39,7 @@ public class AboutWindow
         WindowToManage
   {
   
-  public  static final String COPYRIGHT_YEAR_THRU = "2013";
+  public  static final String COPYRIGHT_YEAR_THRU = "2014";
   
   private String    copyRightYears = "";
   private String    fontBegin = "<font face=\"Arial\" size=\"4\">";
@@ -165,7 +167,7 @@ public class AboutWindow
         copyRightYears = home.getCopyrightYearFrom() + " - " + COPYRIGHT_YEAR_THRU;
       }
       t.append(copyRightYears);
-      t.append(" - 2013 Herb Bowie");
+      t.append(" Herb Bowie");
       t.append(fontEnd);
       t.append("</p>");
       
