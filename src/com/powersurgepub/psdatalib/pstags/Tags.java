@@ -778,6 +778,10 @@ public class Tags
   public int length () {
     return tags.length();
   }
+  
+  public boolean areBlank() {
+    return isBlank();
+  }
 
   /**
    Is the tags string empty (length of zero)?
