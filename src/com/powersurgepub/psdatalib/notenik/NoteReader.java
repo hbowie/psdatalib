@@ -90,9 +90,14 @@ public class NoteReader {
     String nextDirEntry = dirEntries.get (entryIndex);
     File dirEntryFile = new File (currDirAsFile, nextDirEntry);
     if (dirEntryFile.isDirectory()) {
-      DirToExplode newDirToExplode = new DirToExplode 
-          (currDirDepth + 1, dirEntryFile.getAbsolutePath());
-      dirList.add (newDirToExplode);
+      if (nextDirEntry.equalsIgnoreCase("templates")
+          || nextDirEntry.equalsIgnoreCase("publish")) {
+        // skip
+      } else {
+        DirToExplode newDirToExplode = new DirToExplode 
+            (currDirDepth + 1, dirEntryFile.getAbsolutePath());
+        dirList.add (newDirToExplode);
+      }
     } 
     else
     if (isInterestedIn (dirEntryFile)) {
