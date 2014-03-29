@@ -17,6 +17,7 @@
 package com.powersurgepub.psdatalib.pstags;
 
   import com.powersurgepub.psdatalib.elements.*;
+  import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psutils.*;
 
 /**
@@ -43,7 +44,9 @@ package com.powersurgepub.psdatalib.pstags;
                    one level at a time. 
  */
 public class Tags
-      implements DataElement {
+      implements 
+        DataElement,
+        DataValue {
 
   public final static String  SIMPLE_NAME   = "tags";
   public final static String  DISPLAY_NAME  = "Tags";
@@ -768,6 +771,18 @@ public class Tags
    */
   public int compareTo (Tags cat2) {
     return tags.toString().compareToIgnoreCase (cat2.toString());
+  }
+  
+  /**
+     Compares this data value to another and indicates which is greater.
+    
+     @return Zero if the fields are equal, negative if this field is less than value2,
+             or positive if this field is greater than value2.
+    
+     @param  value2 Another data value to be compared to this one.
+   */
+  public int compareTo(DataValue value2) {
+    return toString().compareToIgnoreCase(value2.toString());
   }
 
   /**

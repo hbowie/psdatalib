@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2014 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -134,7 +134,7 @@ public class DataField {
   protected    DataFieldDefinition    def;
 
   /** The data in the field, stored as a string. */
-  protected    String                 data;
+  protected    DataValue              data = null;
   
   /** Can the string represent an integer? */
   protected    boolean                aNumber = false;
@@ -152,7 +152,7 @@ public class DataField {
      A prior version of the data in this field, saved in case it needs
      to be restored.
    */
-  protected  String                 oldData;
+  protected    DataValue              oldData;
   
   /** Has the oldData field been set to something (a prior value)? */
   protected  boolean                oldDataSet;
@@ -188,10 +188,19 @@ public class DataField {
    */
   public DataField (DataFieldDefinition def, String data) {
     this.def = def;
+    this.data = def.getEmptyDataValue();
     setData (data);
     oldData = null;
     oldDataSet = false;
     fields = new ArrayList ();
+  }
+  
+  public DataField (DataFieldDefinition def, DataValue data) {
+    this.def = def;
+    setData(data);
+    oldData = null;
+    oldDataSet = false;
+    fields = new ArrayList();
   }
   
   public int getNumberOfFields () {
@@ -232,11 +241,11 @@ public class DataField {
     if (! common1.equals (common2)) {
       return DIFFERENT_NAMES;
     }
-    String dataStr2 = (String)field2.getData();
+    String dataStr2 = field2.getData();
     if (dataStr2.equals ("")) {
       return NO_DATA_LOSS;
     }
-    String dataStr1 = (String)data;
+    String dataStr1 = data.toString();
     if (dataStr1.equalsIgnoreCase (dataStr2)) {
       return NO_DATA_LOSS;
     }
@@ -379,7 +388,7 @@ public class DataField {
      Sets string to represent current integer value.
    */
   private void setStringFromInt() {
-    data = String.valueOf (dataInteger);
+    data.set(String.valueOf (dataInteger));
     // System.out.println("DataField.setStringFromInt string = \"" + data + "\"");
     processData();
   }
@@ -389,7 +398,9 @@ public class DataField {
     
      @return Actual data stored in this field.
    */
-  public String getData () { return data; }
+  public String getData () { return data.toString(); }
+  
+  public DataValue getDataValue () { return data; }
   
   /**
      Returns the field as a boolean value.
@@ -397,15 +408,16 @@ public class DataField {
      @return The data field stored as a boolean.
    */
   public boolean getDataBoolean() { 
-    if (data.length() >= 2) {
-      if (data.substring(0, 2).equalsIgnoreCase("on")) {
+    String dataStr = data.toString();
+    if (dataStr.length() >= 2) {
+      if (dataStr.substring(0, 2).equalsIgnoreCase("on")) {
         return true;
       }
     }
-    if (data.length() >= 1) {
-      if (data.substring(0, 1).equalsIgnoreCase("y")
-          || data.substring(0, 1).equalsIgnoreCase("t")
-          || data.substring(0, 1).equals("1")) {
+    if (dataStr.length() >= 1) {
+      if (dataStr.substring(0, 1).equalsIgnoreCase("y")
+          || dataStr.substring(0, 1).equalsIgnoreCase("t")
+          || dataStr.substring(0, 1).equals("1")) {
         return true;
       }
     }
@@ -487,7 +499,7 @@ public class DataField {
     
      @return Length of data field as a string.
    */
-  public int length() { return data.length(); }
+  public int length() { return data.toString().length(); }
   
   /**
    * Sets the data portion of the field to a new value, without removing
@@ -496,8 +508,12 @@ public class DataField {
    * @param data New data value to be set.
    */
   public void setDataRaw (String data) {
-    this.data = data;
+    this.data.set (data);
     processData();
+  }
+  
+  public void setData (DataValue value) {
+    this.data = value;
   }
   
   /**
@@ -506,8 +522,15 @@ public class DataField {
      @param data New data value to be set.
    */
   public void setData (String data) {
-    this.data = StringUtils.purifyInvisibles (def.getRule().transform (data));
-    processData();
+    if (data == null) {
+      this.data.set("");
+    } else {
+      DataFormatRule rule = def.getRule();
+      String transformed = rule.transform(data);
+      String purified = StringUtils.purifyInvisibles(transformed);
+      this.data.set (purified);
+      processData();
+    }
     
   } // end method setData
   
@@ -521,10 +544,11 @@ public class DataField {
     dataInteger = 0;
     dataLong = 0;
     int digitCount = 0;
-    int l = data.length();
+    String dataStr = data.toString();
+    int l = dataStr.length();
     aNumber = true;
     while ((i < l) && (aNumber)) {
-      c = data.charAt(i);
+      c = dataStr.charAt(i);
       if (Character.isDigit(c)) {
         dataInteger = (dataInteger * 10) + Character.getNumericValue(c);
         dataLong    = (dataLong    * 10) + Character.getNumericValue(c);
@@ -644,7 +668,7 @@ public class DataField {
       }
     } // end opIndex < 6
     else {                      // text comparison
-      String datalc = data.toLowerCase();
+      String datalc = data.toString().toLowerCase();
       String operandlc = operand.getData().toLowerCase();
       if (opIndex == 6) {
         int ix = datalc.indexOf (operandlc);
@@ -711,7 +735,7 @@ public class DataField {
         return 0;
       }
     } else { 
-      return data.compareTo (field2.getData());
+      return data.compareTo (field2.getDataValue());
     }
   } // end compareTo method
   
@@ -924,6 +948,24 @@ public class DataField {
     DataField field = new DataField (recDef, columnNumber, data);
     fields.add (field);
     recDef.anotherField (data, columnNumber);
+    return columnNumber;
+  }
+  
+  /**
+   Adds a field to this field/record, given a definition and a String 
+   representing the data. 
+  
+   @param inDef - The field definition to be used. 
+   @param inData - A string representation of the data value. 
+  
+   @return The position of the new field within the list of all fields. 
+  */
+  public int addField (DataFieldDefinition inDef, String inData) {
+    DataValue value = inDef.getEmptyDataValue();
+    value.set(inData);
+    DataField field = new DataField(inDef, value);
+    int columnNumber = fields.size();
+    fields.add(field);
     return columnNumber;
   }
   

@@ -17,6 +17,7 @@
 package com.powersurgepub.psdatalib.pslist;
 
   import com.powersurgepub.psdatalib.psdata.*;
+  import com.powersurgepub.psdatalib.pstags.*;
   import com.powersurgepub.psfiles.*;
   import com.powersurgepub.psutils.*;
   import java.io.*;
@@ -32,7 +33,7 @@ public class DataRecList
     extends
       AbstractTableModel
     implements
-        PSList, DataSource {
+        PSList, DataSource, TaggableList {
   
   private     FileSpec            fileSpec = null;
   

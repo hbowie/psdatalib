@@ -16,8 +16,8 @@
 
 package com.powersurgepub.psdatalib.psdata;
 
-  import java.lang.*;
   import com.powersurgepub.psutils.*;
+  import com.powersurgepub.psdatalib.pstags.*;
   
   
 /**
@@ -51,6 +51,18 @@ public class DataFieldDefinition {
   
   /** A rule for standardizing the format of this type of data. */
   private    	DataFormatRule  rule;
+  
+  /** An indicator of the type of data field. */
+  private     int             dataFieldType = DEFAULT_TYPE;
+  
+  public static final int     MIN_TYPE            = 0;
+  public static final int     DEFAULT_TYPE        = 0;
+  public static final int     STRING_TYPE         = 1;
+  public static final int     TITLE_TYPE          = 2;
+  public static final int     STRING_BUILDER_TYPE = 3;
+  public static final int     TAGS_TYPE           = 4;
+  public static final int     LINK_TYPE           = 5;
+  public static final int     MAX_TYPE            = 5;
   
   /** 
      If two fields of this type are to be combined, is it OK to do 
@@ -125,11 +137,56 @@ public class DataFieldDefinition {
      @param combineByAppendingOK Can two of these fields be combined by appending?
    */
   public DataFieldDefinition 
-    (String properName, DataFormatRule rule, boolean combineByAppendingOK) {
+      (String properName, DataFormatRule rule, boolean combineByAppendingOK) {
     this.properName = properName;
     commonName =  new CommonName (properName);
     this.rule  = rule;
     this.combineByAppendingOK = combineByAppendingOK;
+    
+    if (commonName.equals("link")) {
+      setType (LINK_TYPE);
+    }
+    else
+    if (commonName.equals("title")) {
+      setType (TITLE_TYPE);
+    }
+    else
+    if (commonName.equals("tags")) {
+      setType (TAGS_TYPE);
+    }
+    else
+    if (commonName.equals("body")) {
+      setType (STRING_BUILDER_TYPE);
+    }
+  }
+  
+  public void setType(int type) {
+    if (type >= MIN_TYPE && type <= MAX_TYPE) {
+      this.dataFieldType = type;
+    }
+  }
+  
+  public int getType() {
+    return dataFieldType;
+  }
+  
+  public DataValue getEmptyDataValue() {
+    switch (dataFieldType) {
+      case DEFAULT_TYPE:
+        return new DataValueString();
+      case STRING_TYPE:
+        return new DataValueString();
+      case TITLE_TYPE:
+        return new DataValueString();
+      case STRING_BUILDER_TYPE:
+        return new DataValueStringBuilder();
+      case TAGS_TYPE:
+        return new Tags();
+      case LINK_TYPE:
+        return new Link();
+      default:
+        return new DataValueString();
+    }
   }
   
   /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2014 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,11 @@
 
 package com.powersurgepub.psdatalib.psdata;
 
-  import java.util.*;
   import com.powersurgepub.psdatalib.pslist.*;
   import com.powersurgepub.psdatalib.pstags.*;
   import com.powersurgepub.psutils.*;
+  import com.powersurgepub.urlvalidator.*;
+  import java.util.*;  
   
 /**
    A record or row, consisting of one or more
@@ -65,7 +66,10 @@ package com.powersurgepub.psdatalib.psdata;
 public class DataRecord 
     extends DataField 
     implements
-      PSItem {
+      Comparable,
+      ItemWithURL,
+      PSItem,
+      Taggable {
   
   /** An index pointing to a particular field number within the record. */
   private   int           fieldNumber;
@@ -462,6 +466,21 @@ public class DataRecord
    */
   public TagsNode getTagsNode () {
     return null;
+  }
+  
+  /**
+   Returns the url as a string.
+  */
+  public String getURLasString () {
+    return "";
+  }
+  
+  public boolean hasTitle() {
+    return hasFields();
+  }
+  
+  public boolean hasFields() {
+    return (fields.size() > 0);
   }
   
 }

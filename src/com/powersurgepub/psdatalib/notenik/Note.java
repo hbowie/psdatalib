@@ -16,6 +16,7 @@
 
 package com.powersurgepub.psdatalib.notenik;
 
+  import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psdatalib.pstags.*;
   import com.powersurgepub.psutils.*;
   import com.powersurgepub.urlvalidator.*;
@@ -29,10 +30,30 @@ package com.powersurgepub.psdatalib.notenik;
  @author Herb Bowie
  */
 public class Note 
+    extends
+      DataRecord
     implements 
       Comparable, 
       Taggable, 
       ItemWithURL {
+  
+  public static final String  TITLE_FIELD_NAME  = "Title";
+  public static final String  TITLE_COMMON_NAME = "title";
+  public static final String  LINK_FIELD_NAME   = "Link";
+  public static final String  LINK_COMMON_NAME  = "link";
+  public static final String  TAGS_FIELD_NAME   = "Tags";
+  public static final String  TAGS_COMMON_NAME  = "tags";
+  public static final String  BODY_FIELD_NAME   = "Body";
+  public static final String  BODY_COMMON_NAME  = "body";
+  
+  public static final DataFieldDefinition TITLE_DEF 
+      = new DataFieldDefinition(TITLE_FIELD_NAME);
+  public static final DataFieldDefinition LINK_DEF 
+      = new DataFieldDefinition(LINK_FIELD_NAME);
+  public static final DataFieldDefinition TAGS_DEF
+      = new DataFieldDefinition(TAGS_FIELD_NAME);
+  public static final DataFieldDefinition BODY_DEF
+      = new DataFieldDefinition(BODY_FIELD_NAME);
   
   public static final boolean SLASH_TO_SEPARATE = false;
   
@@ -52,41 +73,75 @@ public class Note
   public final static DateFormat STANDARD_FORMAT
       = new SimpleDateFormat (STANDARD_FORMAT_STRING);
   
-  public static final String  TITLE_FIELD_NAME  = "Title";
-  public static final String  TITLE_COMMON_NAME = "title";
-  public static final String  LINK_FIELD_NAME   = "Link";
-  public static final String  LINK_COMMON_NAME  = "link";
-  public static final String  TAGS_FIELD_NAME   = "Tags";
-  public static final String  TAGS_COMMON_NAME  = "tags";
-  public static final String  BODY_FIELD_NAME   = "Body";
-  public static final String  BODY_COMMON_NAME  = "body";
-  
   private String        fileName = "";
-  private String        title    = "";
-  private Tags          tags     = new Tags(SLASH_TO_SEPARATE);
-  private Link          link     = new Link();
-  private StringBuilder body     = new StringBuilder();
   
   private String        diskLocation = "";
   
   private Date          lastModDate;
   
   private TagsNode      tagsNode = null;
-
+  
+  private DataValueString     titleValue = null;
+  private DataField           titleField = null;
+  
+  private Link                linkValue = null;
+  private DataField           linkField = null;
+  private boolean             linkAdded = false;
+  
+  private Tags                tagsValue = null;
+  private DataField           tagsField = null;
+  private boolean             tagsAdded = false;
+  
+  private DataValueStringBuilder bodyValue = null;
+  private DataField           bodyField;
+  private boolean bodyAdded = false;
+  
+  static {
+    TITLE_DEF.setType (DataFieldDefinition.TITLE_TYPE);
+    LINK_DEF.setType  (DataFieldDefinition.LINK_TYPE);
+    TAGS_DEF.setType  (DataFieldDefinition.TAGS_TYPE);
+    BODY_DEF.setType  (DataFieldDefinition.STRING_BUILDER_TYPE);
+  }
   
   public Note() {
+    initNoteFields();
     setLastModDateToday();
   }
   
   public Note(String title) {
+    initNoteFields();
     setTitle(title);
     setLastModDateToday();
   }
   
   public Note(String title, String body) {
+    initNoteFields();
     setTitle(title);
     setBody(body);
     setLastModDateToday();
+  }
+  
+  private void initNoteFields() {
+    
+    // Build the Title field
+    titleValue = new DataValueString();
+    titleField = new DataField(TITLE_DEF, titleValue);
+    addField(titleField);
+    
+    // Build the Link field
+    linkValue = new Link();
+    linkField = new DataField(LINK_DEF, linkValue);
+    linkAdded = false;
+    
+    // Build the Tags field
+    tagsValue = new Tags();
+    tagsField = new DataField(TAGS_DEF, tagsValue);
+    tagsAdded = false;
+    
+    // Build the body field
+    bodyValue = new DataValueStringBuilder();
+    bodyField = new DataField(BODY_DEF, bodyValue);
+    bodyAdded = false;
   }
   
   public boolean equals (Object obj2) {
@@ -116,6 +171,22 @@ public class Note
     return comparison;
   }
   
+  /**
+   Compare this Note object to another, using the titles for comparison.
+  
+   @param The second object to compare to this one.
+  
+   @return A number less than zero if this object is less than the second,
+           a number greater than zero if this object is greater than the second,
+           or zero if the two titles are equal (ignoring case differences).
+   */
+  public int compareTo (Note note2) {
+    int comparison = -1;
+      comparison = this.getKey().compareToIgnoreCase(note2.getKey());
+
+    return comparison;
+  }
+  
   public boolean hasKey() {
     return (getKey() != null
         && getKey().length() > 0);
@@ -138,7 +209,7 @@ public class Note
     }
 
     // Merge tags
-    tags.merge (note2.getTags());
+    getTags().merge (note2.getTags());
 
     // Merge comments
     if (getBody().equals(note2.getBody())) {
@@ -157,7 +228,7 @@ public class Note
   }
   
   public void setTitle(String title) {
-    this.title = title;
+    titleValue.set(title);
 		if (title == null) {
 			fileName = "";
 		}
@@ -170,11 +241,12 @@ public class Note
   }
   
   public boolean equalsTitle (String title2) {
-    return title.equals (title2.trim());
+
+    return titleValue.toString().equals (title2.trim());
   }
   
   public String getTitle() {
-    return title;
+    return titleValue.toString();
   }
   
 	/**
@@ -187,19 +259,31 @@ public class Note
 	}
   
   public void setTags(String tags) {
-    this.tags.set(tags);
+    tagsValue.set(tags);
+    if (! tagsAdded) {
+      addField(tagsField);
+      tagsAdded = true;
+    }
   }
   
   public boolean hasTags() {
-    return (! tags.areBlank());
+    if (tagsAdded && tagsValue != null) {
+      return (! tagsValue.areBlank());
+    } else {
+      return false;
+    }
   }
   
   public Tags getTags() {
-    return tags;
+    return tagsValue;
   }
   
   public String getTagsAsString() {
-    return tags.toString();
+    if (tagsAdded && tagsValue != null) {
+      return tagsValue.toString();
+    } else {
+      return "";
+    }
   }
   
   public void setTagsNode (TagsNode tagsNode) {
@@ -211,60 +295,92 @@ public class Note
   }
   
   public void flattenTags () {
-    tags.flatten();
+    tagsValue.flatten();
   }
 
   public void lowerCaseTags () {
-    tags.makeLowerCase();
+    tagsValue.makeLowerCase();
   }
   
   public void setLink(String link) {
-    this.link.setLink(link);
+
+    linkValue.set(link);
+    if (! linkAdded) {
+      addField(linkField);
+      linkAdded = true;
+    }
   }
   
   public void setLink(Link link) {
-    this.link.setLink(link.toString());
+    linkValue.set(link.toString());
+    if (! linkAdded) {
+      addField(linkField);
+      linkAdded = true;
+    }
   }
   
   public boolean hasLink() {
-    return (link != null && link.hasLink());
+    return (linkAdded && linkValue != null && linkValue.hasLink());
   }
   
   public boolean blankLink () {
-    return (link == null || (link.blankLink()));
+    return ((! linkAdded) || linkValue == null || (linkValue.blankLink()));
   }
   
   public Link getLink() {
-    return link;
+    return linkValue;
   }
   
   public String getLinkAsString() {
-    return link.getURLasString();
+    if (linkAdded && linkValue != null) {
+      return linkValue.getURLasString();
+    } else {
+      return "";
+    }
   }
   
   public boolean equalsTags (String tags2) {
-    return tags.toString().equals (tags2.trim());
+    return tagsValue.toString().equals (tags2.trim());
   }
   
   public String getURLasString () {
-    return link.getURLasString();
+    if (linkAdded && linkValue != null) {
+      return linkValue.getURLasString();
+    } else {
+      return "";
+    }
   }
   
   public void setBody(String body) {
-    this.body = new StringBuilder(body);
+    bodyValue.set(body);
+    if (! bodyAdded) {
+      addField(bodyField);
+      bodyAdded = true;
+    }
   }
   
   public void appendLineToBody(String line) {
-    body.append(line);
-    body.append(GlobalConstants.LINE_FEED);
+    bodyValue.appendLine(line);
+    if (! bodyAdded) {
+      addField(bodyField);
+      bodyAdded = true;
+    }
   }
   
   public boolean hasBody() {
-    return (body.length() > 0);
+    if (bodyAdded && bodyValue != null) {
+      return (bodyValue.toString().length() > 0);
+    } else {
+      return false;
+    }
   }
   
   public String getBody() {
-    return body.toString();
+    if (bodyAdded && bodyValue != null) {
+      return bodyValue.toString();
+    } else {
+      return "";
+    }
   }
   
   /**
@@ -394,7 +510,7 @@ public class Note
   } // end method
   
   public String toString() {
-    return title;
+    return titleValue.toString();
   }
 
 }

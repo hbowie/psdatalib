@@ -65,8 +65,6 @@ public class NoteList
            pointing to its resulting position in the list.
    */
   public NotePositioned add (Note newNote) {
-    // System.out.println ("adding: " + newNote.toString());
-    // System.out.println ("URLCollection add " + newNote.toString());
     // newNote.getTags().displayTags();
     Note resultingNote = newNote;
     boolean merged = false;

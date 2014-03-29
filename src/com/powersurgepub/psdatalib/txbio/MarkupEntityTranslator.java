@@ -53,6 +53,7 @@ public class MarkupEntityTranslator {
     list.add (new MarkupEntity ("gt",      62, ">"));
     list.add (new MarkupEntity ("nbsp",   160, " "));
     list.add (new MarkupEntity ("mdash", 8212, "--"));
+    list.add (new MarkupEntity ("",      8217, "'"));
   }
 
   /**
