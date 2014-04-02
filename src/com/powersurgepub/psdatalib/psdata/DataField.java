@@ -203,6 +203,16 @@ public class DataField {
     fields = new ArrayList();
   }
   
+  public void displayFields() {
+    System.out.println("DataField.displayFields");
+    for (int i = 0; i < fields.size(); i++) {
+      DataField nextField = getField(i);
+      System.out.println("- " + nextField.getProperName()
+          + ": " + nextField.getData());
+    }
+    System.out.println(" ");
+  }
+  
   public int getNumberOfFields () {
     return fields.size();
   }

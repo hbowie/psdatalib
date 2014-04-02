@@ -48,7 +48,11 @@ public class DataValueStringBuilder
   }
   
   public void appendLine(String line) {
-    value.append(line);
+    if (value == null) {
+      value = new StringBuilder(value);
+    } else {
+      value.append(line);
+    }
     value.append(GlobalConstants.LINE_FEED);
   }
   

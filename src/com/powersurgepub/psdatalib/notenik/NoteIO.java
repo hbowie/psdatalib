@@ -241,6 +241,11 @@ public class NoteIO {
     }
   }
   
+  public Note getNote(String fileName) 
+      throws IOException, FileNotFoundException {
+    return getNote(getFile(fileName));
+  }
+  
   /**
    Read one note from disk and return it as a note object. 
   
@@ -345,7 +350,12 @@ public class NoteIO {
               note.setBody(line.substring(fieldValueStart, end));
               bodyStarted = true;
             }
-            else {
+            else 
+            if (fieldName.length() > 0) {
+              note.storeField
+                  (line.substring(start, fieldNameEnd), 
+                   line.substring(fieldValueStart, end));
+            } else {
               note.appendLineToBody(line);
               bodyStarted = true;
             }
@@ -563,6 +573,10 @@ public class NoteIO {
   
   public File getFile (Note note) {
     return new File (homeFolder, note.getFileName() + FILE_EXT);
+  }
+  
+  public File getFile(String localPath) {
+    return getFile (homeFolder, localPath);
   }
  
   /**
