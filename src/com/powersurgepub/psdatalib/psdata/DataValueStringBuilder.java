@@ -49,7 +49,7 @@ public class DataValueStringBuilder
   
   public void appendLine(String line) {
     if (value == null) {
-      value = new StringBuilder(value);
+      value = new StringBuilder(line);
     } else {
       value.append(line);
     }

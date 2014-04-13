@@ -498,7 +498,6 @@ private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event
 }//GEN-LAST:event_formWindowClosed
 
 private void formComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentHidden
-  System.out.println ("AboutWindow.formComponentHidden");
   WindowMenuManager.getShared().hide(this);
 }//GEN-LAST:event_formComponentHidden
   

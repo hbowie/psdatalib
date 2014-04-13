@@ -227,6 +227,27 @@ public class Note
     }
   }
   
+  /**
+     Duplicates this item, making a deep copy.
+   */
+  public Note duplicate () {
+    Note newNote = new Note();
+    
+    String titleStr = new String(getTitle());
+    newNote.setTitle(titleStr);
+    
+    String tagsStr = new String(getTagsAsString());
+    newNote.setTags(tagsStr);
+    
+    String linkStr = new String(getLinkAsString());
+    newNote.setLink(linkStr);
+    
+    String bodyStr = new String(this.getBody());
+    newNote.setBody(bodyStr);
+	
+		return newNote;
+  }
+  
   public void setTitle(String title) {
     titleValue.set(title);
 		if (title == null) {
@@ -444,7 +465,7 @@ public class Note
     try {
       setLastModDate (fmt.parse (date));
     } catch (ParseException e) {
-      System.out.println ("URLPlus.setLastModDate to " + date + " with " + fmt
+      System.out.println ("Note.setLastModDate to " + date + " with " + fmt
           + " -- Parse Exception");
     }
 

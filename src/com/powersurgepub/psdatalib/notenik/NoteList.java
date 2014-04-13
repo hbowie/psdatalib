@@ -328,6 +328,14 @@ public class NoteList
     }
   } // end method get (int)
   
+  public Note getUnfiltered (int index) {
+    if (index >= 0 && index < notes.size()) {
+      return (Note)notes.get(index);
+    } else {
+      return null;
+    }
+  } // end method get (int)
+  
   public void setTitle (String title) {
     this.title = title;
   }
@@ -337,6 +345,10 @@ public class NoteList
   }
 
   public int size() {
+    return notes.size();
+  }
+  
+  public int totalSize() {
     return notes.size();
   }
 

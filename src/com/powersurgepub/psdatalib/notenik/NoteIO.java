@@ -56,6 +56,13 @@ public class NoteIO {
   private             BufferedReader      inBuffered;
   private             BufferedWriter      outBuffered;
   
+  private             int                 ioStyle = IO_STYLE_UNDETERMINED;
+  public static final int IO_STYLE_UNDETERMINED   = -1;
+  public static final int IO_EXPLICIT             = 0;
+  public static final int IO_IMPLICIT             = 1;
+  public static final int IO_IMPLICIT_UNDERLINES  = 2;
+  public static final int IO_IMPLICIT_FILENAME    = 3;
+  
   public NoteIO (File folder) {
     this.homeFolder = folder;
   } 
@@ -266,6 +273,7 @@ public class NoteIO {
       FileName noteFileName = new FileName(noteFile);
       String fileNameIn = noteFileName.getBase();
       note = new Note();
+      note.setDiskLocation(noteFile);
       
       // Use the file name (minus the path and extension) as the default title
       note.setTitle(fileNameIn);
@@ -309,7 +317,7 @@ public class NoteIO {
             underlineChar = line.charAt(start);
             underlines = true;
             underlineCount = 1;
-            while (underlines && (start + underlineCount) <= end) {
+            while (underlines && (start + underlineCount) < end) {
               if (line.charAt(start + underlineCount) == underlineChar) {
                 underlineCount++;
               } else {
@@ -321,6 +329,20 @@ public class NoteIO {
           // If the line contains a colon, look for field name and value
           int colonPosition = line.indexOf(":", start);
           String fieldName = "";
+          
+          // See if the line contains a level 1 heading
+          if ((start + 2) < end
+              && line.charAt(start) == '#'
+              && line.charAt(start + 1) == ' '
+              && lineCount == 1
+              && fileNameIn.equals 
+                (StringUtils.makeReadableFileName(line.substring(start + 2, end)))) {
+            note.setTitle(line.substring(start + 2, end));
+            if (ioStyle == IO_STYLE_UNDETERMINED) {
+              ioStyle = IO_IMPLICIT;
+            }
+          }
+          else
           if (colonPosition > 0) {
             int fieldNameEnd = colonPosition;
             while (fieldNameEnd > start 
@@ -424,10 +446,10 @@ public class NoteIO {
     File file = getFile(folder, note);
     // System.out.println ("NoteWriter.save to " + file.toString());
     openOutput (file);
-    // String oldDiskLocation = note.getDiskLocation();
+    String oldDiskLocation = note.getDiskLocation();
     saveOneItem (note);
     if (primaryLocation) {
-      // note.setDiskLocation (file);
+      note.setDiskLocation (file);
     }
     closeOutput();
  
@@ -454,6 +476,11 @@ public class NoteIO {
       DataField nextField = note.getField(i);
       if (nextField != null) {
         writeFieldName (nextField.getProperName());
+        if (nextField.getCommonFormOfName().equals("body")
+            || nextField.getCommonFormOfName().equals("comments")) {
+          writeLine("");
+          writeLine(" ");
+        }
         writeFieldValue (nextField.getData());
         writeLine("");
       }
@@ -540,6 +567,10 @@ public class NoteIO {
     return getFile(folder, localPath).exists();
   }
   
+  public boolean exists (String localPath) {
+    return getFile(homeFolder, localPath).exists();
+  }
+  
   public boolean delete (Note note) {
     return getFile(homeFolder, note).delete();
   }
@@ -576,7 +607,9 @@ public class NoteIO {
   }
   
   public File getFile(String localPath) {
+
     return getFile (homeFolder, localPath);
+
   }
  
   /**
