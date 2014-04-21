@@ -16,6 +16,7 @@
 
 package com.powersurgepub.psdatalib.notenik;
 
+  import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psdatalib.pstags.TagsNode;
 
 /**
@@ -35,8 +36,8 @@ public class NotePositioned {
   private   int      navigator = NAVIGATE_USING_LIST;
   private   boolean  newNote = true;
 
-  public NotePositioned () {
-    this.note = new Note();
+  public NotePositioned (RecordDefinition recDef) {
+    this.note = new Note(recDef);
     this.index = -1;
     this.tagsNode = null;
   }

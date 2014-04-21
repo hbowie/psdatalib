@@ -96,6 +96,8 @@ public class Note
   private DataField           bodyField;
   private boolean bodyAdded = false;
   
+  private RecordDefinition    recDef = null;
+  
   static {
     TITLE_DEF.setType (DataFieldDefinition.TITLE_TYPE);
     LINK_DEF.setType  (DataFieldDefinition.LINK_TYPE);
@@ -103,18 +105,21 @@ public class Note
     BODY_DEF.setType  (DataFieldDefinition.STRING_BUILDER_TYPE);
   }
   
-  public Note() {
+  public Note(RecordDefinition recDef) {
+    this.recDef = recDef;
     initNoteFields();
     setLastModDateToday();
   }
   
-  public Note(String title) {
+  public Note(RecordDefinition recDef, String title) {
+    this.recDef = recDef;
     initNoteFields();
     setTitle(title);
     setLastModDateToday();
   }
   
-  public Note(String title, String body) {
+  public Note(RecordDefinition recDef, String title, String body) {
+    this.recDef = recDef;
     initNoteFields();
     setTitle(title);
     setBody(body);
@@ -126,7 +131,8 @@ public class Note
     // Build the Title field
     titleValue = new DataValueString();
     titleField = new DataField(TITLE_DEF, titleValue);
-    addField(titleField);
+    storeField (recDef, titleField);
+    // addField(titleField);
     
     // Build the Link field
     linkValue = new Link();
@@ -231,7 +237,7 @@ public class Note
      Duplicates this item, making a deep copy.
    */
   public Note duplicate () {
-    Note newNote = new Note();
+    Note newNote = new Note(recDef);
     
     String titleStr = new String(getTitle());
     newNote.setTitle(titleStr);
@@ -282,7 +288,8 @@ public class Note
   public void setTags(String tags) {
     tagsValue.set(tags);
     if (! tagsAdded) {
-      addField(tagsField);
+      storeField (recDef, tagsField);
+      // addField(tagsField);
       tagsAdded = true;
     }
   }
@@ -327,7 +334,8 @@ public class Note
 
     linkValue.set(link);
     if (! linkAdded) {
-      addField(linkField);
+      storeField (recDef, linkField);
+      // addField(linkField);
       linkAdded = true;
     }
   }
@@ -335,7 +343,8 @@ public class Note
   public void setLink(Link link) {
     linkValue.set(link.toString());
     if (! linkAdded) {
-      addField(linkField);
+      storeField (recDef, linkField);
+      // addField(linkField);
       linkAdded = true;
     }
   }
@@ -375,7 +384,8 @@ public class Note
   public void setBody(String body) {
     bodyValue.set(body);
     if (! bodyAdded) {
-      addField(bodyField);
+      storeField (recDef, bodyField);
+      // addField(bodyField);
       bodyAdded = true;
     }
   }
@@ -383,7 +393,8 @@ public class Note
   public void appendLineToBody(String line) {
     bodyValue.appendLine(line);
     if (! bodyAdded) {
-      addField(bodyField);
+      storeField (recDef, bodyField);
+      // addField(bodyField);
       bodyAdded = true;
     }
   }

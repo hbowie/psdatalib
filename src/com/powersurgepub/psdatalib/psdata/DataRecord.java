@@ -128,7 +128,86 @@ public class DataRecord
     }
   }
   
-
+  /**
+     Adds a new field to this record, if one with this name does not 
+     already exist. If one with this name does exist, then updates the
+     data portion of the field to reflect the new data value. Maintains
+     field length statistics. 
+    
+     @return Column number of field added or updated.
+    
+     @param  recDef Definition to be used for this record.
+     @param  name   Name of the field to be added or updated.
+     @param  data   Data value to be added or updated.
+   */
+  public int storeField (RecordDefinition recDef, DataFieldDefinition fieldDef, String data) {
+    int columnNumber = getColumnNumber (fieldDef.getProperName());
+    DataField targetField = getField (columnNumber);
+    DataFieldDefinition workDef;
+    if (targetField == null
+        || targetField == UNKNOWN_FIELD) {
+      columnNumber = recDef.getColumnNumber(fieldDef.getProperName());
+      if (columnNumber >= 0) {
+        workDef = recDef.getDef(columnNumber);
+      } else {
+        workDef = fieldDef;
+        columnNumber = recDef.addColumn(workDef);
+      }
+      targetField = new DataField (workDef, data);
+      while (getNumberOfFields() < columnNumber) {
+        DataFieldDefinition missingDef = recDef.getDef(getNumberOfFields());
+        DataField missingField = new DataField(missingDef, "");
+        addField(missingField);
+      }
+      return addField (targetField);
+    } 
+    else {
+      targetField.setData (data);
+      recDef.anotherField (data, columnNumber);
+      return columnNumber;
+    }
+  }
+  
+  /**
+     Adds a new field to this record, if one with this name does not 
+     already exist. If one with this name does exist, then updates the
+     data portion of the field to reflect the new data value. Maintains
+     field length statistics. 
+    
+     @return Column number of field added or updated.
+    
+     @param  recDef Definition to be used for this record.
+     @param  name   Name of the field to be added or updated.
+     @param  data   Data value to be added or updated.
+   */
+  public int storeField (RecordDefinition recDef, DataField field) {
+    int columnNumber = getColumnNumber (field.getProperName());
+    DataField targetField = getField (columnNumber);
+    DataFieldDefinition workDef;
+    if (targetField == null
+        || targetField == UNKNOWN_FIELD) {
+      columnNumber = recDef.getColumnNumber(field.getProperName());
+      if (columnNumber >= 0) {
+        workDef = recDef.getDef(columnNumber);
+        targetField = new DataField (workDef, field.getDataValue());
+      } else {
+        workDef = field.getDef();
+        columnNumber = recDef.addColumn(workDef);
+        targetField = field;
+      }
+      while (getNumberOfFields() < columnNumber) {
+        DataFieldDefinition missingDef = recDef.getDef(getNumberOfFields());
+        DataField missingField = new DataField(missingDef, "");
+        addField(missingField);
+      }
+      return addField (targetField);
+    } 
+    else {
+      targetField.setData (field.getDataValue());
+      recDef.anotherField (field.getData(), columnNumber);
+      return columnNumber;
+    }
+  }
   
   /**
     For calculated fields, calculate the field values.

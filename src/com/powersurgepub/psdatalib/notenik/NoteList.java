@@ -16,6 +16,7 @@
 
 package com.powersurgepub.psdatalib.notenik;
 
+  import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psdatalib.pstags.*;
   import java.io.*;
   import java.util.*;
@@ -29,6 +30,7 @@ public class NoteList
     implements TaggableList {
 
   private String          title = "Note List";
+  private RecordDefinition recDef = null;
   private List<Note>      notes = new ArrayList<Note>();
 
   private int             findIndex = -1;
@@ -37,7 +39,8 @@ public class NoteList
   private TagsList        tagsList = new TagsList();
   private TagsModel       tagsModel = new TagsModel();
 
-  public NoteList () {
+  public NoteList (RecordDefinition recDef) {
+    this.recDef = recDef;
     tagsList.registerValue("");
   }
 
@@ -235,7 +238,7 @@ public class NoteList
     if (index >= size()) {
       index = size() - 1;
     }
-    NotePositioned position = new NotePositioned();
+    NotePositioned position = new NotePositioned(recDef);
     position.setIndex (index);
     position.setNavigator (NotePositioned.NAVIGATE_USING_LIST);
     if (index >= 0) {
@@ -275,7 +278,7 @@ public class NoteList
     if (node == null) {
       return null;
     } else {
-      NotePositioned position = new NotePositioned();
+      NotePositioned position = new NotePositioned(recDef);
       position.setNote ((Note)node.getTaggable());
       position.setTagsNode (node);
       findInternal (position.getNote());
@@ -292,8 +295,8 @@ public class NoteList
   public String getColumnName (int columnIndex) {
     switch (columnIndex) {
       case 0: return "Title";
-      case 1: return "Link";
-      case 2: return "Tags";
+      case 1: return "Tags";
+      case 2: return "Link"; 
       default: return "?";
     }
   }
@@ -311,9 +314,9 @@ public class NoteList
         case 0:
           return row.getTitle();
         case 1:
-          return row.getLinkAsString();
+          return row.getTagsAsString(); 
         case 2:
-          return row.getTagsAsString();
+          return row.getLinkAsString();
         default:
           return "Column " + String.valueOf(columnIndex);
       } // end switch

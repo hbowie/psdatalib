@@ -53,7 +53,9 @@ public class DataValueStringBuilder
     } else {
       value.append(line);
     }
-    value.append(GlobalConstants.LINE_FEED);
+    if (value.length() > 0) {
+      value.append(GlobalConstants.LINE_FEED);
+    }
   }
   
   /** 

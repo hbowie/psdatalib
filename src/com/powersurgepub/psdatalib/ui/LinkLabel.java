@@ -125,7 +125,6 @@ public class LinkLabel
 
     linkComboBox = new javax.swing.JComboBox();
 
-    setBorder(javax.swing.BorderFactory.createEtchedBorder());
     setLayout(new java.awt.GridBagLayout());
 
     linkComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Link:", "Tweak...", "Disk File...", "Launch..." }));
@@ -137,7 +136,8 @@ public class LinkLabel
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 0;
-    gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+    gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+    gridBagConstraints.insets = new java.awt.Insets(0, 0, 4, 4);
     add(linkComboBox, gridBagConstraints);
   }// </editor-fold>//GEN-END:initComponents
 

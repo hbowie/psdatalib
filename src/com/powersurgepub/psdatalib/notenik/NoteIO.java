@@ -63,7 +63,9 @@ public class NoteIO {
   public static final int IO_IMPLICIT_UNDERLINES  = 2;
   public static final int IO_IMPLICIT_FILENAME    = 3;
   
-  public NoteIO (File folder) {
+  public NoteIO (RecordDefinition recDef, File folder) {
+    this.recDef = recDef;
+    dict = recDef.getDict();
     this.homeFolder = folder;
   } 
   
@@ -104,6 +106,10 @@ public class NoteIO {
     
     dict = new DataDictionary();
     recDef = new RecordDefinition(dict);
+    recDef.addColumn(Note.TITLE_DEF);
+    recDef.addColumn(Note.TAGS_DEF);
+    recDef.addColumn(Note.LINK_DEF);
+    recDef.addColumn(Note.BODY_DEF);
     notesLoaded = 0;
     dirList = new ArrayList();
     dirList.add (new DirToExplode (1, homeFolder.getAbsolutePath()));
@@ -272,11 +278,15 @@ public class NoteIO {
       
       FileName noteFileName = new FileName(noteFile);
       String fileNameIn = noteFileName.getBase();
-      note = new Note();
+      note = new Note(recDef);
       note.setDiskLocation(noteFile);
       
       // Use the file name (minus the path and extension) as the default title
       note.setTitle(fileNameIn);
+      
+      // Set the last modified date
+      Date lastModDate = new Date(noteFile.lastModified());
+      note.setLastModDate(lastModDate);
       
       // Get ready to read the text file
       FileInputStream fileInputStream = new FileInputStream(noteFile);
@@ -328,6 +338,12 @@ public class NoteIO {
           
           // If the line contains a colon, look for field name and value
           int colonPosition = line.indexOf(":", start);
+          if (colonPosition >= 0) {
+            if ((end - colonPosition) >= 2
+                && (! Character.isWhitespace(line.charAt(colonPosition + 1)))) {
+              colonPosition = -1;
+            }
+          }
           String fieldName = "";
           
           // See if the line contains a level 1 heading
@@ -371,12 +387,12 @@ public class NoteIO {
             if (fieldName.equals(Note.BODY_COMMON_NAME)) {
               note.setBody(line.substring(fieldValueStart, end));
               bodyStarted = true;
-            }
-            else 
-            if (fieldName.length() > 0) {
-              note.storeField
-                  (line.substring(start, fieldNameEnd), 
-                   line.substring(fieldValueStart, end));
+            // }
+            // else 
+            // if (fieldName.length() > 0) {
+            //   note.storeField
+            //       (line.substring(start, fieldNameEnd), 
+            //        line.substring(fieldValueStart, end));
             } else {
               note.appendLineToBody(line);
               bodyStarted = true;
@@ -471,7 +487,6 @@ public class NoteIO {
  
   private void saveOneItem (Note note) 
       throws IOException {
-    
     for (int i = 0; i < note.getNumberOfFields(); i++) {
       DataField nextField = note.getField(i);
       if (nextField != null) {
