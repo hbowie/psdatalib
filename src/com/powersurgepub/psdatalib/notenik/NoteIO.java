@@ -299,24 +299,28 @@ public class NoteIO {
       // For each line in the file
       while (line != null) {
         lineCount++;
+        // Find the beginning and end of the data on the line
+        int start = 0;
+        while (start < line.length() 
+            && Character.isWhitespace(line.charAt(start))) {
+          start++;
+        }
+        int end = line.length();
+        while (end > 0 
+            && Character.isWhitespace(line.charAt(end - 1))) {
+          end--;
+        }
+        
         if (bodyStarted) {
-          // Once we've started the body, assume the rest is all body
-          note.appendLineToBody(line);
+          if (note.hasBody() || start < end) {
+            // Once we've started the body, assume the rest is all body
+            note.appendLineToBody(line);
+          }
         } else {
           
           // Haven't started the body yet -- look for metadata
           
-          // Find the beginning and end of the data on the line
-          int start = 0;
-          while (start < line.length() 
-              && Character.isWhitespace(line.charAt(start))) {
-            start++;
-          }
-          int end = line.length();
-          while (end > 0 
-              && Character.isWhitespace(line.charAt(end - 1))) {
-            end--;
-          }
+
           
           // See if the line underlines a heading
           char underlineChar = ' ';
