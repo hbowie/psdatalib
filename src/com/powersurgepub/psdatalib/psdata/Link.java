@@ -121,6 +121,15 @@ public class Link
     }
   } // end setURL method
   
+  /**
+   Does this value have any data stored in it? 
+  
+   @return True if data, false if empty. 
+  */
+  public boolean hasData() {
+    return (hasLink());
+  }
+  
   public String toString() {
     return getLink();
   }

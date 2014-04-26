@@ -136,6 +136,15 @@ public class Tags
   public void setValue(String value) {
     set (value);
   }
+  
+  /**
+   Does this value have any data stored in it? 
+  
+   @return True if data, false if empty. 
+  */
+  public boolean hasData() {
+    return (tags != null && tags.length() > 0);
+  }
 
   /**
    Obtain the value of the element in the form of the element's preferred class.

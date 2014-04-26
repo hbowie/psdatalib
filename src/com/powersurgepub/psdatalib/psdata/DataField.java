@@ -412,6 +412,8 @@ public class DataField {
   
   public DataValue getDataValue () { return data; }
   
+  public boolean hasData () { return data.hasData(); }
+  
   /**
      Returns the field as a boolean value.
     

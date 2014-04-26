@@ -493,7 +493,8 @@ public class NoteIO {
       throws IOException {
     for (int i = 0; i < note.getNumberOfFields(); i++) {
       DataField nextField = note.getField(i);
-      if (nextField != null) {
+      if (nextField != null
+          && nextField.hasData()) {
         writeFieldName (nextField.getProperName());
         if (nextField.getCommonFormOfName().equals("body")
             || nextField.getCommonFormOfName().equals("comments")) {

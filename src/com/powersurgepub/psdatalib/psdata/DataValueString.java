@@ -41,6 +41,15 @@ public class DataValueString
     this.value = value;
   }
   
+  /**
+   Does this value have any data stored in it? 
+  
+   @return True if data, false if empty. 
+  */
+  public boolean hasData() {
+    return (value != null && value.length() > 0);
+  }
+  
   /** 
    Converts the value to a String.
   
