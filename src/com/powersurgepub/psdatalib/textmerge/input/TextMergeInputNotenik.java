@@ -16,28 +16,30 @@
 
 package com.powersurgepub.psdatalib.textmerge.input;
 
-  import com.powersurgepub.psdatalib.txbio.*;
+  import com.powersurgepub.psdatalib.notenik.*;
   import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psdatalib.txbio.*;
   import java.io.*;
 
 /**
- A PSTextMerge input module for reading Markdown files with embedded metadata.
+ A PSTextMerge input module for reading Notenik files.
 
  @author Herb Bowie
  */
-public class TextMergeInputMetaMarkdown 
+public class TextMergeInputNotenik 
     extends TextMergeInputModule {
   
-  public TextMergeInputMetaMarkdown () {
+  public TextMergeInputNotenik () {
     
     modifiers.add("");
-    modifiers.add("mmdown");
-    modifiers.add("mmdowntags");
+    modifiers.add("notenik");
+    modifiers.add("notenik+");
+    modifiers.add("notenik-general");
     
-    labels.add("No Markdown");
-    labels.add("Markdown Metadata");
-    labels.add("Markdown Metadata Tags");
+    labels.add("No Notneik");
+    labels.add("Notenik Notes");
+    labels.add("Notenik Notes Plus");
+    labels.add("Notenik General");
   }
   
   /**
@@ -49,7 +51,7 @@ public class TextMergeInputMetaMarkdown
            otherwise false. 
   */
   public boolean isInterestedIn(File candidate) {
-    return MetaMarkdownReader.isInterestedIn(candidate);
+    return NoteIO.isInterestedIn(candidate);
   }
   
   /**
@@ -61,7 +63,7 @@ public class TextMergeInputMetaMarkdown
   */
   public DataSource getDataSource(File chosenFile) {
     DataSource dataSource;
-    dataSource = new MetaMarkdownReader(chosenFile, inputType);
+    dataSource = new NoteIO (chosenFile, inputType);
     return dataSource;
   }
 

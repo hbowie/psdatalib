@@ -137,9 +137,9 @@ public interface DataSource {
   public void setMaxDepth (int maxDepth);
   
   /**
-     Retrieves the path to the original source file (if any).
+     Retrieves the path to the parent folder of the original source file (if any).
     
-     @return Path to the original source file (if any).
+     @return Path to the parent folder of the original source file (if any).
    */
   public String getDataParent ();
 }

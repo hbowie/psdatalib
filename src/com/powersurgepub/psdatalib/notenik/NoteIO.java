@@ -28,15 +28,26 @@ package com.powersurgepub.psdatalib.notenik;
 
  @author Herb Bowie
  */
-public class NoteIO {
+public class NoteIO 
+    implements DataSource 
+  {
   
   public static final String              PARMS_TITLE         = "Collection Parms";
   public static final String              FILE_EXT            = ".txt";
+  
+  /** The type of data set to generate: planner or minutes. */
+  private    int              inType = 1;
+  public static final int     NOTES_ONLY_TYPE = 1;
+  public static final int     NOTES_PLUS_TYPE = 2;
+  public static final int     NOTES_GENERAL_TYPE = 3;
   
   private             File                homeFolder          = null;
   private             File                altFolder           = null;
   private             NoteList            list                = null;
   private             int                 notesLoaded         = 0;
+  
+  /** Sequential number identifying last record read or written. */
+  private             int                 recordNumber;
   
   private             DataDictionary      dict = null;
   private             RecordDefinition    recDef = null;
@@ -46,6 +57,7 @@ public class NoteIO {
   
   private             File                currDirAsFile = null;
   private             int                 currDirDepth = 0;
+  private             int                 maxDepth = 99;
   
   private             ArrayList<String>   dirEntries;
   private             int							    entryNumber = 0;
@@ -63,11 +75,46 @@ public class NoteIO {
   public static final int IO_IMPLICIT_UNDERLINES  = 2;
   public static final int IO_IMPLICIT_FILENAME    = 3;
   
+  // The following fields are used for logging
+  
+  /** Log to record events. */
+  private  Logger       log;
+  
+  /** Do we want to log all data, or only data preceding significant events? */
+  private  boolean      dataLogging = false;
+  
+  /** Data to be sent to the log. */
+  private  LogData      logData;
+  
+  /** Events to be logged. */
+  private  LogEvent     logEvent;
+  
+  /** Debug instance. */
+  private  Debug				debug = new Debug(false);
+  
+  /** Identifier for this file (to be printed in the log as a source ID). */
+  private  String       fileId;
+  
   public NoteIO (RecordDefinition recDef, File folder) {
     this.recDef = recDef;
     dict = recDef.getDict();
     this.homeFolder = folder;
+    inType = NOTES_ONLY_TYPE;
   } 
+  
+  public NoteIO (File folder) {
+    dict = new DataDictionary();
+    recDef = new RecordDefinition(dict);
+    homeFolder = folder;
+    inType = NOTES_ONLY_TYPE;
+  }
+  
+  public NoteIO (File folder, int inType) {
+    dict = new DataDictionary();
+    recDef = new RecordDefinition(dict);
+    homeFolder = folder;
+    this.inType = inType;
+  }
   
   public void setHomeFolder (File homeFolder) {
     this.homeFolder = homeFolder;
@@ -101,15 +148,56 @@ public class NoteIO {
     return notesLoaded;
   }
   
+  /**
+     Opens the reader for input.
+    
+     @param inDict A data dictionary to use.
+    
+     @throws IOException If there is trouble opening a disk file.
+   */
+  public void openForInput (DataDictionary inDict)
+      throws IOException {
+    this.dict = inDict;
+    recDef = new RecordDefinition(dict);
+    buildStandardRecordDefinition();
+    openForInputCommon();
+  }
+      
+  /**
+     Opens the reader for input.
+    
+     @param inRecDef A record definition to use.
+    
+     @throws IOException If there is trouble opening a disk file.
+   */
+  public void openForInput (RecordDefinition inRecDef)
+      throws IOException {
+    this.recDef = inRecDef;
+    dict = recDef.getDict();
+    openForInputCommon();
+  }
+  
   public void openForInput () 
       throws IOException {
     
     dict = new DataDictionary();
     recDef = new RecordDefinition(dict);
-    recDef.addColumn(Note.TITLE_DEF);
-    recDef.addColumn(Note.TAGS_DEF);
-    recDef.addColumn(Note.LINK_DEF);
-    recDef.addColumn(Note.BODY_DEF);
+    buildStandardRecordDefinition();
+    openForInputCommon();
+  }
+  
+  private void buildStandardRecordDefinition() {
+    if (inType == NOTES_ONLY_TYPE 
+        || inType == NOTES_PLUS_TYPE) {
+      recDef.addColumn(Note.TITLE_DEF);
+      recDef.addColumn(Note.TAGS_DEF);
+      recDef.addColumn(Note.LINK_DEF);
+      recDef.addColumn(Note.BODY_DEF);
+    }
+  }
+  
+  private void openForInputCommon () 
+      throws IOException {
     notesLoaded = 0;
     dirList = new ArrayList();
     dirList.add (new DirToExplode (1, homeFolder.getAbsolutePath()));
@@ -118,8 +206,40 @@ public class NoteIO {
     nextNote = null;
     entryNumber = 0;
     dirEntries = new ArrayList<String>();
+    recordNumber = 0;
     nextNote();
-
+  }
+  
+  /**
+     Sets the file ID to be passed to the Logger.
+    
+     @param fileId Used to identify the source of the data being logged.
+   */
+  public void setFileId (String fileId) {
+    this.fileId = fileId;
+    logData.setSourceId (fileId);
+  }
+  
+  /**
+     Sets the maximum directory explosion depth.
+    
+     @param maxDepth Desired directory/sub-directory explosion depth.
+   */
+  public void setMaxDepth (int maxDepth) {
+    this.maxDepth = maxDepth;
+  }
+  
+  /**
+     Returns the next input data record.
+    
+     @return Next data record.
+    
+     @throws IOException If reading from a source that might generate
+                         these.
+   */
+  public DataRecord nextRecordIn ()
+      throws IOException {
+    return readNextNote();
   }
   
   /**
@@ -134,7 +254,27 @@ public class NoteIO {
     
     Note noteToReturn = nextNote;
     nextNote();
+    recordNumber++;
     return noteToReturn;
+  }
+  
+  /**
+     Returns the record number of the last record
+     read or written.
+    
+     @return Number of last record read or written.
+   */
+  public int getRecordNumber () {
+    return recordNumber;
+  }
+  
+  /**
+     Indicates whether there are more records to return.
+    
+     @return True if no more records to return.
+   */
+  public boolean isAtEnd() {
+    return (nextNote == null);
   }
   
   public void close() {
@@ -158,7 +298,8 @@ public class NoteIO {
       dirEntryFile = new File (currDirAsFile, nextDirEntry);
       if (dirEntryFile.isDirectory()) {
         if (nextDirEntry.equalsIgnoreCase("templates")
-            || nextDirEntry.equalsIgnoreCase("publish")) {
+            || nextDirEntry.equalsIgnoreCase("publish")
+            || currDirDepth >= maxDepth) {
           // skip
         } else {
           DirToExplode newDirToExplode = new DirToExplode 
@@ -391,12 +532,14 @@ public class NoteIO {
             if (fieldName.equals(Note.BODY_COMMON_NAME)) {
               note.setBody(line.substring(fieldValueStart, end));
               bodyStarted = true;
-            // }
-            // else 
-            // if (fieldName.length() > 0) {
-            //   note.storeField
-            //       (line.substring(start, fieldNameEnd), 
-            //        line.substring(fieldValueStart, end));
+            }
+            else 
+            if (fieldName.length() > 0 
+                && (inType > NOTES_ONLY_TYPE)) {
+              note.storeField
+                  (recDef,
+                   line.substring(start, fieldNameEnd), 
+                   line.substring(fieldValueStart, end));
             } else {
               note.appendLineToBody(line);
               bodyStarted = true;
@@ -664,6 +807,75 @@ public class NoteIO {
     completePath.append(localPath);
     completePath.append(FILE_EXT);
     return new File (completePath.toString());
+  }
+  
+  /**
+     Returns the record definition for the file.
+    
+     @return Record definition for this tab-delimited file.
+   */
+  public RecordDefinition getRecDef () {
+    return recDef;
+  }
+  
+  /**
+     Retrieves the path to the parent folder of the notes (if any).
+    
+     @return Path to the parent folder of the notes (if any).
+   */
+  public String getDataParent () {
+    if (homeFolder == null) {
+      return null;
+    } else {
+      return homeFolder.getAbsolutePath();
+    }
+  }
+  
+ /**
+     Sets the Logger object to be used for logging. 
+    
+     @param log The Logger object being used for logging significant events.
+   */
+  public void setLog (Logger log) {
+    this.log = log;
+  }
+  
+  /**
+     Gets the Logger object to be used for logging. 
+    
+     @return The Logger object being used for logging significant events.
+   */
+  public Logger getLog () {
+    return log;
+  } 
+  
+  /**
+     Sets the option to log all data off or on. 
+    
+     @param dataLogging True to send all data read or written to the
+                        log file.
+   */
+  public void setDataLogging (boolean dataLogging) {
+    this.dataLogging = dataLogging;
+  }
+  
+  /**
+     Gets the option to log all data. 
+    
+     @return True to send all data read or written to the
+             log file.
+   */
+  public boolean getDataLogging () {
+    return dataLogging;
+  }
+  
+  /**
+     Sets the debug instance to the passed value.
+    
+     @param debug Debug instance. 
+   */
+  public void setDebug (Debug debug) {
+    this.debug = debug;
   }
   
   /**

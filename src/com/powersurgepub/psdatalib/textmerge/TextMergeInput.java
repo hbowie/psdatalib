@@ -79,6 +79,7 @@ public class TextMergeInput {
   private     TextMergeInputYojimbo inYojimbo = new TextMergeInputYojimbo();
   // private     TextMergeInputYAML    inYAML = new TextMergeInputYAML();
   private     TextMergeInputMetaMarkdown inMarkdown = new TextMergeInputMetaMarkdown();
+  private     TextMergeInputNotenik inNotenik = new TextMergeInputNotenik();
   
   private     int                   inputModuleIndex = 0;
   
@@ -212,11 +213,13 @@ public class TextMergeInput {
     insertAt = addInputModule(inHTML, insertAt);
     insertAt = addInputModule(inTunes, insertAt);
     insertAt = addInputModule(inMarkdown, insertAt);
+    insertAt = addInputModule(inNotenik, insertAt);
     // insertAt = addInputModule(inOutline, insertAt);
     // insertAt = addInputModule(inMail, insertAt);
     insertAt = addInputModule(inXML, insertAt);
     // insertAt = addInputModule(inYAML, insertAt);
     insertAt = addInputModule(inYojimbo, insertAt);
+    
     inputTypeBox.setSelectedIndex (0);
     
     // Normalization init
@@ -802,7 +805,8 @@ public class TextMergeInput {
     if (inputModuleFound) {
       fileNameToDisplay = chosenFile.getName();
       tabName = chosenFile.getAbsolutePath();
-      if (chosenFile.isDirectory()) {
+      if (chosenFile.isDirectory()
+          && (! (inputModule instanceof TextMergeInputNotenik))) {
         setCurrentDirectoryFromDir (chosenFile);
         TextMergeDirectoryReader dirReader 
             = new TextMergeDirectoryReader (chosenFile);
