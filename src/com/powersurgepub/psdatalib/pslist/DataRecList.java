@@ -263,24 +263,28 @@ public class DataRecList
   private void addToFilteredDataSet (int i) {
     DataRecord dataRec = completeDataSet.getRecord(i);
     if (itemSelected(dataRec)) {
-      findIndex = size();
-      if (size() == 0) {
-        // If this is the first =$itemclass$= being added to the proxy list,
-        // simply add the proxy to the list
+      if (comparator instanceof PSDefaultComparator) {
         filteredDataSet.add(dataRec);
-      }
-      else
-      if (comparator.compare (get(size() - 1), dataRec) < 0) {
-        // If the new item has a key higher than the highest item in the
-        // collection, simply add the new item to the end
-        // (more efficient if an input file happens to be pre-sorted).
-        filteredDataSet.add (dataRec);
       } else {
-        findInternal (dataRec);
-        filteredDataSet.add (findIndex, dataRec);
-      }
-    }
-  }
+        findIndex = size();
+        if (size() == 0) {
+          // If this is the first =$itemclass$= being added to the proxy list,
+          // simply add the proxy to the list
+          filteredDataSet.add(dataRec);
+        }
+        else
+        if (comparator.compare (get(size() - 1), dataRec) < 0) {
+          // If the new item has a key higher than the highest item in the
+          // collection, simply add the new item to the end
+          // (more efficient if an input file happens to be pre-sorted).
+          filteredDataSet.add (dataRec);
+        } else {
+          findInternal (dataRec);
+          filteredDataSet.add (findIndex, dataRec);
+        }
+      } // end if not the default comparator
+    } // end if item selected
+  } // end method addToFilteredDataSet
   
   /**
    Remove a record from the list, based on the record's position within the

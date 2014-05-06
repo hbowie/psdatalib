@@ -231,7 +231,7 @@ public class DataSet
      @throws IOException If the passed data source experiences an i/o error.
    */
   private void load (DataSource inData) 
-    throws IOException {
+      throws IOException {
     dataParent = inData.getDataParent();
     recDef = inData.getRecDef();
     initialize();
@@ -239,7 +239,7 @@ public class DataSet
     while (! inData.isAtEnd()) {
       DataRecord nextRec = inData.nextRecordIn();
       if (nextRec != null) {
-        this.addRecord (nextRec);
+        addRecord (nextRec);
         recordsLoaded++;
       }
     }
@@ -596,7 +596,7 @@ public class DataSet
       }
       lastRecordNumber = i;
     } // end of seqSpec processing
-   checkMemory();
+    checkMemory();
   } // end method addRecord
   
   public void add (DataRecord inRec) {
