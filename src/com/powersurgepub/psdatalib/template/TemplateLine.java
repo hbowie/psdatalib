@@ -936,8 +936,11 @@ public class TemplateLine {
           
           if (formatStringFound || date != null) {
             if (date == null) {
-              StringScanner dateString = new StringScanner (replaceData);
-              date = dateString.getDate("mdy");
+              StringDate dateString = new StringDate();
+              dateString.parse(replaceData);
+              date = dateString.getCalendar().getTime();
+              // StringScanner dateString = new StringScanner (replaceData);
+              // date = dateString.getDate("mdy");
             }
             if (formatStringBuf.length() > 0) {
               formatString = formatStringBuf.toString();
