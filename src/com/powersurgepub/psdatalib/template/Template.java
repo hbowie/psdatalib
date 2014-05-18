@@ -16,7 +16,7 @@
 
 package com.powersurgepub.psdatalib.template;
 
-import com.powersurgepub.pstextio.TextLineWriter;
+  import com.powersurgepub.pstextio.*;
   import com.powersurgepub.psdatalib.tabdelim.*;
   import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psutils.*;
@@ -69,10 +69,18 @@ public class Template {
   private    TemplateLine   recLine;
   
   /** Collection of all the template lines that need to be processed repetitively. */
-  private    Vector         recLines;
+  private    ArrayList<TemplateLine>          recLines;
 	
 	/** Collection of all the ifendgroup lines. */
-	private		 Vector					endGroupLines;
+	private		 ArrayList<TemplateLine>          endGroupLines;
+  
+  private    boolean        outerLoop = false;
+  
+  /** Collection of all the lines within an outer loop, but before the inner loop. */
+  private    ArrayList<TemplateLine>          outerLinesBefore;
+  
+  /** Collection of all the lines within an outer loop, but after the inner loop. */
+  private    ArrayList<TemplateLine>          outerLinesAfter;
 	
 	/** Flag to indicate we are in an end group block. */
 	private		 boolean				endGroupBlock = false;
@@ -81,7 +89,7 @@ public class Template {
   private    TemplateLine   endLine;
   
   /** All the lines at the end of the template file. */
-  private    Vector         endLines;
+  private    ArrayList<TemplateLine>         endLines;
 
   /** Simple file name for the template file. */
   private    String         templateFileSimpleName;
@@ -100,6 +108,8 @@ public class Template {
   
   /** Number of records so far read from the template file. */
   private    int            templateFileLineCount = 0;
+  
+  private    ArrayList<DataRecord>       dataRecs;
   
   /** File name for the tab-delimited data file. */
   private    String         dataFileName;
@@ -271,7 +281,16 @@ public class Template {
       return false;
     }
     
-    // process lines up to the NEXTREC command
+    recLines = new ArrayList<TemplateLine>();
+    outerLinesBefore = new ArrayList<TemplateLine>();
+    outerLinesAfter = new ArrayList<TemplateLine>();
+		endGroupLines = new ArrayList<TemplateLine>();
+    endLines = new ArrayList();
+    dataRecs = new ArrayList<DataRecord>();
+    outerLoop = false;
+    
+    // Process lines up to the NEXTREC or OUTER command.
+    // These lines only need to be processed once. 
     templateUtil.setSkippingData (false);
     templateUtil.setFirstTemplateLine (true);
     do {
@@ -281,16 +300,17 @@ public class Template {
         nextLine.generateOutput(nullRec);
       }
     } while ((! templateFile.isAtEnd()) 
-      && (! nextLine.getCommand().equals (TemplateLine.NEXTREC)));
+      && (! nextLine.getCommand().equals (TemplateLine.NEXTREC))
+      && (! nextLine.getCommand().equals (TemplateLine.OUTER)));
       
-    
+    // Let's get out of here if we encountered a problem.
     if ((! templateFile.isAtEnd())
         && (! dataFileOK)) {
       return false;
     }
     
-    // If the template file didn't contain a nextrec command, 
-    // then let's get out of here.
+    // If the template file didn't contain a NEXTREC command  
+    // or an OUTER command, then let's get out of here.
     if (templateFile.isAtEnd()) {
       if (templateUtil.isTextFileOutOpen()) {
         templateUtil.close();
@@ -300,9 +320,36 @@ public class Template {
       return true;
     }
     
+    // If we have an outer loop, then collect those lines and store them
+    if ((! templateFile.isAtEnd())
+        && nextLine.getCommand().equals (TemplateLine.OUTER)) {
+      outerLoop = true;
+      do {
+        nextLine = nextTemplateLine ();
+        if (! templateFile.isAtEnd()) {
+          if (nextLine.isCommandLine()
+              && nextLine.getCommand().equals (TemplateLine.DELIMS)) {
+            nextLine.generateOutput(nullRec);
+          } else {
+            outerLinesBefore.add (nextLine);
+            if (nextLine.isCommandLine()
+              && nextLine.getCommand().equals (TemplateLine.IFENDGROUP)) {
+              endGroupBlock = true;
+            }
+            if (endGroupBlock) {
+              endGroupLines.add (nextLine);
+            }
+            if (nextLine.isCommandLine()
+              && nextLine.getCommand().equals (TemplateLine.IFNEWGROUP)) {
+              endGroupBlock = false;
+            }
+          }
+        }
+      } while ((! templateFile.isAtEnd()) 
+        && (! nextLine.getCommand().equals (TemplateLine.NEXTREC)));
+    }
+    
     // table lines between NEXTREC and LOOP
-    recLines = new Vector();
-		endGroupLines = new Vector();
     do {
       nextLine = nextTemplateLine ();
       if (! templateFile.isAtEnd()) {
@@ -310,13 +357,13 @@ public class Template {
           && nextLine.getCommand().equals (TemplateLine.DELIMS)) {
           nextLine.generateOutput(nullRec);
         } else {
-          recLines.addElement (nextLine);
+          recLines.add (nextLine);
 					if (nextLine.isCommandLine()
 						&& nextLine.getCommand().equals (TemplateLine.IFENDGROUP)) {
 						endGroupBlock = true;
 					}
 					if (endGroupBlock) {
-						endGroupLines.addElement (nextLine);
+						endGroupLines.add (nextLine);
 					}
 					if (nextLine.isCommandLine()
 						&& nextLine.getCommand().equals (TemplateLine.IFNEWGROUP)) {
@@ -326,9 +373,36 @@ public class Template {
       }
     } while ((! templateFile.isAtEnd()) 
       && (! nextLine.getCommand().equals (TemplateLine.LOOP)));
+    
+    // If we have an outer loop, then collect the lines after the inner loop
+    // and store them.
+    if ((! templateFile.isAtEnd()) & outerLoop) {
+      do {
+        nextLine = nextTemplateLine ();
+        if (! templateFile.isAtEnd()) {
+          if (nextLine.isCommandLine()
+              && nextLine.getCommand().equals (TemplateLine.DELIMS)) {
+            nextLine.generateOutput(nullRec);
+          } else {
+            outerLinesAfter.add (nextLine);
+            if (nextLine.isCommandLine()
+              && nextLine.getCommand().equals (TemplateLine.IFENDGROUP)) {
+              endGroupBlock = true;
+            }
+            if (endGroupBlock) {
+              endGroupLines.add (nextLine);
+            }
+            if (nextLine.isCommandLine()
+              && nextLine.getCommand().equals (TemplateLine.IFNEWGROUP)) {
+              endGroupBlock = false;
+            }
+          }
+        }
+      } while ((! templateFile.isAtEnd()) 
+        && (! nextLine.getCommand().equals (TemplateLine.OUTERLOOP)));
+    }
       
     // table lines after loop
-    endLines = new Vector();
     do {
       nextLine = nextTemplateLine ();
       if (! templateFile.isAtEnd()) {
@@ -336,22 +410,51 @@ public class Template {
           && nextLine.getCommand().equals (TemplateLine.DELIMS)) {
           nextLine.generateOutput(nullRec);
         } else {
-          endLines.addElement (nextLine);
+          endLines.add (nextLine);
         }
       }
     } while (! templateFile.isAtEnd());
-      
-    // process tab delimited data file
+    
+    // Now let's process the data. 
     templateUtil.setSkippingData (false);
-    do {
-      lastRec = dataRec;
-      if (! dataFile.isAtEnd()) {
-        dataRec = dataFile.nextRecordIn ();
+    
+    // If we have an outer loop, then read the data records and store them
+    // in an array. 
+    if (outerLoop) {
+      do {
+        dataRec = dataFile.nextRecordIn();
         if (dataRec != null) {
-					templateUtil.resetGroupBreaks();
-          Enumeration eRecLines = recLines.elements();
-          while (eRecLines.hasMoreElements()) {
-            recLine = (TemplateLine)eRecLines.nextElement ();
+          dataRecs.add(dataRec);
+        }
+      } while (! dataFile.isAtEnd());
+      int outerIndex = 0;
+      dataRec = null;
+      do {
+        
+        // Writer outer loop lines before inner loop
+        dataRec = dataRecs.get(outerIndex);
+        templateUtil.resetGroupBreaks();
+        Iterator eOuterLinesBefore = outerLinesBefore.iterator();
+        while (eOuterLinesBefore.hasNext()) {
+          recLine = (TemplateLine)eOuterLinesBefore.next();
+          if (recLine.getCommand().equals (TemplateLine.OUTPUT)) {
+            if (! templateUtil.isSkippingData()) {
+              if (templateUtil.isTextFileOutOpen()) {
+                writeEndLines();
+              } // end if text file out open
+            } // end skipping Data check
+          } // end if next line is OUTPUT command
+          recLine.generateOutput(dataRec);
+        }
+        
+        // Now iterate through inner loop
+        int innerIndex = 0;
+        do {
+          dataRec = dataRecs.get(innerIndex);
+          templateUtil.resetGroupBreaks();
+          Iterator eRecLines = recLines.iterator();
+          while (eRecLines.hasNext()) {
+            recLine = (TemplateLine)eRecLines.next();
             if (recLine.getCommand().equals (TemplateLine.OUTPUT)) {
               if (! templateUtil.isSkippingData()) {
                 if (templateUtil.isTextFileOutOpen()) {
@@ -360,18 +463,61 @@ public class Template {
               } // end skipping Data check
             } // end if next line is OUTPUT command
             recLine.generateOutput(dataRec);
-          } // end while more template record lines in vector 
-        } // end dataRec not null
-      } // end if more data records
-    } while (! dataFile.isAtEnd());
+          }
+          innerIndex++;
+        } while (innerIndex < dataRecs.size());
+        
+        // Writer outer loop lines after inner loop
+        dataRec = dataRecs.get(outerIndex);
+        templateUtil.resetGroupBreaks();
+        Iterator eOuterLinesAfter = outerLinesAfter.iterator();
+        while (eOuterLinesAfter.hasNext()) {
+          recLine = (TemplateLine)eOuterLinesAfter.next();
+          if (recLine.getCommand().equals (TemplateLine.OUTPUT)) {
+            if (! templateUtil.isSkippingData()) {
+              if (templateUtil.isTextFileOutOpen()) {
+                writeEndLines();
+              } // end if text file out open
+            } // end skipping Data check
+          } // end if next line is OUTPUT command
+          recLine.generateOutput(dataRec);
+        }
+        
+        // Bump up the outer loop index
+        outerIndex++;
+      } while (outerIndex < dataRecs.size());
+    } else {
+      // process tab delimited data file
+      do {
+        lastRec = dataRec;
+        if (! dataFile.isAtEnd()) {
+          dataRec = dataFile.nextRecordIn ();
+          if (dataRec != null) {
+            templateUtil.resetGroupBreaks();
+            Iterator eRecLines = recLines.iterator();
+            while (eRecLines.hasNext()) {
+              recLine = (TemplateLine)eRecLines.next();
+              if (recLine.getCommand().equals (TemplateLine.OUTPUT)) {
+                if (! templateUtil.isSkippingData()) {
+                  if (templateUtil.isTextFileOutOpen()) {
+                    writeEndLines();
+                  } // end if text file out open
+                } // end skipping Data check
+              } // end if next line is OUTPUT command
+              recLine.generateOutput(dataRec);
+            } // end while more template record lines in vector 
+          } // end dataRec not null
+        } // end if more data records
+      } while (! dataFile.isAtEnd());
+    }
     
 		// end of data file - end all groups
 		templateUtil.setSkippingData (false);
 		templateUtil.resetGroupBreaks();
 		templateUtil.setEndGroupsTrue (0);
-		Enumeration eEndGroupLines = endGroupLines.elements();
-		while (eEndGroupLines.hasMoreElements()) {
-			recLine = (TemplateLine)eEndGroupLines.nextElement();
+		Iterator eEndGroupLines = endGroupLines.iterator();
+		while (eEndGroupLines.hasNext()) {
+			recLine = (TemplateLine)eEndGroupLines.next();
 			recLine.generateOutput(nullRec);
 		} // end while more end group lines
 		
@@ -405,9 +551,9 @@ public class Template {
    */
   public void writeEndLines () {
     templateUtil.setSkippingData (false);
-    Enumeration eEndLines = endLines.elements();
-    while (eEndLines.hasMoreElements()) {
-      endLine = (TemplateLine)eEndLines.nextElement ();
+    Iterator eEndLines = endLines.iterator();
+    while (eEndLines.hasNext()) {
+      endLine = (TemplateLine)eEndLines.next ();
       endLine.generateOutput(lastRec);
     } // end while more template end lines in vector 
   } // end writeEndLines method
@@ -420,7 +566,7 @@ public class Template {
    */
   private TemplateLine nextTemplateLine() 
       throws IOException {
-    String       nextString = "";
+    String        nextString = "";
     TemplateLine  nextLine = null;
     if (! templateFile.isAtEnd()) {
       nextString = templateFile.readLine();

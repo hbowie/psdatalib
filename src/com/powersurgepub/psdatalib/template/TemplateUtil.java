@@ -16,9 +16,7 @@
 
 package com.powersurgepub.psdatalib.template;
 
-import com.powersurgepub.pstextio.FileLineReader;
-import com.powersurgepub.pstextio.TextLineWriter;
-import com.powersurgepub.pstextio.FileMaker;
+  import com.powersurgepub.pstextio.*;
   import com.powersurgepub.psdatalib.txbio.*;
   import com.powersurgepub.psdatalib.txbmodel.*;
   import com.powersurgepub.psdatalib.psdata.*;
@@ -79,6 +77,8 @@ public class TemplateUtil {
   
   /** The folder enclosing the data file. */
   private    String      dataParent;
+  
+  private    String      dataParentFolder;
   
   /** Name of the output text file. */
   private    String      textFileOutName;
@@ -302,6 +302,13 @@ public class TemplateUtil {
      @return Name of the folder containing the data file.
    */
   public String getDataParent() { return dataParent; }
+  
+  /**
+   Returns the name of the folder containing the data file. 
+  
+   @return The name of the folder, without any of its parent path info. 
+  */
+  public String getDataParentFolder() { return dataParentFolder; }
   
   /**
      Returns the skippingData variable.
@@ -599,6 +606,8 @@ public class TemplateUtil {
    */
   public void setDataParent (String dataParent) {
     this.dataParent = dataParent;
+    FileName folderName = new FileName(dataParent);
+    dataParentFolder = folderName.getFolder();
   }
   
   /**

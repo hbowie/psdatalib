@@ -79,6 +79,9 @@ public class TemplateLine {
   /** Command for specifying output file name. */
   final static String OUTPUT    = "output";
   
+  /** Command for initiating an outer loop. */
+  final static String OUTER     = "outer";
+  
   /** Command for specifying beginning of loop for each data record. */
   final static String NEXTREC   = "nextrec";
 	
@@ -113,8 +116,11 @@ public class TemplateLine {
   /** Command to include text lines from a separate file. */
   final static String INCLUDE   = "include";
   
-  /** Command for indiciating end of NEXTREC loop. */
+  /** Command for indicating end of NEXTREC loop. */
   final static String LOOP      = "loop";
+  
+  /** Command for indicating end of an outer loop. */
+  final static String OUTERLOOP = "outerloop";
   
   /** Command for setting a global variable to a new value. */
   final static String SET       = "set";
@@ -142,6 +148,10 @@ public class TemplateLine {
   /** Variable name that will be replaced with the parent folder for the 
       input data file. */
   final static String DATA_PARENT_NAME_VARIABLE = "dataparent";
+  
+  /** Variable name to be replaced by the name of the folder in which the
+      data is stored. */
+  final static String DATA_PARENT_FOLDER_VARIABLE = "parentfolder";
   
   /** Variable name that will be replaced with today's date. */
   final static String TODAYS_DATE_VARIABLE = "today";
@@ -266,6 +276,8 @@ public class TemplateLine {
       nextToken = nextToken.toLowerCase ();
       if (nextToken.equals (NEXTREC)
         || nextToken.equals (LOOP)
+        || nextToken.equals (OUTER)
+        || nextToken.equals (OUTERLOOP)
         || nextToken.equals (OUTPUT) 
         || nextToken.equals (DELIMS)
         || nextToken.equals (INCLUDE)
@@ -844,6 +856,9 @@ public class TemplateLine {
           if (variable.equals (DATA_PARENT_NAME_VARIABLE)) {
             replaceData = templateUtil.getDataParent();
           } else 
+          if (variable.equals (DATA_PARENT_FOLDER_VARIABLE)) {
+            replaceData = templateUtil.getDataParentFolder();
+          } else
           if (variable.equals (TODAYS_DATE_VARIABLE)) {
             date = Calendar.getInstance().getTime();
           } else
