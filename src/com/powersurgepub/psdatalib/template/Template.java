@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2014 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ package com.powersurgepub.psdatalib.template;
   import com.powersurgepub.psdatalib.tabdelim.*;
   import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psutils.*;
-  import com.powersurgepub.xos2.*;
   import java.io.File;
   import java.io.IOException;
   import java.util.*;
@@ -90,24 +89,6 @@ public class Template {
   
   /** All the lines at the end of the template file. */
   private    ArrayList<TemplateLine>         endLines;
-
-  /** Simple file name for the template file. */
-  private    String         templateFileSimpleName;
-  
-  /** File name, including path, for the template file. */
-  private    String         templateFilePathAndName;
-  
-  /** File definition for the template file. */
-  private    File           templateFileSpec;
-  
-  /** Template file as a XTextFile. */
-  private    XTextFile       templateFile;
-  
-  /** Did the template file open successfully? */
-  private    boolean        templateFileOK;
-  
-  /** Number of records so far read from the template file. */
-  private    int            templateFileLineCount = 0;
   
   private    ArrayList<DataRecord>       dataRecs;
   
@@ -170,6 +151,10 @@ public class Template {
     globalDefs = new RecordDefinition();
   }
   
+  public void setWebRoot (File webRootFile) {
+    templateUtil.setWebRoot(webRootFile);
+  }
+  
   /**
      Opens the input template file.
     
@@ -179,25 +164,7 @@ public class Template {
                                 template file.
    */
   public boolean openTemplate (File inTemplateFileSpec) {
-    templateFileSpec = inTemplateFileSpec;
-    // templateUtil.setTemplateFileName (templateFileSpec.getAbsolutePath());
-    templateFile = new XTextFile (templateFileSpec);
-    try {
-      templateFile.openForInput ();
-      templateFileOK = true;
-      templateFilePathAndName = templateFile.getAbsolutePath();
-      templateFileSimpleName = templateFile.getName();
-      templateUtil.setTemplateFileName (templateFileSimpleName);
-      templateUtil.setTemplateFilePath (templateFilePathAndName.substring
-        (0, (templateFilePathAndName.length() 
-          - templateFileSimpleName.length())));
-      templateUtil.setTemplateParent(templateFilePathAndName.substring 
-        (0, (templateFilePathAndName.length() 
-          - templateFileSimpleName.length() - 1)));
-    } catch (IOException e) {
-      templateFileOK = false;
-    }
-    return templateFileOK;
+    return templateUtil.openTemplate (inTemplateFileSpec);
   }
   
   public void setTemplateFilePath (String path) {
@@ -275,7 +242,7 @@ public class Template {
   public boolean generateOutput () 
     throws IOException {
   
-    if ((! templateFileOK) 
+    if ((! templateUtil.isTemplateFileOK()) 
         // || (! dataFileOK)
         ) {
       return false;
@@ -294,39 +261,38 @@ public class Template {
     templateUtil.setSkippingData (false);
     templateUtil.setFirstTemplateLine (true);
     do {
-      nextLine = nextTemplateLine ();
+      nextLine = nextTemplateLine();
       templateUtil.setFirstTemplateLine (false);
-      if (! templateFile.isAtEnd()) {
+      if (! templateUtil.isTemplateFileAtEnd()) {
         nextLine.generateOutput(nullRec);
       }
-    } while ((! templateFile.isAtEnd()) 
+    } while ((! templateUtil.isTemplateFileAtEnd()) 
       && (! nextLine.getCommand().equals (TemplateLine.NEXTREC))
       && (! nextLine.getCommand().equals (TemplateLine.OUTER)));
       
     // Let's get out of here if we encountered a problem.
-    if ((! templateFile.isAtEnd())
+    if ((! templateUtil.isTemplateFileAtEnd())
         && (! dataFileOK)) {
       return false;
     }
     
     // If the template file didn't contain a NEXTREC command  
     // or an OUTER command, then let's get out of here.
-    if (templateFile.isAtEnd()) {
+    if (templateUtil.isTemplateFileAtEnd()) {
       if (templateUtil.isTextFileOutOpen()) {
         templateUtil.close();
       }
-      templateFileLineCount = templateFile.getLineNumber();
-      templateFile.close();
+      templateUtil.closeTemplateFile();
       return true;
     }
     
     // If we have an outer loop, then collect those lines and store them
-    if ((! templateFile.isAtEnd())
+    if ((! templateUtil.isTemplateFileAtEnd())
         && nextLine.getCommand().equals (TemplateLine.OUTER)) {
       outerLoop = true;
       do {
         nextLine = nextTemplateLine ();
-        if (! templateFile.isAtEnd()) {
+        if (! templateUtil.isTemplateFileAtEnd()) {
           if (nextLine.isCommandLine()
               && nextLine.getCommand().equals (TemplateLine.DELIMS)) {
             nextLine.generateOutput(nullRec);
@@ -345,14 +311,14 @@ public class Template {
             }
           }
         }
-      } while ((! templateFile.isAtEnd()) 
+      } while ((! templateUtil.isTemplateFileAtEnd()) 
         && (! nextLine.getCommand().equals (TemplateLine.NEXTREC)));
     }
     
     // table lines between NEXTREC and LOOP
     do {
       nextLine = nextTemplateLine ();
-      if (! templateFile.isAtEnd()) {
+      if (! templateUtil.isTemplateFileAtEnd()) {
         if (nextLine.isCommandLine()
           && nextLine.getCommand().equals (TemplateLine.DELIMS)) {
           nextLine.generateOutput(nullRec);
@@ -371,15 +337,15 @@ public class Template {
 					}
         }
       }
-    } while ((! templateFile.isAtEnd()) 
+    } while ((! templateUtil.isTemplateFileAtEnd()) 
       && (! nextLine.getCommand().equals (TemplateLine.LOOP)));
     
     // If we have an outer loop, then collect the lines after the inner loop
     // and store them.
-    if ((! templateFile.isAtEnd()) & outerLoop) {
+    if ((! templateUtil.isTemplateFileAtEnd()) & outerLoop) {
       do {
         nextLine = nextTemplateLine ();
-        if (! templateFile.isAtEnd()) {
+        if (! templateUtil.isTemplateFileAtEnd()) {
           if (nextLine.isCommandLine()
               && nextLine.getCommand().equals (TemplateLine.DELIMS)) {
             nextLine.generateOutput(nullRec);
@@ -398,14 +364,14 @@ public class Template {
             }
           }
         }
-      } while ((! templateFile.isAtEnd()) 
+      } while ((! templateUtil.isTemplateFileAtEnd()) 
         && (! nextLine.getCommand().equals (TemplateLine.OUTERLOOP)));
     }
       
     // table lines after loop
     do {
       nextLine = nextTemplateLine ();
-      if (! templateFile.isAtEnd()) {
+      if (! templateUtil.isTemplateFileAtEnd()) {
         if (nextLine.isCommandLine()
           && nextLine.getCommand().equals (TemplateLine.DELIMS)) {
           nextLine.generateOutput(nullRec);
@@ -413,7 +379,7 @@ public class Template {
           endLines.add (nextLine);
         }
       }
-    } while (! templateFile.isAtEnd());
+    } while (! templateUtil.isTemplateFileAtEnd());
     
     // Now let's process the data. 
     templateUtil.setSkippingData (false);
@@ -431,7 +397,7 @@ public class Template {
       dataRec = null;
       do {
         
-        // Writer outer loop lines before inner loop
+        // Write outer loop lines before inner loop
         dataRec = dataRecs.get(outerIndex);
         templateUtil.resetGroupBreaks();
         Iterator eOuterLinesBefore = outerLinesBefore.iterator();
@@ -528,8 +494,7 @@ public class Template {
       writeEndLines();
       templateUtil.close();
     }
-    templateFileLineCount = templateFile.getLineNumber();
-    templateFile.close();
+    templateUtil.closeTemplateFile();
     if (templateUtil.getOutputCommandCount() == 0) {
       templateUtil.recordEvent (LogEvent.MINOR,
         "No OUTPUT Command Found", false);
@@ -566,15 +531,7 @@ public class Template {
    */
   private TemplateLine nextTemplateLine() 
       throws IOException {
-    String        nextString = "";
-    TemplateLine  nextLine = null;
-    if (! templateFile.isAtEnd()) {
-      nextString = templateFile.readLine();
-    }
-    if (! templateFile.isAtEnd()) {
-      nextLine = new TemplateLine (nextString, templateUtil);
-    }
-    return nextLine;
+    return templateUtil.nextTemplateLine();
   } // end method nextTemplateLine
   
   /**
@@ -583,7 +540,7 @@ public class Template {
      
      @return Name of the last output text file.
    */
-  public String getTextFileOutName() {
+  public FileName getTextFileOutName() {
     return templateUtil.getTextFileOutName();
   }
   
@@ -604,7 +561,7 @@ public class Template {
      @return templateFileLineCount
    */
   public int getTemplateFileLineCount() {
-    return templateFileLineCount;
+    return templateUtil.getTemplateFileLineCount();
   }
   
   /**

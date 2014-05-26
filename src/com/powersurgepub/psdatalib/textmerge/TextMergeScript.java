@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2014 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -994,6 +994,10 @@ public class TextMergeScript
           inActionValueAsInt = 0;
           inActionValueValidInt = false;
         }
+        if (inActionModule.length() == 0) {
+          // Skip blank lines
+        }
+        else
         if (inActionModule.startsWith("<!--")) {
           Logger.getShared().recordEvent(LogEvent.NORMAL, inActionModule, false);
         }

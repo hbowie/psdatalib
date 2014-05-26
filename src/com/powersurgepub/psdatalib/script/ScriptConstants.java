@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2014 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ public class ScriptConstants {
 	public  static final String TEMPLATE_MODULE     = "template";
   public  static final String CALLBACK_MODULE     = "callback";
   public  static final String OPEN_ACTION         = "open";
+  public  static final String WEB_ROOT_ACTION     = "webroot";
   public  static final String EPUB_IN_ACTION      = "epubin";
   public  static final String EPUB_OUT_ACTION     = "epubout";
   public  static final String SET_ACTION          = "set";

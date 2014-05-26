@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2014 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,12 @@ package com.powersurgepub.psdatalib.template;
   import com.powersurgepub.psdatalib.txbmodel.*;
   import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psutils.*;
+  import com.powersurgepub.xos2.*;
   import java.io.*;
   import java.net.*;
+  import java.text.*;
+  import java.util.*;
+  import org.pegdown.*;
 
 /**
    Persistent data needed by the TemplateLine class. <p>
@@ -51,11 +55,70 @@ package com.powersurgepub.psdatalib.template;
  */
 public class TemplateUtil {
   
+  /** Indicator to write line out without a trailing line break. */
+  final static String NO_LINE_BREAK = "nobr";
+  
+  /** Variable name that will be replaced with the name of the template file. */
+  final static String TEMPLATE_FILE_NAME_VARIABLE = "templatefilename";
+  
+  /** Variable name that will be replaced with the parent folder for the
+      template file. */
+  final static String TEMPLATE_PARENT_NAME_VARIABLE = "templateparent";
+  
+  /** Variable name that will be replaced with the name of the input data file. */
+  final static String DATA_FILE_NAME_VARIABLE = "datafilename";
+
+  /** Variable name that will be replaced with the name of the input data file,
+   without the extension. */
+  final static String DATA_FILE_BASE_NAME_VARIABLE = "datafilebasename";
+  
+  /** Variable name that will be replaced with the parent folder for the 
+      input data file. */
+  final static String DATA_PARENT_NAME_VARIABLE = "dataparent";
+  
+  /** Variable name to be replaced by the name of the folder in which the
+      data is stored. */
+  final static String DATA_PARENT_FOLDER_VARIABLE = "parentfolder";
+  
+  /** Variable name that will be replaced with today's date. */
+  final static String TODAYS_DATE_VARIABLE = "today";
+  
+  /** Relative path to web site root. */
+  final static String RELATIVE_VARIABLE = "relative";
+  
+  /** Default formatting string for dates. */
+  final static String DEFAULT_DATE_FORMAT = "dd-MMM-yyyy";
+  
+  /** Include parm value to cause include file to be copied as-is. **/
+  public static final String INCLUDE_COPY = "copy";
+  
   /** Used to write events and data to a log file. */
   private    Logger      log;
   
   /** Work area for any event to be logged. */
   private    LogEvent    event;
+  
+  /** Simple file name for the template file. */
+  private    String         templateFileSimpleName;
+  
+  /** File name, including path, for the template file. */
+  private    String         templateFilePathAndName;
+  
+  /** File definition for the template file. */
+  private    File           templateFileSpec;
+  
+  /** Template file as a XTextFile. */
+  // private    XTextFile       templateFile;
+  private    TextLineReader  templateFile;
+  
+  /** Did the template file open successfully? */
+  private    boolean        templateFileOK;
+  
+  /** Have we hit end of all the template data yet? */
+  private    boolean        templateFileAtEnd = false;
+  
+  /** Number of records so far read from the template file. */
+  private    int            templateFileLineCount = 0;
   
   /** The name of the input template file being used. */
   private    String      templateFileName;
@@ -80,8 +143,14 @@ public class TemplateUtil {
   
   private    String      dataParentFolder;
   
+  /** Location of the web root directory. */
+  private    File         webRootFile = null;
+  private    FileName     webRootFileName = null;
+  
+  private    StringBuilder relativePathToRoot = new StringBuilder();
+  
   /** Name of the output text file. */
-  private    String      textFileOutName;
+  private    FileName     textFileOutName;
   
   /** Output text file where merged file is written. */
   private    TextLineWriter textFileOut;
@@ -147,6 +216,10 @@ public class TemplateUtil {
   private             int                 tempCount = 0;
   
   private             StringConverter     noBreaksConverter = null;
+  
+  private  CommonMarkup      htmlConverter     = new CommonMarkup ("txt", "html");
+  
+  private             PegDownProcessor    pegDown;
 
   /**
      Constructs the utility collection.
@@ -162,12 +235,29 @@ public class TemplateUtil {
    */
   public TemplateUtil (Logger log) {
     io = new TextIO ();
+    int pegDownOptions = 0;
+    pegDownOptions = pegDownOptions + Extensions.SMARTYPANTS;
+    pegDown = new PegDownProcessor(pegDownOptions);
     this.log = log;
     event = new LogEvent();
     globals = new DataRecord ();
 		resetGroupBreaks();
 		resetGroupValues();
     // io.logTypes();
+  }
+  
+  public void setWebRoot (File webRootFile) {
+    // System.out.println("TemplateUtil.setWebRoot to " + webRootFile);
+    this.webRootFile = webRootFile;
+    if (webRootFile == null) {
+      webRootFileName = null;
+    } else {
+      webRootFileName = new FileName (webRootFile);
+    }
+  }
+  
+  public File getWebRoot () {
+    return webRootFile;
   }
 
   public void setEpub (boolean epub) {
@@ -229,7 +319,7 @@ public class TemplateUtil {
     
      @return Name of output text file.
    */
-  public String getTextFileOutName() {
+  public FileName getTextFileOutName() {
     return textFileOutName;
   }
   
@@ -241,6 +331,96 @@ public class TemplateUtil {
    */
   public TextLineWriter getTextFileOut() {
     return textFileOut;
+  }
+  
+  public boolean openTemplate (File inTemplateFileSpec) {
+    
+    templateFileSpec = inTemplateFileSpec;
+    // templateUtil.setTemplateFileName (templateFileSpec.getAbsolutePath());
+    templateFile = new FileLineReader (templateFileSpec);
+
+    templateFileOK = templateFile.open();
+    templateFilePathAndName = inTemplateFileSpec.getAbsolutePath();
+    templateFileSimpleName = inTemplateFileSpec.getName();
+    setTemplateFileName (templateFileSimpleName);
+    setTemplateFilePath (templateFilePathAndName.substring
+      (0, (templateFilePathAndName.length() 
+        - templateFileSimpleName.length())));
+    setTemplateParent(templateFilePathAndName.substring 
+      (0, (templateFilePathAndName.length() 
+        - templateFileSimpleName.length() - 1)));
+
+    templateFileAtEnd = (! templateFileOK);
+    templateFileLineCount = 0;
+    return templateFileOK;
+  }
+  
+  /**
+   Is the template file OK?
+  
+   @return True if the file's ok, false if we've run into an exception. 
+  */
+  public boolean isTemplateFileOK () {
+    return templateFileOK;
+  }
+  
+  /**
+   Have we hit the end of all the template data, including any include files?
+  
+   @return True if at end, false if no end yet. 
+  */
+  public boolean isTemplateFileAtEnd() {
+    return templateFileAtEnd;
+  }
+  
+  /**
+     Gets the next line in the template file, and returns
+     it as a TemplateLine.
+     
+     @return The next line of the template.
+   */
+  public TemplateLine nextTemplateLine() {
+    String        nextString = "";
+    TemplateLine  nextLine = null;
+    
+    // System.out.println("nextTemplateLine from " + templateFile.toString());
+    
+    do {
+      nextString = templateFile.readLine();
+      if (templateFile.isAtEnd()) {
+        // System.out.println("- at end");
+        templateFileAtEnd = true;
+      } else {
+        // System.out.println("- line = " + nextString);
+        nextLine = new TemplateLine (nextString, this);
+      }
+    } while (nextLine == null && (! templateFileAtEnd));
+    
+    if (! templateFile.isOK()) {
+      templateFileOK = false;
+    }
+    
+    if (nextLine != null) {
+      templateFileLineCount++;
+    }
+    return nextLine;
+  } // end method nextTemplateLine
+  
+  public boolean closeTemplateFile() {
+
+    templateFileOK = templateFile.close();
+
+    return templateFileOK;
+  }
+  
+  /**
+     Returns the number of lines found in the input 
+     template file read during the last GenerateOutput operation.</p>
+      
+     @return templateFileLineCount
+   */
+  public int getTemplateFileLineCount() {
+    return templateFileLineCount;
   }
   
   /** 
@@ -606,8 +786,13 @@ public class TemplateUtil {
    */
   public void setDataParent (String dataParent) {
     this.dataParent = dataParent;
-    FileName folderName = new FileName(dataParent);
-    dataParentFolder = folderName.getFolder();
+    if (dataParent != null && dataParent.length() > 0) {
+      FileName folderName = new FileName(dataParent);
+      dataParentFolder = folderName.getFolder();
+    } else {
+      dataParentFolder = "";
+    }
+    
   }
   
   /**
@@ -619,14 +804,33 @@ public class TemplateUtil {
      @param textFileOutName New name for the output text file.
    */
   public void setTextFileOutName (String textFileOutName) {
-    this.textFileOutName = textFileOutName;
+    // System.out.println("TemplateUtil.setTextFileOutName");
+    // System.out.println("- file = " + textFileOutName);
+    this.textFileOutName = new FileName (textFileOutName, FileName.FILE_TYPE);
     close();
     if (! textFileOutName.startsWith ("/")) {
       FileName path = new FileName (templateFilePath);
-      this.textFileOutName = path.resolveRelative(textFileOutName);
+      this.textFileOutName = new FileName (path.resolveRelative(textFileOutName));
+    }
+    if (this.webRootFile == null) {
+      // System.out.println("- web root = null");
+      relativePathToRoot = null;
+    } 
+    else
+    if (this.textFileOutName.isBeneath(webRootFileName)) {
+      relativePathToRoot = new StringBuilder();
+      for (int i = this.textFileOutName.getNumberOfFolders();
+               i > webRootFileName.getNumberOfFolders();
+               i--) {
+        relativePathToRoot.append("../");
+      }
+      // System.out.println("- path = " + relativePathToRoot);
+    } else {
+      relativePathToRoot = null;
+      // System.out.println("- file not beneath web root");
     }
     textFileOut = new FileMaker
-      (this.textFileOutName);
+      (this.textFileOutName.toString());
     outputCommandCount++;
     boolean ok = textFileOut.openForOutput();
     if (ok) {
@@ -636,6 +840,20 @@ public class TemplateUtil {
         "Attempt to Open File " + textFileOutName + " was unsuccessful", false);
     }
   } // end method setTextFileOutName
+  
+  /**
+   Return the path to the web root folder relative to the current output file. 
+  
+   @return A relative path (i.e., '../../../') or null if the output file is
+           not beneath the web root folder. 
+  */
+  public String getRelativePathToRoot() {
+    if (relativePathToRoot == null) {
+      return null;
+    } else {
+      return relativePathToRoot.toString();
+    }
+  }
   
   public String noBreaks (String inStr) {
     if (noBreaksConverter == null) {
@@ -648,14 +866,20 @@ public class TemplateUtil {
   }
   
   /**
-     Copies the contents of the include file into the output file stream. 
+     Includes the contents of the named include file into the output file stream. 
     
      @param includeFileName Name of the text file to be included.
+     @param includeParm     Optional parameter to modify how the include
+                            file is processed. 
+                            * copy - indicates the include file should be copied
+                                     as-is, without any modifications. 
    */
-  public void includeFile (String includeFileNameStr, String includeParm) {
+  public void includeFile (String includeFileNameStr, 
+                           String includeParm, 
+                           DataRecord dataRec) {
 
     // Make sure we have a complete file name
-    FileLineReader includeFile;
+    TextLineReader includeFile;
     if (includeFileNameStr.startsWith("file:")) {
       includeFile = new FileLineReader (includeFileNameStr);
     }
@@ -668,11 +892,18 @@ public class TemplateUtil {
           (templatePathFileName.resolveRelative(includeFileNameStr));
     }
 
-    // System.out.println("TemplateUtil.includeFile: " + includeFile.toString());
+    // System.out.println("TemplateUtil.includeFile");
+    // System.out.println("- output = " + textFileOut.getDestination());
+    // System.out.println("- file   = " + includeFile.toString());
+    // System.out.println("- parm   = " + includeParm);
+    
     recordEvent (LogEvent.NORMAL, "Including file " + includeFile.toString(), false);
+    
     boolean converted = false;
-    File incFile = includeFile.getFile();
+    FileLineReader includeFileReader = (FileLineReader)includeFile;
+    File incFile = includeFileReader.getFile();
     if (incFile != null && (! incFile.exists())) {
+      // System.out.println("- Include File Not Found!");
       recordEvent (LogEvent.MEDIUM, 
           "File " + includeFile.toString() + " not found", false);
     } else {
@@ -682,62 +913,101 @@ public class TemplateUtil {
       FileName textFileOutFileName = new FileName (textFileOut.getDestination());
       String inExt = includeFileName.getExt();
       String outExt = textFileOutFileName.getExt();
+      // System.out.println("- inExt  = " + inExt);
+      // System.out.println("- outExt = " + outExt);
       TextIOType inType = io.getType (inExt, "Input", false);
       TextIOType outType = io.getType (outExt, "Output", true);
       if ((includeParm == null
           || includeParm.length() == 0
-          || (! includeParm.equalsIgnoreCase("copy")))
+          || (! includeParm.equalsIgnoreCase(INCLUDE_COPY)))
           && inExt.length() > 0
           && outExt.length() > 0
           && inType != null
           && outType != null
           && ((! inExt.equalsIgnoreCase (outExt))
-            || inExt.equalsIgnoreCase("html"))) {
-        TextNode root = new TextNode(tree);
-        tree = new TextTree (root);
-        tree.getTextRoot().setType (TextType.LOCATION_FILE);
-        tree.getTextRoot().setText (includeFile.toString());
-        try {
-          URL url = includeFile.toURL();
-          // System.out.println("  Loading type = " + inType + ", " + url.toString());
-          converted = io.load (tree, url, inType, includeParm);
-          // System.out.println("  Loaded successfully? " + String.valueOf(converted));
-          if (converted) {
-            File temp
-                = File.createTempFile
-                  ("pstm_include_temp_" + String.valueOf (tempCount++),
-                    "." + outExt);
-            // Delete temp file when program exits.
-            temp.deleteOnExit();
-            FileMaker writer = new FileMaker (temp);
-            // System.out.println("  Storing " + url.toString());
-            converted = io.store (tree, writer, outType, epub, epubSite);
-            // System.out.println("  Stored " + url.toString());
-            if (converted) {
-              recordEvent (LogEvent.NORMAL,
-                  "Converted Include file "
-                    + includeFile.toString()
-                    + " from "
-                    + inType.getLabel()
-                    + " to "
-                    + outType.getLabel(),
-                    false);
-              includeFile = new FileLineReader (temp);
+            // || inExt.equalsIgnoreCase("html")  ???
+          )) {
+        // The stars are aligned: let's try to convert from the input format
+        // to the intended output format (typically markdown to html).
+        if ((inExt.equalsIgnoreCase("md")
+              || inExt.equalsIgnoreCase("markdown")
+              || inExt.equalsIgnoreCase("mdown")
+              || inExt.equalsIgnoreCase("mkdown"))
+            && (outExt.equalsIgnoreCase("html")
+              || outExt.equalsIgnoreCase("htm"))) {
+          // Convert markdown to HTML
+          StringBuilder md = new StringBuilder();
+          while (! includeFile.isAtEnd()) {
+            String line = includeFile.readLine();
+            if (line != null && (! includeFile.isAtEnd())) {
+              md.append(line);
+              md.append(GlobalConstants.LINE_FEED);
             }
+          } 
+          // System.out.println("Converting markdown to html");
+          // System.out.println("- input:  " + includeFileReader.toString());
+          // System.out.println("- output: " + textFileOutName.toString());
+          // System.out.println("- input  character count: " + String.valueOf(md.length()));
+          String html = pegDown.markdownToHtml(md.toString());
+          // System.out.println("- output character count: " + String.valueOf(html.length()));
+          // System.out.println(" ");
+          TextLineReader htmlReader = new StringLineReader(html);
+          includeFile = htmlReader;
+        } else {
+          
+          // Use pspub routines for other conversions
+          TextNode root = new TextNode(tree);
+          tree = new TextTree (root);
+          tree.getTextRoot().setType (TextType.LOCATION_FILE);
+          tree.getTextRoot().setText (includeFile.toString());
+          try {
+            URL url = includeFileReader.toURL();
+            // System.out.println("  Loading type = " + inType + ", " + url.toString());
+            converted = io.load (tree, url, inType, includeParm);
+            // System.out.println("  Loaded successfully? " + String.valueOf(converted));
+            if (converted) {
+              File temp
+                  = File.createTempFile
+                    ("pstm_include_temp_" + String.valueOf (tempCount++),
+                      "." + outExt);
+              // Delete temp file when program exits.
+              temp.deleteOnExit();
+              FileMaker writer = new FileMaker (temp);
+              // System.out.println("  Storing " + url.toString());
+              converted = io.store (tree, writer, outType, epub, epubSite);
+              // System.out.println("  Stored " + url.toString());
+              if (converted) {
+                recordEvent (LogEvent.NORMAL,
+                    "Converted Include file "
+                      + includeFile.toString()
+                      + " from "
+                      + inType.getLabel()
+                      + " to "
+                      + outType.getLabel(),
+                      false);
+                includeFile = new FileLineReader (temp);
+              }
+            }
+          } catch (MalformedURLException e) {
+            converted = false;
+          } catch (IOException e) {
+            converted = false;
           }
-        } catch (MalformedURLException e) {
-          converted = false;
-        } catch (IOException e) {
-          converted = false;
-        }
-      }
-
-      // Copy included file to output
+        } // end try
+      } // end if using a pspub routine
+ 
+      // System.out.println(" - Copying include file to output file");
       boolean inOK = includeFile.open();
       if (inOK) {
         String includeLine = includeFile.readLine(); 
         while (! includeFile.isAtEnd()) { 
-          writeLine (includeLine); 
+          LineWithBreak lineWithBreak = replaceVariables
+            (new StringBuilder(includeLine), dataRec);
+          if (lineWithBreak.getLineBreak()) {
+            writeLine (lineWithBreak.getLine());
+          } else {
+            write (lineWithBreak.getLine());
+          }
           includeLine = includeFile.readLine(); 
         } 
         includeFile.close(); 
@@ -746,7 +1016,8 @@ public class TemplateUtil {
           "Attempt to Open Include File " + includeFileNameStr + " was unsuccessful",
             true);
       } 
-    }
+      
+    } // end if include file exists
     
   } // end method setTextFileOutName
   
@@ -858,6 +1129,355 @@ public class TemplateUtil {
   public String toString () {
     return ("TemplateUtil Text File Name is "
       + templateFileName.toString ());
+  }
+  
+  /**
+   Replace any variables found in passed data. 
+  
+   @param str The StringBuilder to have its variables replaced. 
+  */
+  public LineWithBreak replaceVariables (StringBuilder str, DataRecord dataRec) {
+    
+    LineWithBreak lineWithBreak = new LineWithBreak();
+    int varIndex = 0;
+    while ((varIndex >= 0) && (varIndex < str.length())) {
+      // find the beginning of the next variable
+      int startDelim = str.indexOf (nlStartVariable, varIndex);
+      // If a variable starting delimiter also begins 1 character to the right,
+      // then use that instead
+      if (startDelim >= 0) {
+        int startDelim2 = str.indexOf (nlStartVariable, startDelim + 1);
+        if (startDelim2 == (startDelim + 1)) {
+          startDelim = startDelim2;
+        }
+      }
+      if (startDelim < 0) {
+        varIndex = startDelim;
+      } else {
+        // if beginning found, now find the end
+        int endDelim = str.indexOf 
+          (nlEndVariable, startDelim + nlStartVariable.length() + 1);
+        if (endDelim < 0) {
+          varIndex = endDelim;
+        } else {
+          // found beginning and end of variable -- process it
+          int endVar = endDelim;
+          // find beginning of variable modifiers, if any
+          int startMods = str.indexOf
+            (nlStartModifiers, startDelim + nlStartVariable.length() + 1);
+          int leadingCount = 0;
+          int caseCode = 0;
+          boolean initialCase = false;
+          char listSep = ' ';
+          boolean formatStringFound = false;
+          boolean underscoreFound = false;
+          StringBuilder formatStringBuf = new StringBuilder();
+          Date date = null;
+
+          boolean xml = false;
+          boolean html = false;
+          boolean fileBaseName = false;
+          boolean keepRight = false;
+          boolean convertLinks = false;
+          boolean makeFileName = false;
+          boolean makeFileNameReadable = false;
+          boolean noBreaks = false;
+          boolean noPunctuation = false;
+          String formatString;
+          
+          boolean demarcation = false;
+          int firstCase = 0;
+          int leadingCase = 0;
+          int normalCase = 0;
+          int caseCount = 0;
+          StringBuilder delimiter = new StringBuilder();
+          
+          // if we found any variable modifiers, then collect them now
+          if ((startMods > 0) && (startMods < endDelim)) {
+            endVar = startMods;
+            for (int i = startMods + 1; i < endDelim; i++) {
+              char workChar = str.charAt (i);
+              if (Character.toLowerCase (workChar) == 'c') {
+                demarcation = true;
+              } else
+              if (demarcation) {
+                int wordCase = -2;
+                if (Character.toLowerCase (workChar) == 'u') {
+                  wordCase = 1;
+                } else
+                if (Character.toLowerCase (workChar) == 'l') {
+                  wordCase = -1;
+                } else
+                if (Character.toLowerCase (workChar) == 'a') {
+                  wordCase = 0;
+                }
+                if (wordCase > -2) {
+                  caseCount++;
+                  switch (caseCount) {
+                    case 1:
+                      firstCase = wordCase;
+                      break;
+                    case 2:
+                      leadingCase = wordCase;
+                      break;
+                    default:
+                      normalCase = wordCase;
+                      break;
+                  }
+                } else {
+                  delimiter.append (workChar);
+                }
+              } else
+              if (Character.isDigit (workChar)) {
+                leadingCount = (leadingCount * 10)
+                  + Character.getNumericValue (workChar);
+              } else
+              if (Character.toLowerCase(workChar) == 'f') {
+                makeFileName = true;
+              } else
+              if (makeFileName 
+                  && (! makeFileNameReadable)
+                  && Character.toLowerCase(workChar) == 'r') {
+                makeFileNameReadable = true;
+              } else
+              if (Character.toLowerCase (workChar) == 'l') {
+                caseCode = -1;
+              } else
+              if (Character.toLowerCase (workChar) == 'u') {
+                caseCode = +1;
+              } else
+              if (Character.toLowerCase (workChar) == 'i') {
+                initialCase = true;
+              } else
+              if (Character.toLowerCase (workChar) == 'x') {
+                xml = true;
+              } else
+              if (workChar == 'h') {
+                html = true;
+              } else
+              if (Character.toLowerCase (workChar) == 'b') {
+                fileBaseName = true;
+              } else
+              if (Character.toLowerCase (workChar) == 'r') {
+                keepRight = true;
+              } else
+              if (Character.toLowerCase(workChar) == 'j') {
+                convertLinks = true;
+              }
+              else
+              if (Character.toLowerCase(workChar) == 'n') {
+                noBreaks = true;
+              } else
+              if (Character.toLowerCase(workChar) == 'p') {
+                noPunctuation = true;
+              } else
+              if (formatStringFound) {
+                formatStringBuf.append (workChar);
+              } else
+              if (Character.isLetter (workChar)) {
+                formatStringFound = true;
+                formatStringBuf.append (workChar);
+              } else
+              if (workChar == '_') {
+                underscoreFound = true;
+              } else
+              if (! Character.isLetterOrDigit (workChar)) {
+                listSep = workChar;
+              }
+            }
+          } // end of variable modifier processing
+          
+          // get variable name and replacement value
+          String variable = str.substring
+            ((startDelim + nlStartVariable.length()), endVar);
+          CommonName common = new CommonName (variable);
+          variable = common.getCommonForm();
+          String replaceData = GlobalConstants.EMPTY_STRING;
+          if (variable.equals (NO_LINE_BREAK)) {
+            lineWithBreak.setLineBreak(false);
+          } else
+          if (variable.equals (TEMPLATE_FILE_NAME_VARIABLE)) {
+            replaceData = getTemplateFileName();
+          } else
+          if (variable.equals (TEMPLATE_PARENT_NAME_VARIABLE)) {
+            replaceData = getTemplateParent();
+          } else
+          if (variable.equals (DATA_FILE_NAME_VARIABLE)) {
+            replaceData = getDataFileDisplay();
+          } else
+          if (variable.equals (DATA_FILE_BASE_NAME_VARIABLE)) {
+            replaceData = getDataFileBaseName();
+          }else
+          if (variable.equals (DATA_PARENT_NAME_VARIABLE)) {
+            replaceData = getDataParent();
+          } else 
+          if (variable.equals (DATA_PARENT_FOLDER_VARIABLE)) {
+            replaceData = getDataParentFolder();
+          } else
+          if (variable.equals (TODAYS_DATE_VARIABLE)) {
+            date = Calendar.getInstance().getTime();
+          } else
+          if (variable.equals (RELATIVE_VARIABLE)) {
+            replaceData = getRelativePathToRoot();
+            // System.out.println("  - replacing relative variable with " + replaceData);
+          } else
+          if (globals.containsField (variable)) {
+            replaceData = globals.getFieldData (variable);
+          } else {
+            replaceData = dataRec.getFieldData (variable);
+          }
+          
+          // transform replacement value according to variable modifiers
+          if ((replaceData != null) 
+              && ((replaceData.length() > 0) 
+                || (variable.equals(RELATIVE_VARIABLE)))
+              ) {
+            
+            if (leadingCount > 0) {
+              if (leadingCount < replaceData.length()) {
+                if (keepRight) {
+                  replaceData = replaceData.substring (replaceData.length() - leadingCount);
+                } else {
+                  replaceData = replaceData.substring (0, leadingCount);
+                }
+              } else {
+                while (leadingCount > replaceData.length()) {
+                  replaceData = "0" + replaceData;
+                }
+              }
+            } // end if leadingCount > 0
+            
+            if (initialCase) {
+              StringBuilder work = new StringBuilder ("");
+              if (replaceData.length() > 0) {
+                if (caseCode > 0) {
+                  work.append (replaceData.substring(0,1).toUpperCase());
+                } else
+                if (caseCode < 0) {
+                  work.append (replaceData.substring(0,1).toLowerCase());
+                }
+                if (replaceData.length() > 1) {
+                  work.append (replaceData.substring (1));
+                }
+              } // end if replaceData length > 0
+              replaceData = work.toString();
+            } else {
+              if (caseCode > 0) {
+                replaceData = replaceData.toUpperCase();
+              } 
+              else
+              if (caseCode < 0) {
+                replaceData = replaceData.toLowerCase();
+              }
+            } // end if not initialCase
+            
+            if (makeFileNameReadable) {
+              replaceData = StringUtils.makeReadableFileName(replaceData.trim());
+            } else
+            if (makeFileName) {
+              replaceData = StringUtils.makeFileName(replaceData.trim(), false);
+            }
+            
+            if (underscoreFound) {
+              replaceData = StringUtils.replaceChars 
+                  (replaceData.trim(), " ", "_");
+            }
+            if (demarcation) {
+              replaceData = StringUtils.wordDemarcation 
+                  (replaceData, delimiter.toString(), firstCase, leadingCase, normalCase);
+            }
+            if (noBreaks) {
+              replaceData = noBreaks(replaceData);
+            }
+            if (noPunctuation) {
+              replaceData = StringUtils.purifyPunctuation(replaceData);
+            }
+          } // end if replaceData non-blank
+          
+          if (listSep == ' ') {
+            setListItemPending (false);
+          } 
+          else 
+          if ((replaceData != null) && (replaceData.length() > 0)) {
+            if (isListItemPending()) {
+              if (listSep == '/' || listSep == '\\') {
+                replaceData = String.valueOf(listSep) + replaceData;
+              } else {
+                replaceData = String.valueOf(listSep) + " " + replaceData;
+              }
+            }
+            setListItemPending (true);
+          }
+          
+          if (formatStringFound || date != null) {
+            if (date == null) {
+              StringDate dateString = new StringDate();
+              dateString.parse(replaceData);
+              Calendar cal = dateString.getCalendar();
+              if (cal != null) {
+                date = cal.getTime();
+              } else {
+                date = new Date();
+              }
+              // StringScanner dateString = new StringScanner (replaceData);
+              // date = dateString.getDate("mdy");
+            }
+            if (formatStringBuf.length() > 0) {
+              formatString = formatStringBuf.toString();
+            } else {
+              formatString = DEFAULT_DATE_FORMAT;
+            }
+            
+            try {
+              SimpleDateFormat dateFormat = new SimpleDateFormat (formatString);
+              replaceData = dateFormat.format (date);
+            } catch (IllegalArgumentException e) {
+              replaceData = "";
+            }
+          }
+          
+          if (xml) {
+            StringConverter xmlConverter = StringConverter.getXML();
+            replaceData = xmlConverter.convert (replaceData);
+          }
+
+          if (html) {
+            replaceData = htmlConverter.markup (replaceData, true);
+          }
+          
+          if (convertLinks) {
+            replaceData = StringUtils.convertLinks (replaceData);
+          }
+          
+          if (fileBaseName) {
+            FileName fn = new FileName (replaceData);
+            replaceData = fn.getBase();
+          }
+          
+          // now perform the variable replacement
+          if (replaceData != null) {
+            str.delete(startDelim, endDelim + nlEndVariable.length());
+            str.insert(startDelim, replaceData);
+            varIndex = startDelim + replaceData.length();
+          } else {
+            varIndex = endDelim + nlEndVariable.length();
+          }
+        } // end processing when ending delimiters found
+      } // end processing when starting delimiters found
+    } // end processing of all variables in line
+    
+    // Check for a back slash at the end of the line
+    // If found, replace with a space, to ensure two spaces
+    // Which will generat a line break when converting Markdown to HTML
+    if (str.length() > 2
+        && str.charAt(str.length() - 1) == '\\'
+        && str.charAt(str.length() - 2) == ' ') {
+      str.deleteCharAt(str.length() - 1);
+      str.append(' ');
+    }
+    
+    lineWithBreak.setLine(str);
+    return lineWithBreak;
   }
 }
 

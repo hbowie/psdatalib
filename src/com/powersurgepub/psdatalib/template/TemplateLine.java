@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2014 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,31 +130,6 @@ public class TemplateLine {
   
   /** Indicator to write line out without a trailing line break. */
   final static String NO_LINE_BREAK = "nobr";
-  
-  /** Variable name that will be replaced with the name of the template file. */
-  final static String TEMPLATE_FILE_NAME_VARIABLE = "templatefilename";
-  
-  /** Variable name that will be replaced with the parent folder for the
-      template file. */
-  final static String TEMPLATE_PARENT_NAME_VARIABLE = "templateparent";
-  
-  /** Variable name that will be replaced with the name of the input data file. */
-  final static String DATA_FILE_NAME_VARIABLE = "datafilename";
-
-  /** Variable name that will be replaced with the name of the input data file,
-   without the extension. */
-  final static String DATA_FILE_BASE_NAME_VARIABLE = "datafilebasename";
-  
-  /** Variable name that will be replaced with the parent folder for the 
-      input data file. */
-  final static String DATA_PARENT_NAME_VARIABLE = "dataparent";
-  
-  /** Variable name to be replaced by the name of the folder in which the
-      data is stored. */
-  final static String DATA_PARENT_FOLDER_VARIABLE = "parentfolder";
-  
-  /** Variable name that will be replaced with today's date. */
-  final static String TODAYS_DATE_VARIABLE = "today";
   
   /** Default formatting string for dates. */
   final static String DEFAULT_DATE_FORMAT = "dd-MMM-yyyy";
@@ -381,7 +356,7 @@ public class TemplateLine {
         if (! templateUtil.isSkippingData()) {
           String includeFile = replaceVarsInOperand (operandScanner, dataRec);
           String includeParm = replaceVarsInOperand (operandScanner, dataRec);
-          templateUtil.includeFile (includeFile, includeParm);
+          templateUtil.includeFile (includeFile, includeParm, dataRec);
         } // end skippingData test
       } // end include command processing
       else
@@ -651,12 +626,12 @@ public class TemplateLine {
         // do nothing
       }
       else {
-        if (lineBreak) {
-          templateUtil.writeLine 
-              (replaceVariables (new StringBuilder(outString), dataRec));
+        LineWithBreak lineWithBreak = templateUtil.replaceVariables
+            (new StringBuilder(outString), dataRec);
+        if (lineWithBreak.getLineBreak()) {
+          templateUtil.writeLine (lineWithBreak.getLine());
         } else {
-          templateUtil.write 
-              (replaceVariables (new StringBuilder(outString), dataRec));
+          templateUtil.write (lineWithBreak.getLine());
         }
       } // end not skipping data
     } // end non-command line
@@ -672,337 +647,10 @@ public class TemplateLine {
    @return The next operand, with variable replacements completed. 
   */
   private String replaceVarsInOperand(StringScanner opScanner, DataRecord dataRec) {
-    return replaceVariables (
+    LineWithBreak lineWithBreak = templateUtil.replaceVariables (
         new StringBuilder(opScanner.extractQuotedString()),
         dataRec);
-  }
-  
-  /**
-   Replace any variables found in passed data. 
-  
-   @param str The StringBuilder to have its variables replaced. 
-  */
-  private String replaceVariables (StringBuilder str, DataRecord dataRec) {
-    
-    int varIndex = 0;
-    while ((varIndex >= 0) && (varIndex < str.length())) {
-      // find the beginning of the next variable
-      int startDelim = str.indexOf (startVariable, varIndex);
-      // If a variable starting delimiter also begins 1 character to the right,
-      // then use that instead
-      if (startDelim >= 0) {
-        int startDelim2 = str.indexOf (startVariable, startDelim + 1);
-        if (startDelim2 == (startDelim + 1)) {
-          startDelim = startDelim2;
-        }
-      }
-      if (startDelim < 0) {
-        varIndex = startDelim;
-      } else {
-        // if beginning found, now find the end
-        int endDelim = str.indexOf 
-          (endVariable, startDelim + startVariable.length() + 1);
-        if (endDelim < 0) {
-          varIndex = endDelim;
-        } else {
-          // found beginning and end of variable -- process it
-          int endVar = endDelim;
-          // find beginning of variable modifiers, if any
-          int startMods = str.indexOf
-            (startModifiers, startDelim + startVariable.length() + 1);
-          int leadingCount = 0;
-          int caseCode = 0;
-          boolean initialCase = false;
-          char listSep = ' ';
-          boolean formatStringFound = false;
-          boolean underscoreFound = false;
-          StringBuilder formatStringBuf = new StringBuilder();
-          Date date = null;
-
-          boolean xml = false;
-          boolean html = false;
-          boolean fileBaseName = false;
-          boolean keepRight = false;
-          boolean convertLinks = false;
-          boolean makeFileName = false;
-          boolean makeFileNameReadable = false;
-          boolean noBreaks = false;
-          boolean noPunctuation = false;
-          String formatString;
-          
-          boolean demarcation = false;
-          int firstCase = 0;
-          int leadingCase = 0;
-          int normalCase = 0;
-          int caseCount = 0;
-          StringBuilder delimiter = new StringBuilder();
-          
-          // if we found any variable modifiers, then collect them now
-          if ((startMods > 0) && (startMods < endDelim)) {
-            endVar = startMods;
-            for (int i = startMods + 1; i < endDelim; i++) {
-              char workChar = str.charAt (i);
-              if (Character.toLowerCase (workChar) == 'c') {
-                demarcation = true;
-              } else
-              if (demarcation) {
-                int wordCase = -2;
-                if (Character.toLowerCase (workChar) == 'u') {
-                  wordCase = 1;
-                } else
-                if (Character.toLowerCase (workChar) == 'l') {
-                  wordCase = -1;
-                } else
-                if (Character.toLowerCase (workChar) == 'a') {
-                  wordCase = 0;
-                }
-                if (wordCase > -2) {
-                  caseCount++;
-                  switch (caseCount) {
-                    case 1:
-                      firstCase = wordCase;
-                      break;
-                    case 2:
-                      leadingCase = wordCase;
-                      break;
-                    default:
-                      normalCase = wordCase;
-                      break;
-                  }
-                } else {
-                  delimiter.append (workChar);
-                }
-              } else
-              if (Character.isDigit (workChar)) {
-                leadingCount = (leadingCount * 10)
-                  + Character.getNumericValue (workChar);
-              } else
-              if (Character.toLowerCase(workChar) == 'f') {
-                makeFileName = true;
-              } else
-              if (makeFileName 
-                  && (! makeFileNameReadable)
-                  && Character.toLowerCase(workChar) == 'r') {
-                makeFileNameReadable = true;
-              } else
-              if (Character.toLowerCase (workChar) == 'l') {
-                caseCode = -1;
-              } else
-              if (Character.toLowerCase (workChar) == 'u') {
-                caseCode = +1;
-              } else
-              if (Character.toLowerCase (workChar) == 'i') {
-                initialCase = true;
-              } else
-              if (Character.toLowerCase (workChar) == 'x') {
-                xml = true;
-              } else
-              if (workChar == 'h') {
-                html = true;
-              } else
-              if (Character.toLowerCase (workChar) == 'b') {
-                fileBaseName = true;
-              } else
-              if (Character.toLowerCase (workChar) == 'r') {
-                keepRight = true;
-              } else
-              if (Character.toLowerCase(workChar) == 'j') {
-                convertLinks = true;
-              }
-              else
-              if (Character.toLowerCase(workChar) == 'n') {
-                noBreaks = true;
-              } else
-              if (Character.toLowerCase(workChar) == 'p') {
-                noPunctuation = true;
-              } else
-              if (formatStringFound) {
-                formatStringBuf.append (workChar);
-              } else
-              if (Character.isLetter (workChar)) {
-                formatStringFound = true;
-                formatStringBuf.append (workChar);
-              } else
-              if (workChar == '_') {
-                underscoreFound = true;
-              } else
-              if (! Character.isLetterOrDigit (workChar)) {
-                listSep = workChar;
-              }
-            }
-          } // end of variable modifier processing
-          
-          // get variable name and replacement value
-          String variable = str.substring
-            ((startDelim + startVariable.length()), endVar);
-          CommonName common = new CommonName (variable);
-          variable = common.getCommonForm();
-          String replaceData = GlobalConstants.EMPTY_STRING;
-          if (variable.equals (NO_LINE_BREAK)) {
-            lineBreak = false;
-          } else
-          if (variable.equals (TEMPLATE_FILE_NAME_VARIABLE)) {
-            replaceData = templateUtil.getTemplateFileName();
-          } else
-          if (variable.equals (TEMPLATE_PARENT_NAME_VARIABLE)) {
-            replaceData = templateUtil.getTemplateParent();
-          } else
-          if (variable.equals (DATA_FILE_NAME_VARIABLE)) {
-            replaceData = templateUtil.getDataFileDisplay();
-          } else
-          if (variable.equals (DATA_FILE_BASE_NAME_VARIABLE)) {
-            replaceData = templateUtil.getDataFileBaseName();
-          }else
-          if (variable.equals (DATA_PARENT_NAME_VARIABLE)) {
-            replaceData = templateUtil.getDataParent();
-          } else 
-          if (variable.equals (DATA_PARENT_FOLDER_VARIABLE)) {
-            replaceData = templateUtil.getDataParentFolder();
-          } else
-          if (variable.equals (TODAYS_DATE_VARIABLE)) {
-            date = Calendar.getInstance().getTime();
-          } else
-          if (globals.containsField (variable)) {
-            replaceData = globals.getFieldData (variable);
-          } else {
-            replaceData = dataRec.getFieldData (variable);
-          }
-          
-          // transform replacement value according to variable modifiers
-          if ((replaceData != null) 
-              && (replaceData.length() > 0)
-              ) {
-            
-            if (leadingCount > 0) {
-              if (leadingCount < replaceData.length()) {
-                if (keepRight) {
-                  replaceData = replaceData.substring (replaceData.length() - leadingCount);
-                } else {
-                  replaceData = replaceData.substring (0, leadingCount);
-                }
-              } else {
-                while (leadingCount > replaceData.length()) {
-                  replaceData = "0" + replaceData;
-                }
-              }
-            } // end if leadingCount > 0
-            
-            if (initialCase) {
-              StringBuilder work = new StringBuilder ("");
-              if (replaceData.length() > 0) {
-                if (caseCode > 0) {
-                  work.append (replaceData.substring(0,1).toUpperCase());
-                } else
-                if (caseCode < 0) {
-                  work.append (replaceData.substring(0,1).toLowerCase());
-                }
-                if (replaceData.length() > 1) {
-                  work.append (replaceData.substring (1));
-                }
-              } // end if replaceData length > 0
-              replaceData = work.toString();
-            } else {
-              if (caseCode > 0) {
-                replaceData = replaceData.toUpperCase();
-              } 
-              else
-              if (caseCode < 0) {
-                replaceData = replaceData.toLowerCase();
-              }
-            } // end if not initialCase
-            
-            if (makeFileNameReadable) {
-              replaceData = StringUtils.makeReadableFileName(replaceData.trim());
-            } else
-            if (makeFileName) {
-              replaceData = StringUtils.makeFileName(replaceData.trim(), false);
-            }
-            
-            if (underscoreFound) {
-              replaceData = StringUtils.replaceChars 
-                  (replaceData.trim(), " ", "_");
-            }
-            if (demarcation) {
-              replaceData = StringUtils.wordDemarcation 
-                  (replaceData, delimiter.toString(), firstCase, leadingCase, normalCase);
-            }
-            if (noBreaks) {
-              replaceData = templateUtil.noBreaks(replaceData);
-            }
-            if (noPunctuation) {
-              replaceData = StringUtils.purifyPunctuation(replaceData);
-            }
-          } // end if replaceData non-blank
-          
-          if (listSep == ' ') {
-            templateUtil.setListItemPending (false);
-          } 
-          else 
-          if ((replaceData != null) && (replaceData.length() > 0)) {
-            if (templateUtil.isListItemPending()) {
-              if (listSep == '/' || listSep == '\\') {
-                replaceData = String.valueOf(listSep) + replaceData;
-              } else {
-                replaceData = String.valueOf(listSep) + " " + replaceData;
-              }
-            }
-            templateUtil.setListItemPending (true);
-          }
-          
-          if (formatStringFound || date != null) {
-            if (date == null) {
-              StringDate dateString = new StringDate();
-              dateString.parse(replaceData);
-              date = dateString.getCalendar().getTime();
-              // StringScanner dateString = new StringScanner (replaceData);
-              // date = dateString.getDate("mdy");
-            }
-            if (formatStringBuf.length() > 0) {
-              formatString = formatStringBuf.toString();
-            } else {
-              formatString = DEFAULT_DATE_FORMAT;
-            }
-            SimpleDateFormat dateFormat = new SimpleDateFormat (formatString);
-            replaceData = dateFormat.format (date);
-          }
-          
-          if (xml) {
-            StringConverter xmlConverter = StringConverter.getXML();
-            replaceData = xmlConverter.convert (replaceData);
-          }
-
-          if (html) {
-            replaceData = htmlConverter.markup (replaceData, true);
-          }
-          
-          if (convertLinks) {
-            replaceData = StringUtils.convertLinks (replaceData);
-          }
-          
-          if (fileBaseName) {
-            FileName fn = new FileName (replaceData);
-            replaceData = fn.getBase();
-          }
-          
-          // now perform the variable replacement
-          str.delete(startDelim, endDelim + endVariable.length());
-          str.insert(startDelim, replaceData);
-          varIndex = startDelim + replaceData.length();
-        } // end processing when ending delimiters found
-      } // end processing when starting delimiters found
-    } // end processing of all variables in line
-    
-    // Check for a back slash at the end of the line
-    // If found, replace with a space, to ensure two spaces
-    // Which will generat a line break when converting Markdown to HTML
-    if (str.length() > 2
-        && str.charAt(str.length() - 1) == '\\'
-        && str.charAt(str.length() - 2) == ' ') {
-      str.deleteCharAt(str.length() - 1);
-      str.append(' ');
-    }
-    
-    return str.toString();
+    return lineWithBreak.getLine();
   }
   
   /**

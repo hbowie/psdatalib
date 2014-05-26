@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2014 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,8 @@ public class TextMergeTemplate {
   // Template Panel Objects
   private     JPanel              templatePanel; 
   
+  private     JButton             setWebRootButton;
+  
   private     JButton             setTemplateLibraryButton;
   
   private     JButton             openTemplateButton;
@@ -71,6 +73,7 @@ public class TextMergeTemplate {
   
   // Template menu items
   private			JMenu								templateMenu;
+  private     JMenuItem           setWebRoot;
   private			JMenuItem						templateOpen;
   private     JMenuItem           templateOpenFromLibrary;
   private			JMenuItem						templateGenerate;
@@ -93,6 +96,8 @@ public class TextMergeTemplate {
   private     File                templateLibraryAppFolder = null;
   private     File                templateLibraryFileSpec = null;
   private     File                templateLibraryButton = null;
+  
+  private     File                webRootFile = null;
   
   public TextMergeTemplate (PSList psList, TextMergeScript scriptRecorder) {
     this.psList = psList;
@@ -187,6 +192,17 @@ public class TextMergeTemplate {
     this.menus = menus;
     templateMenu = new JMenu("Template");
     
+    // Equivalent Menu Item for Set Web Root
+    setWebRoot = new JMenuItem ("Set Web Root...");
+    templateMenu.add (setWebRoot);
+    setWebRoot.addActionListener(new ActionListener()
+      {
+        public void actionPerformed (ActionEvent event) {
+          setWebRoot();
+        }
+      }
+    );
+    
     // Equivalent Menu Item for Template Open
     templateOpen = new JMenuItem ("Open...");
     templateOpen.setAccelerator (KeyStroke.getKeyStroke (KeyEvent.VK_T,
@@ -250,6 +266,16 @@ public class TextMergeTemplate {
 		    } // end ActionPerformed method
 		  } // end action listener
 		);
+    
+    // Create Set Web Root Button
+    setWebRootButton = new JButton ("Set Web Root");
+    setWebRootButton.setToolTipText("Not yet set");
+    setWebRootButton.addActionListener(new ActionListener ()
+      {
+        public void actionPerformed (ActionEvent event) {
+          setWebRoot();
+        }
+      });
     
     // Create SetTemplate Library Button 
     setTemplateLibraryButton = new JButton ("Set Template Library");
@@ -332,8 +358,9 @@ public class TextMergeTemplate {
 		gb.setDefaultRowWeight (0.0);
     
 		// Column 0
-    gb.setRow (1);
+    gb.setRow (0);
     gb.setBottomInset(6);
+    gb.add (setWebRootButton);
     gb.add (setTemplateLibraryButton);
     gb.setTopInset(6);
     gb.setBottomInset(2);
@@ -414,6 +441,16 @@ public class TextMergeTemplate {
       } // end file existence selector
     }
     else 
+    if (inActionAction.equals (ScriptConstants.WEB_ROOT_ACTION)) {
+      webRootFile = new File (inActionValue);
+      if (webRootFile == null) {
+        Logger.getShared().recordEvent (LogEvent.MEDIUM,
+            inActionValue + " is not a valid local directory", true);
+      } else {
+        setWebRootWithFile();
+      }
+    }
+    else
     if (inActionAction.equals (ScriptConstants.GENERATE_ACTION)) {
       checkTemplateRepeat();
       templateGenerate();
@@ -505,6 +542,43 @@ public class TextMergeTemplate {
     outputFileName = "";
     generateOutputName.setText (outputFileName);
   }
+  
+  /**
+     Set the location of the web root.
+   */
+  private void setWebRoot () {
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setFileSelectionMode (JFileChooser.DIRECTORIES_ONLY);
+    int fileChooserReturn 
+      = fileChooser.showOpenDialog (openTemplateFromLibraryButton);
+    if (fileChooserReturn
+        == JFileChooser.APPROVE_OPTION) {
+      webRootFile = fileChooser.getSelectedFile();
+      setWebRootButton.setToolTipText(webRootFile.getAbsolutePath());
+      setWebRootWithFile();
+    }
+  }
+  
+  /**
+     Sets the web root directory.
+   */
+  private void setWebRootWithFile () {
+
+    if (webRootFile != null) {
+      scriptRecorder.recordScriptAction (
+          ScriptConstants.TEMPLATE_MODULE, 
+          ScriptConstants.WEB_ROOT_ACTION, 
+          ScriptConstants.TEXT_MODIFIER, 
+          ScriptConstants.NO_OBJECT, 
+          webRootFile.getAbsolutePath());
+        // setTemplateDirectoryFromFile (templateFile);
+    } else {
+      Logger.getShared().recordEvent (LogEvent.MEDIUM, 
+        webRootFile.getAbsolutePath() 
+          + " could not be opened as a valid Web Root Directory",
+        true);
+    }
+  } // end method setWebRootWithFile()
   
   /**
      Set the location of the template library.
@@ -615,6 +689,7 @@ public class TextMergeTemplate {
         && templateCreated
         && psList instanceof DataSource) {
       DataSource source = (DataSource)psList;
+      template.setWebRoot (webRootFile);
       if (psList.getSource() != null) {
         template.openData (source, psList.getSource().toString());
       }
@@ -628,7 +703,7 @@ public class TextMergeTemplate {
       templateCreated = false;
       templateFileReady = false;
       if (generateOutputOK) {
-        outputFileName = template.getTextFileOutName();
+        outputFileName = template.getTextFileOutName().toString();
         if (outputFileName != null) {
           FileName outputFN = new FileName (outputFileName);
           generateOutputName.setText (outputFN.getFileName());
