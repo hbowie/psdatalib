@@ -957,9 +957,13 @@ public class DataField {
    */
   public int addField (RecordDefinition recDef, String data) {
     int columnNumber = fields.size();
-    DataField field = new DataField (recDef, columnNumber, data);
+    String strData = data;
+    if (data == null) {
+      strData = "";
+    }
+    DataField field = new DataField (recDef, columnNumber, strData);
     fields.add (field);
-    recDef.anotherField (data, columnNumber);
+    recDef.anotherField (strData, columnNumber);
     return columnNumber;
   }
   
