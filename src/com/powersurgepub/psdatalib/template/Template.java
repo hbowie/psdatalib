@@ -399,6 +399,7 @@ public class Template {
         
         // Write outer loop lines before inner loop
         dataRec = dataRecs.get(outerIndex);
+        templateUtil.setSkippingData (false);
         templateUtil.resetGroupBreaks();
         Iterator eOuterLinesBefore = outerLinesBefore.iterator();
         while (eOuterLinesBefore.hasNext()) {
@@ -417,6 +418,7 @@ public class Template {
         int innerIndex = 0;
         do {
           dataRec = dataRecs.get(innerIndex);
+          templateUtil.setSkippingData (false);
           templateUtil.resetGroupBreaks();
           Iterator eRecLines = recLines.iterator();
           while (eRecLines.hasNext()) {
@@ -435,6 +437,7 @@ public class Template {
         
         // Writer outer loop lines after inner loop
         dataRec = dataRecs.get(outerIndex);
+        templateUtil.setSkippingData (false);
         templateUtil.resetGroupBreaks();
         Iterator eOuterLinesAfter = outerLinesAfter.iterator();
         while (eOuterLinesAfter.hasNext()) {
@@ -460,6 +463,7 @@ public class Template {
           dataRec = dataFile.nextRecordIn ();
           if (dataRec != null) {
             templateUtil.resetGroupBreaks();
+            templateUtil.setSkippingData (false);
             Iterator eRecLines = recLines.iterator();
             while (eRecLines.hasNext()) {
               recLine = (TemplateLine)eRecLines.next();
