@@ -535,6 +535,9 @@ public class NoteIO
             }
             else 
             if (fieldName.length() > 0 
+                && (! fieldName.endsWith("http"))
+                && (! fieldName.endsWith("ftp"))
+                && (! fieldName.endsWith("mailto"))
                 && (inType > NOTES_ONLY_TYPE)) {
               note.storeField
                   (recDef,
