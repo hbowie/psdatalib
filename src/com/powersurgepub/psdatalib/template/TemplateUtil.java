@@ -21,7 +21,6 @@ package com.powersurgepub.psdatalib.template;
   import com.powersurgepub.psdatalib.txbmodel.*;
   import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psutils.*;
-  import com.powersurgepub.xos2.*;
   import java.io.*;
   import java.net.*;
   import java.text.*;
@@ -237,6 +236,7 @@ public class TemplateUtil {
     io = new TextIO ();
     int pegDownOptions = 0;
     pegDownOptions = pegDownOptions + Extensions.SMARTYPANTS;
+    // pegDownOptions = pegDownOptions = Extensions.DEFINITIONS;
     pegDown = new PegDownProcessor(pegDownOptions);
     this.log = log;
     event = new LogEvent();
@@ -922,19 +922,14 @@ public class TemplateUtil {
           || (! includeParm.equalsIgnoreCase(INCLUDE_COPY)))
           && inExt.length() > 0
           && outExt.length() > 0
-          && inType != null
-          && outType != null
+          // && inType != null
+          // && outType != null
           && ((! inExt.equalsIgnoreCase (outExt))
             // || inExt.equalsIgnoreCase("html")  ???
           )) {
         // The stars are aligned: let's try to convert from the input format
         // to the intended output format (typically markdown to html).
-        if ((inExt.equalsIgnoreCase("md")
-              || inExt.equalsIgnoreCase("markdown")
-              || inExt.equalsIgnoreCase("mdown")
-              || inExt.equalsIgnoreCase("mkdown"))
-            && (outExt.equalsIgnoreCase("html")
-              || outExt.equalsIgnoreCase("htm"))) {
+        if (isMarkdown(inExt) && isHTML(outExt)) {
           // Convert markdown to HTML
           StringBuilder md = new StringBuilder();
           while (! includeFile.isAtEnd()) {
@@ -953,8 +948,37 @@ public class TemplateUtil {
           // System.out.println(" ");
           TextLineReader htmlReader = new StringLineReader(html);
           includeFile = htmlReader;
-        } else {
-          
+        }
+        else
+        if (isMarkdown(inExt) 
+            && (! isMarkdownTOC(inExt))
+            && isMarkdownTOC(outExt)) {
+          // System.out.println("Adding a table of contents to a Markdown doc");
+          try {
+            File temp
+              = File.createTempFile
+                ("pstm_include_temp_" + String.valueOf (tempCount++),
+                      "." + outExt);
+            // Delete temp file when program exits.
+            temp.deleteOnExit();
+            FileMaker writer = new FileMaker (temp);
+            AddToCtoMarkdown addToC = new AddToCtoMarkdown();
+            addToC.transformNow(includeFile, writer);
+            converted = true;
+            if (converted) {
+              recordEvent (LogEvent.NORMAL,
+                "Added Table of Contents to "
+                  + includeFile.toString(),
+                  false);
+              includeFile = new FileLineReader (temp);
+            } // end if stored successfully
+          } catch (IOException e) {
+            System.out.println("I/O Exception");
+            converted = false;
+          }
+        } 
+        else 
+        if (inType != null && outType != null) { 
           // Use pspub routines for other conversions
           TextNode root = new TextNode(tree);
           tree = new TextTree (root);
@@ -986,8 +1010,8 @@ public class TemplateUtil {
                       + outType.getLabel(),
                       false);
                 includeFile = new FileLineReader (temp);
-              }
-            }
+              } // end if stored successfully
+            } // end if loaded successfully
           } catch (MalformedURLException e) {
             converted = false;
           } catch (IOException e) {
@@ -1020,6 +1044,23 @@ public class TemplateUtil {
     } // end if include file exists
     
   } // end method setTextFileOutName
+  
+  public static boolean isMarkdown(String ext) {
+    return (ext.equalsIgnoreCase("md")
+              || ext.equalsIgnoreCase("markdown")
+              || ext.equalsIgnoreCase("mdown")
+              || ext.equalsIgnoreCase("mkdown")
+              || ext.equalsIgnoreCase("mdtoc"));
+  }
+  
+  public static boolean isHTML(String ext) {
+    return (ext.equalsIgnoreCase("htm")
+        || ext.equalsIgnoreCase("html"));
+  }
+  
+  public static boolean isMarkdownTOC(String ext) {
+    return (ext.equalsIgnoreCase("mdtoc"));
+  }
   
   /**
      Writes a String to the output text file, if one is open.
