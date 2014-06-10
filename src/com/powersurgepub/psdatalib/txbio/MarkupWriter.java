@@ -1541,6 +1541,12 @@ public class MarkupWriter
     }
   }
   
+  public void writeHeadingWithID (int level, String heading, String id) {
+    startHeadingWithID (level, id);
+    write (heading);
+    endHeading (level);
+  }
+  
   public void writeHeading (int level, String heading, String style) {
     startHeading (level, style);
     write (heading);
@@ -1590,6 +1596,51 @@ public class MarkupWriter
     }
   }
   
+  public void startHeadingWithID (int level, String id) {
+    switch (markupFormat) {
+      case MARKDOWN_FORMAT:
+        writer.ensureBlankLine();
+        // if (level > 2) {
+          for (int i = 0; i < level; i++) {
+            writer.write ('#');
+          }
+          writer.write(' ');
+        // }
+        break;
+      case TEXTILE_SYNTAX_1_FORMAT:       
+      case TEXTILE_SYNTAX_2_FORMAT: 
+        startTextileBlockTag (TextType.HEADING_PREFIX + String.valueOf (level),
+            "", false);
+        break;
+      case HTML_FORMAT:
+      case HTML_FRAGMENT_FORMAT:
+        startXML (TextType.HEADING_PREFIX + String.valueOf (level), 
+            TextType.ID, id,
+            true, false, false);
+        break;
+      case NETSCAPE_BOOKMARKS_FORMAT:
+      case XML_FORMAT:
+        if (level == 1) {
+          startXML (TextType.HEADING_PREFIX.toUpperCase()
+              + String.valueOf (level), 
+              TextType.ID, id,
+              false, false, false);
+        } else {
+          startXML (TextType.HEADING_PREFIX.toUpperCase()
+              + String.valueOf (level), TextType.FOLDED.toUpperCase(), "",
+              false, false, false);
+        }
+        break;
+      case OPML_FORMAT:
+        break;
+      case STRUCTURED_TEXT_FORMAT:
+        startStructuredText(TextType.HEADING_PREFIX.toUpperCase()
+            + String.valueOf (level));
+      default:
+        break;
+    }
+  }
+  
   public void endHeading (int level) {
     switch (markupFormat) {
       case MARKDOWN_FORMAT:
@@ -1619,7 +1670,8 @@ public class MarkupWriter
         break;
       case HTML_FORMAT:
       case HTML_FRAGMENT_FORMAT:
-        endXML (TextType.HEADING_PREFIX + String.valueOf (level));
+        endXML (TextType.HEADING_PREFIX + String.valueOf (level),
+            false, true, true);
         break;
       case NETSCAPE_BOOKMARKS_FORMAT:
       case XML_FORMAT:
@@ -1728,10 +1780,30 @@ public class MarkupWriter
       case HTML_FRAGMENT_FORMAT:
       case NETSCAPE_BOOKMARKS_FORMAT:
       case XML_FORMAT:
-        startXML (TextType.DIV, 
-            TextType.CLASS, style, 
-            TextType.ID, id, 
-            true, true, false);
+        boolean hasStyle = (style != null && style.length() > 0);
+        boolean hasID    = (id    != null && id.length() > 0);
+        if (hasStyle && hasID) {
+          startXML (TextType.DIV, 
+              TextType.CLASS, style, 
+              TextType.ID, id, 
+              true, true, false);
+        }
+        else
+        if (hasStyle) {
+          startXML (TextType.DIV, 
+              style,
+              true, true, false);
+        }
+        else
+        if (hasID) {
+          startXML (TextType.DIV,
+              TextType.ID, id,
+              true, true, false);
+        } else {
+          startXML (TextType.DIV,
+              "",
+              true, true, false);
+        }
         break;
       case OPML_FORMAT:
         startStoringText();
@@ -2036,7 +2108,7 @@ public class MarkupWriter
       case HTML_FRAGMENT_FORMAT:
       case NETSCAPE_BOOKMARKS_FORMAT:
       case XML_FORMAT:
-        endXML (TextType.LIST_ITEM);
+        endXML (TextType.LIST_ITEM, true, true, false);
         break;
       case OPML_FORMAT:
         startOutline (TextType.PARAGRAPH, text.toString(), "", true);
