@@ -236,7 +236,7 @@ public class TemplateUtil {
     io = new TextIO ();
     int pegDownOptions = 0;
     pegDownOptions = pegDownOptions + Extensions.SMARTYPANTS;
-    // pegDownOptions = pegDownOptions = Extensions.DEFINITIONS;
+    pegDownOptions = pegDownOptions = Extensions.DEFINITIONS;
     pegDown = new PegDownProcessor(pegDownOptions);
     this.log = log;
     event = new LogEvent();
