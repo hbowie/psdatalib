@@ -43,9 +43,14 @@ public class AddToCtoMarkdown
   
    @param reader The line reader to be used to access the input.
    @param lineWriter The line writer to be used to create the output. 
+   @param startHeadingLevel The heading level at which to start generating 
+          table of contents entries. This should be the numerically lowest level.
+   @param endHeadingLevel The last (numerically highest) heading level for which
+          table of contents entries should be generated. 
    @throws TransformException If an error occurs. 
   */
-  public void transformNow(TextLineReader reader, TextLineWriter lineWriter) 
+  public void transformNow(TextLineReader reader, TextLineWriter lineWriter,
+      int startHeadingLevel, int endHeadingLevel) 
       // throws TransformException 
       {
     // System.out.println("AddToCtoMarkdown.transformNow");
@@ -58,8 +63,6 @@ public class AddToCtoMarkdown
     MarkdownInitialParser mdParser = new MarkdownInitialParser (this);
     
     int firstHeadingLevel = 0;
-    int startHeadingLevel = 2;
-    int endHeadingLevel = 6;
     int lastHeadingLevel = 1;
 
     MarkdownLine mdLine = mdParser.getNextLine();

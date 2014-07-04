@@ -235,7 +235,8 @@ public class TemplateUtil {
   public TemplateUtil (Logger log) {
     io = new TextIO ();
     int pegDownOptions = 0;
-    pegDownOptions = pegDownOptions + Extensions.SMARTYPANTS;
+    pegDownOptions = pegDownOptions + Extensions.SMARTS;
+    pegDownOptions = pegDownOptions + Extensions.QUOTES;
     pegDownOptions = pegDownOptions = Extensions.DEFINITIONS;
     pegDown = new PegDownProcessor(pegDownOptions);
     this.log = log;
@@ -963,7 +964,30 @@ public class TemplateUtil {
             temp.deleteOnExit();
             FileMaker writer = new FileMaker (temp);
             AddToCtoMarkdown addToC = new AddToCtoMarkdown();
-            addToC.transformNow(includeFile, writer);
+            int startHeadingLevel = 2;
+            int endHeadingLevel = 4;
+            char parmStart = '2';
+            char parmEnd   = '4';
+            if (includeParm.length() > 0) {
+              parmStart = includeParm.charAt(0);
+            }
+            if (includeParm.length() > 1) {
+              parmEnd = includeParm.charAt(includeParm.length() - 1);
+            }
+            if (Character.isDigit(parmStart)
+                && parmStart > '0'
+                && parmStart < '7') {
+              startHeadingLevel = Character.getNumericValue(parmStart);
+            }
+            if (Character.isDigit(parmEnd)
+                && parmEnd > '0'
+                && parmEnd < '7'
+                && (! (parmEnd < parmStart))) {
+              endHeadingLevel = Character.getNumericValue(parmEnd);
+            }
+
+            addToC.transformNow(includeFile, writer, 
+                startHeadingLevel, endHeadingLevel);
             converted = true;
             if (converted) {
               recordEvent (LogEvent.NORMAL,
