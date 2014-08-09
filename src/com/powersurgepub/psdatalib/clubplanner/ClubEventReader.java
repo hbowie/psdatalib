@@ -16,8 +16,7 @@
 
 package com.powersurgepub.psdatalib.clubplanner;
 
-import com.powersurgepub.pstextio.FileLineReader;
-import com.powersurgepub.pstextio.TextLineReader;
+  import com.powersurgepub.pstextio.*;
   import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psutils.*;
   import java.io.*;
