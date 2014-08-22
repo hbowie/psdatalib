@@ -535,6 +535,22 @@ public class ClubEvent
  
 
   /**
+   The event recap, formatted as HTML.
+   */
+  private String recapAsHtml = null;
+ 
+  public static final String RECAP_AS_HTML_FIELD_NAME = "Recap as HTML";
+ 
+  public static final String RECAP_AS_HTML_COLUMN_NAME = "Recap as HTML";
+ 
+  public static final String RECAP_AS_HTML_COMMON_NAME = "recapashtml";
+ 
+  public static final int RECAP_AS_HTML_COLUMN_INDEX = 30;
+ 
+  public static final int RECAP_AS_HTML_COLUMN_WIDTH = 50;
+ 
+
+  /**
    After the event has been added to the club web site, the ID assigned to the page by the Content Management System should be entered here. This will be identified in the URL for the event as the articleid, as in articleid=17, meaning that an ID of 17 should be entered here.
    */
   private String id = null;
@@ -545,9 +561,9 @@ public class ClubEvent
  
   public static final String ID_COMMON_NAME = "id";
  
-  public static final int ID_COLUMN_INDEX = 30;
+  public static final int ID_COLUMN_INDEX = 31;
  
-  public static final int ID_COLUMN_WIDTH = 4;
+  public static final int ID_COLUMN_WIDTH = 30;
  
 
   /**
@@ -561,7 +577,7 @@ public class ClubEvent
  
   public static final String LINK_COMMON_NAME = "link";
  
-  public static final int LINK_COLUMN_INDEX = 31;
+  public static final int LINK_COLUMN_INDEX = 32;
  
   public static final int LINK_COLUMN_WIDTH = 30;
  
@@ -577,7 +593,7 @@ public class ClubEvent
  
   public static final String VENUE_COMMON_NAME = "venue";
  
-  public static final int VENUE_COLUMN_INDEX = 32;
+  public static final int VENUE_COLUMN_INDEX = 33;
  
   public static final int VENUE_COLUMN_WIDTH = 30;
  
@@ -593,7 +609,7 @@ public class ClubEvent
  
   public static final String IMAGE_COMMON_NAME = "image";
  
-  public static final int IMAGE_COLUMN_INDEX = 33;
+  public static final int IMAGE_COLUMN_INDEX = 34;
  
   public static final int IMAGE_COLUMN_WIDTH = 30;
  
@@ -609,7 +625,7 @@ public class ClubEvent
  
   public static final String NEWS_IMAGE_COMMON_NAME = "newsimage";
  
-  public static final int NEWS_IMAGE_COLUMN_INDEX = 34;
+  public static final int NEWS_IMAGE_COLUMN_INDEX = 35;
  
   public static final int NEWS_IMAGE_COLUMN_WIDTH = 30;
  
@@ -625,7 +641,7 @@ public class ClubEvent
  
   public static final String SHORT_DATE_COMMON_NAME = "shortdate";
  
-  public static final int SHORT_DATE_COLUMN_INDEX = 35;
+  public static final int SHORT_DATE_COLUMN_INDEX = 36;
  
   public static final int SHORT_DATE_COLUMN_WIDTH = 12;
  
@@ -641,7 +657,7 @@ public class ClubEvent
  
   public static final String NOTES_COMMON_NAME = "notes";
  
-  public static final int NOTES_COLUMN_INDEX = 36;
+  public static final int NOTES_COLUMN_INDEX = 37;
  
   public static final int NOTES_COLUMN_WIDTH = 40;
  
@@ -657,12 +673,12 @@ public class ClubEvent
  
   public static final String NOTES_AS_HTML_COMMON_NAME = "notesashtml";
  
-  public static final int NOTES_AS_HTML_COLUMN_INDEX = 37;
+  public static final int NOTES_AS_HTML_COLUMN_INDEX = 38;
  
   public static final int NOTES_AS_HTML_COLUMN_WIDTH = 50;
  
 
-  public static final int COLUMN_COUNT = 38;
+  public static final int COLUMN_COUNT = 39;
 
 
   /*
@@ -1489,6 +1505,17 @@ public class ClubEvent
         setRecap ((String)obj2);
       }
     }
+    obj2 = clubEvent2.getRecapAsHtml();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setRecapAsHtml ((String)obj2);
+      }
+    }
     obj2 = clubEvent2.getId();
     if (obj2 == null) {
       // No value available -- leave current value as-is
@@ -1686,6 +1713,9 @@ public class ClubEvent
       case RECAP_COLUMN_INDEX:
           setRecap (columnValue);
           break;
+      case RECAP_AS_HTML_COLUMN_INDEX:
+          setRecapAsHtml (columnValue);
+          break;
       case ID_COLUMN_INDEX:
           setId (columnValue);
           break;
@@ -1785,6 +1815,8 @@ public class ClubEvent
           return financeProjection;
       case RECAP_COLUMN_INDEX:
           return recap;
+      case RECAP_AS_HTML_COLUMN_INDEX:
+          return recapAsHtml;
       case ID_COLUMN_INDEX:
           return id;
       case LINK_COLUMN_INDEX:
@@ -1877,6 +1909,8 @@ public class ClubEvent
           return FINANCE_PROJECTION_COLUMN_NAME;
       case RECAP_COLUMN_INDEX:
           return RECAP_COLUMN_NAME;
+      case RECAP_AS_HTML_COLUMN_INDEX:
+          return RECAP_AS_HTML_COLUMN_NAME;
       case ID_COLUMN_INDEX:
           return ID_COLUMN_NAME;
       case LINK_COLUMN_INDEX:
@@ -1970,6 +2004,8 @@ public class ClubEvent
           return FINANCE_PROJECTION_COMMON_NAME;
       case RECAP_COLUMN_INDEX:
           return RECAP_COMMON_NAME;
+      case RECAP_AS_HTML_COLUMN_INDEX:
+          return RECAP_AS_HTML_COMMON_NAME;
       case ID_COLUMN_INDEX:
           return ID_COMMON_NAME;
       case LINK_COLUMN_INDEX:
@@ -2062,6 +2098,8 @@ public class ClubEvent
           return FINANCE_PROJECTION_COLUMN_WIDTH;
       case RECAP_COLUMN_INDEX:
           return RECAP_COLUMN_WIDTH;
+      case RECAP_AS_HTML_COLUMN_INDEX:
+          return RECAP_AS_HTML_COLUMN_WIDTH;
       case ID_COLUMN_INDEX:
           return ID_COLUMN_WIDTH;
       case LINK_COLUMN_INDEX:
@@ -2154,6 +2192,8 @@ public class ClubEvent
           return String.class;
       case RECAP_COLUMN_INDEX:
           return String.class;
+      case RECAP_AS_HTML_COLUMN_INDEX:
+          return String.class;
       case ID_COLUMN_INDEX:
           return String.class;
       case LINK_COLUMN_INDEX:
@@ -2189,6 +2229,8 @@ public class ClubEvent
       case ACTIONS_COLUMN_INDEX:
           return true;
       case BLURB_COLUMN_INDEX:
+          return true;
+      case RECAP_COLUMN_INDEX:
           return true;
       case NOTES_COLUMN_INDEX:
           return true;
@@ -3826,6 +3868,58 @@ public class ClubEvent
    */
   public String getRecap () {
     return recap;
+  }
+ 
+  /**
+     Sets the recap as html for this club event.
+ 
+     @param  recapAsHtml The recap as html for this club event.
+   */
+  public void setRecapAsHtml (String recapAsHtml) {
+    this.recapAsHtml = recapAsHtml;
+    setModified (true);
+  }
+
+  /**
+    Returns the recap as html for this club event as a string.
+ 
+    @return The recap as html for this club event as a string.
+   */
+  public String getRecapAsHtmlAsString () {
+    if (hasRecapAsHtml()) {
+      return getRecapAsHtml().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the recap as html for this club event is null.
+ 
+    @return True if the recap as html for this club event is not null.
+   */
+  public boolean hasRecapAsHtml () {
+    return (recapAsHtml != null);
+  }
+
+  /**
+    Determines if the recap as html for this club event
+    is null or is empty.
+ 
+    @return True if the recap as html for this club event
+    is not null and not empty.
+   */
+  public boolean hasRecapAsHtmlWithData () {
+    return (recapAsHtml != null && recapAsHtml.length() > 0);
+  }
+
+  /**
+    Returns the recap as html for this club event.
+ 
+    @return The recap as html for this club event.
+   */
+  public String getRecapAsHtml () {
+    return recapAsHtml;
   }
  
   /**
