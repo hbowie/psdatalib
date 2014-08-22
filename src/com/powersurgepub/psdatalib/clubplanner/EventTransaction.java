@@ -54,7 +54,7 @@ public class EventTransaction
  
 
   /**
-   The date on which the financial transaction occurred.
+   The date on which the financial transaction occurred, in Year-Month-Day format.
    */
   private String date = null;
  
