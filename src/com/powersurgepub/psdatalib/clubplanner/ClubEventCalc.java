@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Herb Bowie
+ * Copyright 2012 - 2014 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ package com.powersurgepub.psdatalib.clubplanner;
   import com.powersurgepub.psutils.*;
   import java.io.*;
   import java.math.*;
+  import java.text.*;
   import java.util.*;
   import org.pegdown.*;
 
@@ -73,6 +74,9 @@ public class ClubEventCalc {
       = new TextBuilder();
   private    TextBuilder      actionLineField
       = new TextBuilder();
+  
+  private NumberFormat currencyFormat 
+      = NumberFormat.getCurrencyInstance(Locale.US);
   
   public ClubEventCalc () {
     
@@ -262,6 +266,7 @@ public class ClubEventCalc {
     calcItemType (clubEvent);
     calcCategory (clubEvent);
     calcBlurbAsHtml (clubEvent);
+    calcRecapAsHtml (clubEvent);
     calcActionsAsHtml (clubEvent);
     calcNotesAsHtml (clubEvent);
     calcFinanceProjection (clubEvent);
@@ -323,6 +328,14 @@ public class ClubEventCalc {
     }
   }
   
+  public void calcRecapAsHtml (ClubEvent clubEvent) {
+
+    if (clubEvent.getRecap() != null
+        && clubEvent.getRecap().length() > 0) {
+      clubEvent.setRecapAsHtml(pegDown.markdownToHtml(clubEvent.getRecap()));
+    }
+  }
+  
   public void calcNotesAsHtml (ClubEvent clubEvent) {
     if (clubEvent.getNotes() != null
         && clubEvent.getNotes().length() > 0) {
@@ -362,7 +375,8 @@ public class ClubEventCalc {
     }
 
     if (anyFinances) {
-      clubEvent.setFinanceProjection(financeProjection.toPlainString());
+      clubEvent.setFinanceProjection
+          (currencyFormat.format(financeProjection.doubleValue()));
     } else {
       clubEvent.setFinanceProjection("");
     }
@@ -399,7 +413,8 @@ public class ClubEventCalc {
     }
 
     if (anyActuals) {
-      clubEvent.setOverUnder (overUnder.toPlainString());
+      clubEvent.setOverUnder 
+          (currencyFormat.format(overUnder.doubleValue()));
     } else {
       clubEvent.setOverUnder("");
     }
