@@ -248,7 +248,6 @@ public class TemplateUtil {
   }
   
   public void setWebRoot (File webRootFile) {
-    // System.out.println("TemplateUtil.setWebRoot to " + webRootFile);
     this.webRootFile = webRootFile;
     if (webRootFile == null) {
       webRootFileName = null;
@@ -384,15 +383,11 @@ public class TemplateUtil {
     String        nextString = "";
     TemplateLine  nextLine = null;
     
-    // System.out.println("nextTemplateLine from " + templateFile.toString());
-    
     do {
       nextString = templateFile.readLine();
       if (templateFile.isAtEnd()) {
-        // System.out.println("- at end");
         templateFileAtEnd = true;
       } else {
-        // System.out.println("- line = " + nextString);
         nextLine = new TemplateLine (nextString, this);
       }
     } while (nextLine == null && (! templateFileAtEnd));
@@ -805,8 +800,6 @@ public class TemplateUtil {
      @param textFileOutName New name for the output text file.
    */
   public void setTextFileOutName (String textFileOutName) {
-    // System.out.println("TemplateUtil.setTextFileOutName");
-    // System.out.println("- file = " + textFileOutName);
     this.textFileOutName = new FileName (textFileOutName, FileName.FILE_TYPE);
     close();
     if (! textFileOutName.startsWith ("/")) {
@@ -814,7 +807,6 @@ public class TemplateUtil {
       this.textFileOutName = new FileName (path.resolveRelative(textFileOutName));
     }
     if (this.webRootFile == null) {
-      // System.out.println("- web root = null");
       relativePathToRoot = null;
     } 
     else
@@ -825,10 +817,8 @@ public class TemplateUtil {
                i--) {
         relativePathToRoot.append("../");
       }
-      // System.out.println("- path = " + relativePathToRoot);
     } else {
       relativePathToRoot = null;
-      // System.out.println("- file not beneath web root");
     }
     textFileOut = new FileMaker
       (this.textFileOutName.toString());
@@ -892,11 +882,6 @@ public class TemplateUtil {
       includeFile = new FileLineReader 
           (templatePathFileName.resolveRelative(includeFileNameStr));
     }
-
-    // System.out.println("TemplateUtil.includeFile");
-    // System.out.println("- output = " + textFileOut.getDestination());
-    // System.out.println("- file   = " + includeFile.toString());
-    // System.out.println("- parm   = " + includeParm);
     
     recordEvent (LogEvent.NORMAL, "Including file " + includeFile.toString(), false);
     
@@ -904,7 +889,6 @@ public class TemplateUtil {
     FileLineReader includeFileReader = (FileLineReader)includeFile;
     File incFile = includeFileReader.getFile();
     if (incFile != null && (! incFile.exists())) {
-      // System.out.println("- Include File Not Found!");
       recordEvent (LogEvent.MEDIUM, 
           "File " + includeFile.toString() + " not found", false);
     } else {
@@ -914,8 +898,6 @@ public class TemplateUtil {
       FileName textFileOutFileName = new FileName (textFileOut.getDestination());
       String inExt = includeFileName.getExt();
       String outExt = textFileOutFileName.getExt();
-      // System.out.println("- inExt  = " + inExt);
-      // System.out.println("- outExt = " + outExt);
       TextIOType inType = io.getType (inExt, "Input", false);
       TextIOType outType = io.getType (outExt, "Output", true);
       if ((includeParm == null
@@ -940,13 +922,7 @@ public class TemplateUtil {
               md.append(GlobalConstants.LINE_FEED);
             }
           } 
-          // System.out.println("Converting markdown to html");
-          // System.out.println("- input:  " + includeFileReader.toString());
-          // System.out.println("- output: " + textFileOutName.toString());
-          // System.out.println("- input  character count: " + String.valueOf(md.length()));
           String html = pegDown.markdownToHtml(md.toString());
-          // System.out.println("- output character count: " + String.valueOf(html.length()));
-          // System.out.println(" ");
           TextLineReader htmlReader = new StringLineReader(html);
           includeFile = htmlReader;
         }
@@ -954,7 +930,6 @@ public class TemplateUtil {
         if (isMarkdown(inExt) 
             && (! isMarkdownTOC(inExt))
             && isMarkdownTOC(outExt)) {
-          // System.out.println("Adding a table of contents to a Markdown doc");
           try {
             File temp
               = File.createTempFile
@@ -1010,9 +985,7 @@ public class TemplateUtil {
           tree.getTextRoot().setText (includeFile.toString());
           try {
             URL url = includeFileReader.toURL();
-            // System.out.println("  Loading type = " + inType + ", " + url.toString());
             converted = io.load (tree, url, inType, includeParm);
-            // System.out.println("  Loaded successfully? " + String.valueOf(converted));
             if (converted) {
               File temp
                   = File.createTempFile
@@ -1021,9 +994,7 @@ public class TemplateUtil {
               // Delete temp file when program exits.
               temp.deleteOnExit();
               FileMaker writer = new FileMaker (temp);
-              // System.out.println("  Storing " + url.toString());
               converted = io.store (tree, writer, outType, epub, epubSite);
-              // System.out.println("  Stored " + url.toString());
               if (converted) {
                 recordEvent (LogEvent.NORMAL,
                     "Converted Include file "
@@ -1044,7 +1015,6 @@ public class TemplateUtil {
         } // end try
       } // end if using a pspub routine
  
-      // System.out.println(" - Copying include file to output file");
       boolean inOK = includeFile.open();
       if (inOK) {
         String includeLine = includeFile.readLine(); 
@@ -1262,6 +1232,9 @@ public class TemplateUtil {
             endVar = startMods;
             for (int i = startMods + 1; i < endDelim; i++) {
               char workChar = str.charAt (i);
+              if (formatStringFound) {
+                formatStringBuf.append (workChar);
+              } else
               if (Character.toLowerCase (workChar) == 'c') {
                 demarcation = true;
               } else
@@ -1336,9 +1309,6 @@ public class TemplateUtil {
               if (Character.toLowerCase(workChar) == 'p') {
                 noPunctuation = true;
               } else
-              if (formatStringFound) {
-                formatStringBuf.append (workChar);
-              } else
               if (Character.isLetter (workChar)) {
                 formatStringFound = true;
                 formatStringBuf.append (workChar);
@@ -1384,7 +1354,6 @@ public class TemplateUtil {
           } else
           if (variable.equals (RELATIVE_VARIABLE)) {
             replaceData = getRelativePathToRoot();
-            // System.out.println("  - replacing relative variable with " + replaceData);
           } else
           if (globals.containsField (variable)) {
             replaceData = globals.getFieldData (variable);
