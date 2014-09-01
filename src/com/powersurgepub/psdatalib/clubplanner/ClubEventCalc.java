@@ -78,6 +78,8 @@ public class ClubEventCalc {
   private NumberFormat currencyFormat 
       = NumberFormat.getCurrencyInstance(Locale.US);
   
+  private    String           lastNoteYmd = "";
+  
   public ClubEventCalc () {
     
     int pegDownOptions = 0;
@@ -228,7 +230,7 @@ public class ClubEventCalc {
                     adjust the year to be a future year. 
   */
   public void setFuture(String futureStr) {
-    strDate.setFuture(futureStr);
+    strDate.setNextYear(futureStr);
   }
   
   /**
@@ -424,7 +426,7 @@ public class ClubEventCalc {
     
     // Now get the date in a predictable year-month-date format
     if (clubEvent.hasWhen()) {
-      strDate.setFuture(clubEvent.getStatusAsString());
+      strDate.setNextYear(clubEvent.getStatusAsString());
       strDate.parse(clubEvent.getWhen());
       clubEvent.setYmd(strDate.getYMD());
     }
@@ -475,7 +477,7 @@ public class ClubEventCalc {
     
     // Now set a short, human readable date
     if (clubEvent.hasWhen()) {
-      strDate.setFuture(clubEvent.getStatusAsString());
+      strDate.setNextYear(clubEvent.getStatusAsString());
       strDate.parse(clubEvent.getWhen());
       clubEvent.setShortDate(strDate.getShort());
     }
@@ -490,6 +492,7 @@ public class ClubEventCalc {
   */
   public void calcEventNotes (ClubEvent clubEvent) {
     clubEvent.newEventNoteList();
+    lastNoteYmd = getStringDate().getTodayYMD();
     if (clubEvent.hasNotes()) {
       TextLineReader reader = new StringLineReader (clubEvent.getNotes());
       eventNote = new EventNote();
@@ -689,8 +692,13 @@ public class ClubEventCalc {
           break;
         case NOTES_FOR:
           eventNote.setNoteFor(headerElement.toString());
-          getStringDate().parse(headerElement.toString());
-          eventNote.setNoteForYmd (getStringDate().getYMD());
+          StringDate noteDate = getStringDate();
+          noteDate.parse(headerElement.toString());
+          if (noteDate.getYMD().compareTo(lastNoteYmd) > 0) {
+            noteDate.decrementYear();
+          }
+          lastNoteYmd = noteDate.getYMD();
+          eventNote.setNoteForYmd (noteDate.getYMD());
           break;
         case NOTES_VIA:
           eventNote.setNoteVia(headerElement.toString());
