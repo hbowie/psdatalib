@@ -79,6 +79,8 @@ public class Note
   
   private Date          lastModDate;
   
+  private boolean       synced = false;
+  
   private TagsNode      tagsNode = null;
   
   private DataValueString     titleValue = null;
@@ -540,6 +542,14 @@ public class Note
     return lastModDate;
 
   } // end method
+  
+  public void setSynced(boolean synced) {
+    this.synced = synced;
+  }
+  
+  public boolean isSynced() {
+    return synced;
+  }
   
   public String toString() {
     return titleValue.toString();

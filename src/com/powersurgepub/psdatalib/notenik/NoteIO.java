@@ -309,7 +309,7 @@ public class NoteIO
       } 
       else
       if (isInterestedIn (dirEntryFile)) {
-        nextNote = getNote(dirEntryFile);
+        nextNote = getNote(dirEntryFile, "");
         if (nextNote == null) {
           // System.out.println("  - No note built");
         }
@@ -397,18 +397,20 @@ public class NoteIO
   
   public Note getNote(String fileName) 
       throws IOException, FileNotFoundException {
-    return getNote(getFile(fileName));
+    return getNote(getFile(fileName), "");
   }
   
   /**
    Read one note from disk and return it as a note object. 
   
    @param noteFile The file containing the note on disk. 
+   @param syncPrefix An optional prefix that might be appended to the front
+          of the note's title to form the file name. 
    @return A Note object. 
    @throws IOException
    @throws FileNotFoundException 
   */
-  public Note getNote(File noteFile) 
+  public Note getNote(File noteFile, String syncPrefix) 
       throws IOException, FileNotFoundException {
     
     Note note = null;
@@ -418,7 +420,14 @@ public class NoteIO
         && noteFile.isFile()) {
       
       FileName noteFileName = new FileName(noteFile);
-      String fileNameIn = noteFileName.getBase();
+      String fileNameIn = "";
+      if (syncPrefix != null
+          && syncPrefix.length() > 0
+          && noteFileName.getBase().startsWith(syncPrefix)) {
+        fileNameIn = noteFileName.getBase().substring(syncPrefix.length());
+      } else {
+        fileNameIn = noteFileName.getBase();
+      }
       note = new Note(recDef);
       note.setDiskLocation(noteFile);
       
@@ -608,9 +617,7 @@ public class NoteIO
  
   public void save (File folder, Note note, boolean primaryLocation) 
       throws IOException {
- 
     File file = getFile(folder, note);
-    // System.out.println ("NoteWriter.save to " + file.toString());
     openOutput (file);
     String oldDiskLocation = note.getDiskLocation();
     saveOneItem (note);
@@ -618,7 +625,27 @@ public class NoteIO
       note.setDiskLocation (file);
     }
     closeOutput();
- 
+  }
+  
+  /**
+   Save one note to a sync folder. 
+  
+   @param syncFolder The folder to which the note is to be saved. 
+   @param syncPrefix The prefix to be appended to the front of the file name. 
+   @param note       The note to be saved. 
+  
+   @throws IOException 
+  */
+  public void saveToSyncFolder (String syncFolder, String syncPrefix, Note note) 
+      throws IOException {
+    openOutput (getSyncFile(syncFolder, syncPrefix, note.getTitle()));
+    saveOneItem (note);
+    closeOutput();
+  }
+  
+  public File getSyncFile (String syncFolderStr, String syncPrefix, String title) {
+    File syncFolder = new File(syncFolderStr);
+    return new File(syncFolder, syncPrefix + title + FILE_EXT);
   }
  
   /**
