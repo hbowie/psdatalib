@@ -1115,7 +1115,7 @@ public class ClubEvent
 
     boolean found = false;
     int fieldStart = -1;
-    
+
     if (getCategory() != null
         && getCategory().length() > 0) {
       fieldStart = StringUtils.indexOfIgnoreCase (findLower, findUpper,
