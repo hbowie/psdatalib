@@ -15,17 +15,6 @@
  */
 
 package com.powersurgepub.psdatalib.psdata;
-
-  import java.lang.Integer;
-  import java.lang.Object;
-  import java.lang.String;
-  import java.lang.StringBuffer;
-  import java.util.Vector;
-  import com.powersurgepub.psdatalib.psdata.DataDictionary;
-  import com.powersurgepub.psdatalib.psdata.DataFieldDefinition;
-  import com.powersurgepub.psutils.CommonName;
-  import com.powersurgepub.psutils.GlobalConstants;
-  import com.powersurgepub.psutils.StringUtils;
   
 /**
    A definition of one column within a particular RecordDefinition.<p>

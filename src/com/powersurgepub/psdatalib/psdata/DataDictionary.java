@@ -79,7 +79,7 @@ public class DataDictionary
   public   final    static    DataFieldDefinition UNKNOWN_FIELD_DEFINITION 
     = new DataFieldDefinition ("** unknown **");
     
-  /** A data dictonary for dictionary entries themselves. */
+  /** A data dictionary for dictionary entries themselves. */
   private static DataDictionary   metaDictionary;
   
   /** A record definition for data dictionary fields. */
