@@ -18,7 +18,6 @@
 package com.powersurgepub.psdatalib.notenik;
 
   import com.powersurgepub.psdatalib.psdata.*;
-  import com.powersurgepub.psdatalib.pstags.*;
   import com.powersurgepub.psutils.*;
   import java.io.*;
   import java.util.*;
@@ -189,10 +188,10 @@ public class NoteIO
   private void buildStandardRecordDefinition() {
     if (inType == NOTES_ONLY_TYPE 
         || inType == NOTES_PLUS_TYPE) {
-      recDef.addColumn(Note.TITLE_DEF);
-      recDef.addColumn(Note.TAGS_DEF);
-      recDef.addColumn(Note.LINK_DEF);
-      recDef.addColumn(Note.BODY_DEF);
+      recDef.addColumn(NoteFactory.TITLE_DEF);
+      recDef.addColumn(NoteFactory.TAGS_DEF);
+      recDef.addColumn(NoteFactory.LINK_DEF);
+      recDef.addColumn(NoteFactory.BODY_DEF);
     }
   }
   
@@ -526,19 +525,19 @@ public class NoteIO
                 && Character.isWhitespace(line.charAt(fieldValueStart))) {
               fieldValueStart++;
             }
-            if (fieldName.equals(Note.TITLE_COMMON_NAME)) {
+            if (fieldName.equals(NoteFactory.TITLE_COMMON_NAME)) {
               note.setTitle(line.substring(fieldValueStart, end));
             }
             else
-            if (fieldName.equals(Note.LINK_COMMON_NAME)) {
+            if (fieldName.equals(NoteFactory.LINK_COMMON_NAME)) {
               note.setLink(line.substring(fieldValueStart, end));
             }
             else
-            if (fieldName.equals(Note.TAGS_COMMON_NAME)) {
+            if (fieldName.equals(NoteFactory.TAGS_COMMON_NAME)) {
               note.setTags(line.substring(fieldValueStart, end));
             }
             else
-            if (fieldName.equals(Note.BODY_COMMON_NAME)) {
+            if (fieldName.equals(NoteFactory.BODY_COMMON_NAME)) {
               note.setBody(line.substring(fieldValueStart, end));
               bodyStarted = true;
             }

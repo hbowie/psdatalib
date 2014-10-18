@@ -37,41 +37,7 @@ public class Note
       Taggable, 
       ItemWithURL {
   
-  public static final String  TITLE_FIELD_NAME  = "Title";
-  public static final String  TITLE_COMMON_NAME = "title";
-  public static final String  LINK_FIELD_NAME   = "Link";
-  public static final String  LINK_COMMON_NAME  = "link";
-  public static final String  TAGS_FIELD_NAME   = "Tags";
-  public static final String  TAGS_COMMON_NAME  = "tags";
-  public static final String  BODY_FIELD_NAME   = "Body";
-  public static final String  BODY_COMMON_NAME  = "body";
-  
-  public static final DataFieldDefinition TITLE_DEF 
-      = new DataFieldDefinition(TITLE_FIELD_NAME);
-  public static final DataFieldDefinition LINK_DEF 
-      = new DataFieldDefinition(LINK_FIELD_NAME);
-  public static final DataFieldDefinition TAGS_DEF
-      = new DataFieldDefinition(TAGS_FIELD_NAME);
-  public static final DataFieldDefinition BODY_DEF
-      = new DataFieldDefinition(BODY_FIELD_NAME);
-  
-  public static final boolean SLASH_TO_SEPARATE = false;
-  
-  public final static String   YMD_FORMAT_STRING = "yyyy-MM-dd";
-  public final static String   MDY_FORMAT_STRING = "MM-dd-yyyy";
-  public final static String   STANDARD_FORMAT_STRING 
-      = "yyyy-MM-dd'T'HH:mm:ssz";
-  public final static String   
-      COMPLETE_FORMAT_STRING = "EEEE MMMM d, yyyy KK:mm:ss aa zzz";
-  
-  public final static DateFormat YMD_FORMAT 
-      = new SimpleDateFormat (YMD_FORMAT_STRING);
-  public final static DateFormat MDY_FORMAT
-      = new SimpleDateFormat (MDY_FORMAT_STRING);
-  public final static DateFormat COMPLETE_FORMAT
-      = new SimpleDateFormat (COMPLETE_FORMAT_STRING);
-  public final static DateFormat STANDARD_FORMAT
-      = new SimpleDateFormat (STANDARD_FORMAT_STRING);
+  private RecordDefinition recDef;
   
   private String        fileName = "";
   
@@ -98,14 +64,7 @@ public class Note
   private DataField           bodyField;
   private boolean bodyAdded = false;
   
-  private RecordDefinition    recDef = null;
-  
-  static {
-    TITLE_DEF.setType (DataFieldDefinition.TITLE_TYPE);
-    LINK_DEF.setType  (DataFieldDefinition.LINK_TYPE);
-    TAGS_DEF.setType  (DataFieldDefinition.TAGS_TYPE);
-    BODY_DEF.setType  (DataFieldDefinition.STRING_BUILDER_TYPE);
-  }
+  // private RecordDefinition    recDef = null;
   
   public Note(RecordDefinition recDef) {
     this.recDef = recDef;
@@ -132,23 +91,23 @@ public class Note
     
     // Build the Title field
     titleValue = new DataValueString();
-    titleField = new DataField(TITLE_DEF, titleValue);
+    titleField = new DataField(NoteFactory.TITLE_DEF, titleValue);
     storeField (recDef, titleField);
     // addField(titleField);
     
     // Build the Link field
     linkValue = new Link();
-    linkField = new DataField(LINK_DEF, linkValue);
+    linkField = new DataField(NoteFactory.LINK_DEF, linkValue);
     linkAdded = false;
     
     // Build the Tags field
     tagsValue = new Tags();
-    tagsField = new DataField(TAGS_DEF, tagsValue);
+    tagsField = new DataField(NoteFactory.TAGS_DEF, tagsValue);
     tagsAdded = false;
     
     // Build the body field
     bodyValue = new DataValueStringBuilder();
-    bodyField = new DataField(BODY_DEF, bodyValue);
+    bodyField = new DataField(NoteFactory.BODY_DEF, bodyValue);
     bodyAdded = false;
   }
   
@@ -460,11 +419,11 @@ public class Note
   }
   
   public void setLastModDateStandard (String date) {
-    setLastModDate (STANDARD_FORMAT, date);
+    setLastModDate (NoteFactory.STANDARD_FORMAT, date);
   }
     
   public void setLastModDateYMD (String date) {
-    setLastModDate (YMD_FORMAT, date);
+    setLastModDate (NoteFactory.YMD_FORMAT, date);
   }
   
   /**
@@ -523,13 +482,13 @@ public class Note
    */
   public String getLastModDateYMD () {
     
-    return YMD_FORMAT.format (lastModDate);
+    return NoteFactory.YMD_FORMAT.format (lastModDate);
 
   } // end method
   
   public String getLastModDateStandard () {
     
-    return STANDARD_FORMAT.format (lastModDate);
+    return NoteFactory.STANDARD_FORMAT.format (lastModDate);
   }
   
   /**
