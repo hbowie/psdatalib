@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2014 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -239,6 +239,70 @@ public class Tags
       merge (tags2.substring (s2, e2));
       s2 = indexOfNextWordStart (tags2, e2, slashToSeparate);
     }
+  }
+  
+  /**
+   Return the tags as a string, minus any tags to be suppressed. 
+  
+   @param suppressTags The tags to be suppressed. 
+  
+   @return The string containing the non-suppressed tags. 
+  */
+  public String suppress(Tags suppressTags) {
+    StringBuilder result = new StringBuilder();
+    int i = 0;
+    String tag = getTag(i);
+    while (tag != null && tag.length() > 0) {
+      if (suppressTags.tagFound(tag)) {
+        // Suppress it
+      } else {
+        if (result.length() > 0) {
+          result.append(PREFERRED_TAG_SEPARATOR);
+          result.append(' ');
+        }
+        result.append(tag);
+      }
+      i++;
+      tag = getTag(i);
+    }
+    return result.toString();
+  }
+  
+  /**
+   Do any of the passed tags exist within this item's tags?
+  
+   @param tags2 The passed tags. 
+  
+   @return True if any matching tags, or if there are no passed tags. 
+  */
+  public boolean anyTagFound (String tags2) {
+    return anyTagFound (new Tags (tags2));
+  }
+  
+  /**
+   Do any of the passed tags exist within this item's tags?
+  
+   @param tags2 The passed tags. 
+  
+   @return True if any matching tags, or if there are no passed tags. 
+  */
+  public boolean anyTagFound (Tags selTags) {
+
+    boolean tagSelected = false;
+    if (selTags == null || selTags.length() == 0) {
+      tagSelected = true;
+    } else {
+      int i = 0;
+      String selTag = selTags.getTag(i);
+      while (selTag.length() > 0 && (! tagSelected)) {
+        tagSelected = tagFound (selTag);
+        if (! tagSelected) {
+          i++;
+          selTag = selTags.getTag(i);
+        }
+      } // While more item tags for comparision 
+    } // End if we have selection tags
+    return tagSelected;
   }
   
   /**
