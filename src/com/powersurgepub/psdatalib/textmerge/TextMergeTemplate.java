@@ -703,7 +703,12 @@ public class TextMergeTemplate {
       templateCreated = false;
       templateFileReady = false;
       if (generateOutputOK) {
-        outputFileName = template.getTextFileOutName().toString();
+        FileName textFileOutName = template.getTextFileOutName();
+        if (textFileOutName == null) {
+          outputFileName = null;
+        } else {
+          outputFileName = textFileOutName.toString();
+        }
         if (outputFileName != null) {
           FileName outputFN = new FileName (outputFileName);
           generateOutputName.setText (outputFN.getFileName());
