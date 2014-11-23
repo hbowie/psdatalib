@@ -36,7 +36,7 @@ public class TextMergeInputNotenik
     modifiers.add("notenik+");
     modifiers.add("notenik-general");
     
-    labels.add("No Notneik");
+    labels.add("No Notenik");
     labels.add("Notenik Notes");
     labels.add("Notenik Notes Plus");
     labels.add("Notenik General");

@@ -18,9 +18,11 @@
 package com.powersurgepub.psdatalib.notenik;
 
   import com.powersurgepub.psdatalib.psdata.*;
+  import com.powersurgepub.pstextio.*;
   import com.powersurgepub.psutils.*;
   import java.io.*;
   import java.util.*;
+  import org.pegdown.*;
 
 /**
  A class to perform input and output for note files. 
@@ -34,22 +36,18 @@ public class NoteIO
   public static final String              PARMS_TITLE         = "Collection Parms";
   public static final String              FILE_EXT            = ".txt";
   
-  /** The type of data set to generate: planner or minutes. */
-  private    int              inType = 1;
-  public static final int     NOTES_ONLY_TYPE = 1;
-  public static final int     NOTES_PLUS_TYPE = 2;
-  public static final int     NOTES_GENERAL_TYPE = 3;
+  private             NoteParms           noteParms 
+      = new NoteParms(NoteParms.NOTES_ONLY_TYPE);
   
   private             File                homeFolder          = null;
+  private             String              homePath            = "";
+  
   private             File                altFolder           = null;
   private             NoteList            list                = null;
   private             int                 notesLoaded         = 0;
   
   /** Sequential number identifying last record read or written. */
   private             int                 recordNumber;
-  
-  private             DataDictionary      dict = null;
-  private             RecordDefinition    recDef = null;
   
   private             ArrayList<DirToExplode> dirList;
   private             int							    dirNumber = 0;
@@ -61,7 +59,7 @@ public class NoteIO
   private             ArrayList<String>   dirEntries;
   private             int							    entryNumber = 0;
   
-  private             File                dirEntryFile = null;
+  private             File                noteFileToRead = null;
   private             Note                nextNote = null;
   
   private             BufferedReader      inBuffered;
@@ -73,6 +71,10 @@ public class NoteIO
   public static final int IO_IMPLICIT             = 1;
   public static final int IO_IMPLICIT_UNDERLINES  = 2;
   public static final int IO_IMPLICIT_FILENAME    = 3;
+  
+  private             PegDownProcessor   pegDown;
+  
+  private             NoteBuilder builder;
   
   // The following fields are used for logging
   
@@ -94,29 +96,113 @@ public class NoteIO
   /** Identifier for this file (to be printed in the log as a source ID). */
   private  String       fileId;
   
+  public NoteIO () {
+     initialize();
+  }
+  
+  /**
+     Constructs a NoteIO object.
+    
+     @param  inPath Directory path to be read.
+   */
+  public NoteIO (String inPath, int inType) {
+    if (inPath.startsWith("http")) {
+      noteFileToRead = null;
+    } else {
+      noteFileToRead = new File (inPath);
+    }
+    setHomeFolder(null);
+    noteParms.setNoteType(inType);
+    initialize();
+  }
+
+  /**
+     Constructs a NoteIO object.
+    
+     @param  inPathFile Directory path to be read.
+   */
+  public NoteIO (File fileOrFolder, int inType) {
+    if (fileOrFolder.isDirectory()) {
+      setHomeFolder(fileOrFolder);
+    } else {
+      noteFileToRead = fileOrFolder;
+      setHomeFolder(null);
+    }
+    noteParms.setNoteType(inType);
+    initialize();
+  }
+  
+  public NoteIO (TextLineReader lineReader, int inType) {
+    noteFileToRead = null;
+    if (lineReader instanceof FileLineReader) {
+      FileLineReader fileLineReader = (FileLineReader) lineReader;
+      noteFileToRead = fileLineReader.getFile();
+    }
+    setHomeFolder(null);
+    noteParms.setNoteType(inType);
+    initialize();
+  }
+  
   public NoteIO (RecordDefinition recDef, File folder) {
-    this.recDef = recDef;
-    dict = recDef.getDict();
-    this.homeFolder = folder;
-    inType = NOTES_ONLY_TYPE;
+    noteParms.setRecDef(recDef);
+    setHomeFolder(folder);
+    initialize();
   } 
   
   public NoteIO (File folder) {
-    dict = new DataDictionary();
-    recDef = new RecordDefinition(dict);
-    homeFolder = folder;
-    inType = NOTES_ONLY_TYPE;
+    setHomeFolder(folder);
+    initialize();
   }
   
-  public NoteIO (File folder, int inType) {
-    dict = new DataDictionary();
-    recDef = new RecordDefinition(dict);
-    homeFolder = folder;
-    this.inType = inType;
+  /**
+     Performs standard initialization for all the constructors.
+     By default, fileId is set to "directory".
+   */
+  private void initialize () {
+    
+    int pegDownOptions = 0;
+    pegDownOptions = pegDownOptions + Extensions.SMARTYPANTS;
+    pegDownOptions = pegDownOptions + Extensions.TABLES;
+    pegDown = new PegDownProcessor(pegDownOptions);
+    
+    fileId = "NoteIO";
+    logData = new LogData ("", fileId, 0);
+    logEvent = new LogEvent (0, "");
   }
   
   public void setHomeFolder (File homeFolder) {
     this.homeFolder = homeFolder;
+    if (homeFolder == null) {
+      homePath = "";
+    } else {
+      try {
+        homePath = homeFolder.getCanonicalPath();
+      } catch (IOException e) {
+        homePath = homeFolder.getAbsolutePath();
+      }
+    }
+  }
+  
+  public void setNoteType(int noteType) {
+    noteParms.setNoteType(noteType);
+  }
+  
+  public void setNoteParms(NoteParms noteParms) {
+    this.noteParms = noteParms;
+  }
+  
+  /**
+   Pass any metadata lines to the markdown parser as well. 
+  
+   @param metadataAsMarkdown True if metadata lines should appear as part
+                             of output HTML, false otherwise. 
+  */
+  public void setMetadataAsMarkdown (boolean metadataAsMarkdown) {
+    noteParms.setMetadataAsMarkdown(metadataAsMarkdown); 
+  }
+  
+  public boolean treatMetadataAsMarkdown() {
+    return noteParms.treatMetadataAsMarkdown();
   }
   
   /* =======================================================================
@@ -156,9 +242,8 @@ public class NoteIO
    */
   public void openForInput (DataDictionary inDict)
       throws IOException {
-    this.dict = inDict;
-    recDef = new RecordDefinition(dict);
-    buildStandardRecordDefinition();
+    noteParms.newRecordDefinition(inDict);
+    noteParms.buildRecordDefinition();
     openForInputCommon();
   }
       
@@ -171,27 +256,24 @@ public class NoteIO
    */
   public void openForInput (RecordDefinition inRecDef)
       throws IOException {
-    this.recDef = inRecDef;
-    dict = recDef.getDict();
+    noteParms.setRecDef(inRecDef);
     openForInputCommon();
   }
   
   public void openForInput () 
       throws IOException {
     
-    dict = new DataDictionary();
-    recDef = new RecordDefinition(dict);
-    buildStandardRecordDefinition();
+    noteParms.buildRecordDefinition();
     openForInputCommon();
   }
   
-  private void buildStandardRecordDefinition() {
-    if (inType == NOTES_ONLY_TYPE 
-        || inType == NOTES_PLUS_TYPE) {
-      recDef.addColumn(NoteFactory.TITLE_DEF);
-      recDef.addColumn(NoteFactory.TAGS_DEF);
-      recDef.addColumn(NoteFactory.LINK_DEF);
-      recDef.addColumn(NoteFactory.BODY_DEF);
+  public NoteParms getNoteParms() {
+    File noteParmsFile = new File (homeFolder, NoteParms.FILENAME);
+    if (noteParmsFile.exists() && noteParmsFile.canRead()) {
+      NoteParms noteParms = new NoteParms();
+      return noteParms;
+    } else {
+      return null;
     }
   }
   
@@ -201,7 +283,7 @@ public class NoteIO
     dirList = new ArrayList();
     dirList.add (new DirToExplode (1, homeFolder.getAbsolutePath()));
     dirNumber = -1;
-    dirEntryFile = null;
+    noteFileToRead = null;
     nextNote = null;
     entryNumber = 0;
     dirEntries = new ArrayList<String>();
@@ -277,7 +359,7 @@ public class NoteIO
   }
   
   public void close() {
-    dirEntryFile = null;
+    noteFileToRead = null;
     nextNote = null;
   }
   
@@ -294,26 +376,25 @@ public class NoteIO
     
     if (entryNumber >= 0 && entryNumber < dirEntries.size()) {
       String nextDirEntry = dirEntries.get (entryNumber);
-      dirEntryFile = new File (currDirAsFile, nextDirEntry);
-      if (dirEntryFile.isDirectory()) {
+      noteFileToRead = new File (currDirAsFile, nextDirEntry);
+      if (noteFileToRead.isDirectory()) {
         if (nextDirEntry.equalsIgnoreCase("templates")
             || nextDirEntry.equalsIgnoreCase("publish")
             || currDirDepth >= maxDepth) {
           // skip
         } else {
           DirToExplode newDirToExplode = new DirToExplode 
-              (currDirDepth + 1, dirEntryFile.getAbsolutePath());
+              (currDirDepth + 1, noteFileToRead.getAbsolutePath());
           dirList.add (newDirToExplode);
         }
       } 
       else
-      if (isInterestedIn (dirEntryFile)) {
-        nextNote = getNote(dirEntryFile, "");
+      if (isInterestedIn (noteFileToRead)) {
+        nextNote = getNote(noteFileToRead, "");
         if (nextNote == null) {
-          // System.out.println("  - No note built");
         }
       } else {
-        // System.out.println("  - not interested");
+        // No interest
       }
       entryNumber++;
     } else {
@@ -387,11 +468,17 @@ public class NoteIO
       return false;
     }
     else
-    if (candidate.getName().endsWith (".txt")) {
+    if (candidate.getName().endsWith (".txt")
+        || candidate.getName().endsWith (".text")
+        || candidate.getName().endsWith (".markdown")
+        || candidate.getName().endsWith (".md")
+        || candidate.getName().endsWith (".mdown")
+        || candidate.getName().endsWith (".mkdown")
+        || candidate.getName().endsWith (".mdtext")) {
       return true;
     } else {
       return false;
-    }
+    } 
   }
   
   public Note getNote(String fileName) 
@@ -427,7 +514,8 @@ public class NoteIO
       } else {
         fileNameIn = noteFileName.getBase();
       }
-      note = new Note(recDef);
+      NoteBuilder builder = new NoteBuilder (noteParms);
+      note = new Note(noteParms.getRecDef());
       note.setDiskLocation(noteFile);
       
       // Use the file name (minus the path and extension) as the default title
@@ -441,145 +529,14 @@ public class NoteIO
       FileInputStream fileInputStream = new FileInputStream(noteFile);
       InputStreamReader inReader = new InputStreamReader (fileInputStream);
       inBuffered = new BufferedReader (inReader);
-      boolean bodyStarted = false;
+      
+      this.builder = new NoteBuilder(noteParms);
+      
       String line = inBuffered.readLine();
-      int lineCount = 0;
       
       // For each line in the file
       while (line != null) {
-        lineCount++;
-        // Find the beginning and end of the data on the line
-        int start = 0;
-        while (start < line.length() 
-            && Character.isWhitespace(line.charAt(start))) {
-          start++;
-        }
-        int end = line.length();
-        while (end > 0 
-            && Character.isWhitespace(line.charAt(end - 1))) {
-          end--;
-        }
-        
-        if (bodyStarted) {
-          if (note.hasBody() || start < end) {
-            // Once we've started the body, assume the rest is all body
-            note.appendLineToBody(line);
-          }
-        } else {
-          
-          // Haven't started the body yet -- look for metadata
-          
-
-          
-          // See if the line underlines a heading
-          char underlineChar = ' ';
-          int underlineCount = 0;
-          boolean underlines = false;
-          if (start < end
-              && (line.charAt(start) == '-' || line.charAt(start) == '=')) {
-            underlineChar = line.charAt(start);
-            underlines = true;
-            underlineCount = 1;
-            while (underlines && (start + underlineCount) < end) {
-              if (line.charAt(start + underlineCount) == underlineChar) {
-                underlineCount++;
-              } else {
-                underlines = false;
-              }
-            } // end while finding more underline characters
-          }
-          
-          // If the line contains a colon, look for field name and value
-          int colonPosition = line.indexOf(":", start);
-          if (colonPosition >= 0) {
-            if ((end - colonPosition) >= 2
-                && (! Character.isWhitespace(line.charAt(colonPosition + 1)))) {
-              colonPosition = -1;
-            }
-          }
-          String fieldName = "";
-          
-          // See if the line contains a level 1 heading
-          if ((start + 2) < end
-              && line.charAt(start) == '#'
-              && line.charAt(start + 1) == ' '
-              && lineCount == 1
-              && fileNameIn.equals 
-                (StringUtils.makeReadableFileName(line.substring(start + 2, end)))) {
-            note.setTitle(line.substring(start + 2, end));
-            if (ioStyle == IO_STYLE_UNDETERMINED) {
-              ioStyle = IO_IMPLICIT;
-            }
-          }
-          else
-          if (colonPosition > 0) {
-            int fieldNameEnd = colonPosition;
-            while (fieldNameEnd > start 
-                && Character.isWhitespace(line.charAt(fieldNameEnd - 1))) {
-              fieldNameEnd--;
-            }
-            fieldName = StringUtils.commonName
-                (line.substring(start, fieldNameEnd));
-            int fieldValueStart = colonPosition + 1;
-            while (fieldValueStart < end
-                && Character.isWhitespace(line.charAt(fieldValueStart))) {
-              fieldValueStart++;
-            }
-            if (fieldName.equals(NoteFactory.TITLE_COMMON_NAME)) {
-              note.setTitle(line.substring(fieldValueStart, end));
-            }
-            else
-            if (fieldName.equals(NoteFactory.LINK_COMMON_NAME)) {
-              note.setLink(line.substring(fieldValueStart, end));
-            }
-            else
-            if (fieldName.equals(NoteFactory.TAGS_COMMON_NAME)) {
-              note.setTags(line.substring(fieldValueStart, end));
-            }
-            else
-            if (fieldName.equals(NoteFactory.BODY_COMMON_NAME)) {
-              note.setBody(line.substring(fieldValueStart, end));
-              bodyStarted = true;
-            }
-            else 
-            if (fieldName.length() > 0 
-                && (! fieldName.endsWith("http"))
-                && (! fieldName.endsWith("ftp"))
-                && (! fieldName.endsWith("mailto"))
-                && (inType > NOTES_ONLY_TYPE)) {
-              note.storeField
-                  (recDef,
-                   line.substring(start, fieldNameEnd), 
-                   line.substring(fieldValueStart, end));
-            } else {
-              note.appendLineToBody(line);
-              bodyStarted = true;
-            }
-          } // end if colon found on line
-          else
-          if (start >= end) {
-            // If the line is blank, then just ignore it
-          }
-          else
-          if (underlines) {
-            // If the line underlines a heading, then just ignore it
-          }
-          else
-          if (lineCount == 1
-              && fileNameIn.equals 
-                (StringUtils.makeReadableFileName(line.substring(start, end)))) {
-            note.setTitle(line.substring(start, end));
-          }
-          else
-          if (line.substring(start, end).startsWith("http://")
-              || line.substring(start, end).startsWith("https://")
-              || line.substring(start, end).startsWith("mailto:")) {
-            note.setLink(line.substring(start, end));
-          } else {
-            note.appendLineToBody(line);
-          }
-          
-        } // end if not body started
+        NoteLine noteLine = new NoteLine(noteParms, builder, note, line);
         line = inBuffered.readLine();
       }
       inBuffered.close();
@@ -844,7 +801,7 @@ public class NoteIO
      @return Record definition for this tab-delimited file.
    */
   public RecordDefinition getRecDef () {
-    return recDef;
+    return noteParms.getRecDef();
   }
   
   /**
