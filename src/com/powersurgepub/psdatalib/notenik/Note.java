@@ -44,6 +44,7 @@ public class Note
   private String        diskLocation = "";
   
   private Date          lastModDate;
+  private String        lastModDateStr;
   
   private boolean       synced = false;
   
@@ -51,6 +52,14 @@ public class Note
   
   private DataValueString     titleValue = null;
   private DataField           titleField = null;
+  
+  private Author              authorValue = null;
+  private DataField           authorField = null;
+  private boolean             authorAdded = false;
+  
+  private StringDate          dateValue = null;
+  private DataField           dateField = null;
+  private boolean             dateAdded = false;
   
   private Link                linkValue = null;
   private DataField           linkField = null;
@@ -64,7 +73,10 @@ public class Note
   private DataField           bodyField;
   private boolean bodyAdded = false;
   
-  // private RecordDefinition    recDef = null;
+  public static final String    UP_ONE_FOLDER   = "../";
+  
+  private    SimpleDateFormat   dateFormat 
+      = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss zzz");
   
   public Note(RecordDefinition recDef) {
     this.recDef = recDef;
@@ -91,24 +103,38 @@ public class Note
     
     // Build the Title field
     titleValue = new DataValueString();
-    titleField = new DataField(NoteFactory.TITLE_DEF, titleValue);
+    titleField = new DataField(NoteParms.TITLE_DEF, titleValue);
     storeField (recDef, titleField);
     // addField(titleField);
     
+    // Build the Author field
+    authorValue = new Author();
+    authorField = new DataField(NoteParms.AUTHOR_DEF, authorValue);
+    authorAdded = false;
+    
+    // Build the Date field
+    dateValue = new StringDate();
+    dateField = new DataField(NoteParms.DATE_DEF, dateValue);
+    dateAdded = false;
+    
     // Build the Link field
     linkValue = new Link();
-    linkField = new DataField(NoteFactory.LINK_DEF, linkValue);
+    linkField = new DataField(NoteParms.LINK_DEF, linkValue);
     linkAdded = false;
     
     // Build the Tags field
     tagsValue = new Tags();
-    tagsField = new DataField(NoteFactory.TAGS_DEF, tagsValue);
+    tagsField = new DataField(NoteParms.TAGS_DEF, tagsValue);
     tagsAdded = false;
     
     // Build the body field
     bodyValue = new DataValueStringBuilder();
-    bodyField = new DataField(NoteFactory.BODY_DEF, bodyValue);
+    bodyField = new DataField(NoteParms.BODY_DEF, bodyValue);
     bodyAdded = false;
+  }
+  
+  public RecordDefinition getRecDef() {
+    return recDef;
   }
   
   public boolean equals (Object obj2) {
@@ -233,6 +259,10 @@ public class Note
     return titleValue.toString().equals (title2.trim());
   }
   
+  public boolean hasTitle() {
+    return titleValue.hasData();
+  }
+  
   public String getTitle() {
     return titleValue.toString();
   }
@@ -245,6 +275,72 @@ public class Note
 	public String getFileName() {
     return fileName;
 	}
+  
+  public void setAuthor(String author) {
+
+    authorValue.set(author);
+    if (! authorAdded) {
+      storeField (recDef, authorField);
+      authorAdded = true;
+    }
+  }
+  
+  public void setAuthor(Author author) {
+    authorValue.set(author.toString());
+    if (! authorAdded) {
+      storeField (recDef, authorField);
+      authorAdded = true;
+    }
+  }
+  
+  public boolean hasAuthor() {
+    return (authorAdded && authorValue != null && authorValue.hasData());
+  }
+  
+  public Author getAuthor() {
+    return authorValue;
+  }
+  
+  public String getAuthorAsString() {
+    if (authorAdded && authorValue != null) {
+      return authorValue.toString();
+    } else {
+      return "";
+    }
+  }
+  
+  public void setDate(String date) {
+
+    dateValue.set(date);
+    if (! dateAdded) {
+      storeField (recDef, dateField);
+      dateAdded = true;
+    }
+  }
+  
+  public void setDate(StringDate date) {
+    dateValue.set(date.toString());
+    if (! dateAdded) {
+      storeField (recDef, dateField);
+      dateAdded = true;
+    }
+  }
+  
+  public boolean hasDate() {
+    return (dateAdded && dateValue != null && dateValue.hasData());
+  }
+  
+  public StringDate getDate() {
+    return dateValue;
+  }
+  
+  public String getDateAsString() {
+    if (dateAdded && dateValue != null) {
+      return dateValue.toString();
+    } else {
+      return "";
+    }
+  }
   
   public void setTags(String tags) {
     tagsValue.set(tags);
@@ -376,6 +472,10 @@ public class Note
     }
   }
   
+  public DataValueStringBuilder getBodyAsDataValue() {
+    return bodyValue;
+  }
+  
   /**
    Set the disk location at which this item is stored.
  
@@ -398,6 +498,133 @@ public class Note
       this.diskLocation = diskLocationFile.getAbsolutePath();
     }
   }
+  
+  public void extractDiskLocationInfo(String homePath) {
+    
+    // Let's populate some fields based on the file name 
+    String fileNameBase;
+    String  fileExt = "";
+    String localPath;
+    int depth = 0;
+    StringBuilder tagsPath = new StringBuilder();
+    StringBuilder pathToTop = new StringBuilder();
+    ArrayList<String> parents = new ArrayList();
+    StringBuilder breadcrumbs = new StringBuilder();
+    
+    // Get location of file extension and file name
+    int period = diskLocation.length();
+    int slash = -1;
+    int i = diskLocation.length() - 1;
+    while (i >= 0 && slash < 0) {
+      if (diskLocation.charAt(i) == '.'
+          && period == diskLocation.length()) {
+        period = i;
+      } 
+      else
+      if (diskLocation.charAt(i) == '/' ||
+          diskLocation.charAt(i) == '\\') {
+        slash = i;
+      }
+      i--;
+    }
+    int localPathStart = 0;
+    if (diskLocation.startsWith(homePath)) {
+      localPathStart = homePath.length();
+    }
+    if (diskLocation.charAt(localPathStart) == '/' ||
+        diskLocation.charAt(localPathStart) == '\\') {
+      localPathStart++;
+    }
+    // Let's get as much info as we can from the file name or URL
+    if (slash > localPathStart) {
+      localPath = diskLocation.substring(localPathStart, slash) + '/';
+    } else {
+      localPath = "";
+    }
+    
+    int lastSlash = 0;
+    if (lastSlash < localPath.length()
+        && (localPath.charAt(0) == '/'
+          || localPath.charAt(0) == '\\')) {
+      lastSlash++;
+    }
+    while (lastSlash < localPath.length()) {
+      depth++;
+      tagsPath.append(UP_ONE_FOLDER);
+      pathToTop.append(UP_ONE_FOLDER);
+      int nextSlash = localPath.indexOf("/", lastSlash);
+      if (nextSlash < 0) {
+        nextSlash = localPath.indexOf("\\", lastSlash);
+      }
+      if (nextSlash < 0) {
+        nextSlash = localPath.length();
+      }
+      parents.add(localPath.substring(lastSlash, nextSlash));
+      lastSlash = nextSlash;
+      lastSlash++;
+    }
+    tagsPath.append("tags/");
+    
+    fileName = diskLocation.substring(slash + 1);
+    fileNameBase = diskLocation.substring(slash + 1, period);
+    fileExt = diskLocation.substring(period + 1);
+    
+    // Now let's build breadcrumbs to higher-level index pages
+    int parentIndex = 0;
+    int parentStop = parents.size() - 1;
+    while (parentIndex < parentStop) {
+      addBreadcrumb (breadcrumbs, parents, parents.size() - parentIndex, parentIndex);
+      parentIndex++;
+    }
+    if (! fileNameBase.equalsIgnoreCase("index")) {
+      addBreadcrumb (breadcrumbs, parents, 0, parentIndex);
+    } 
+    
+    if (! hasTitle()) {
+      setTitle(diskLocation.substring(slash + 1, period));
+    }
+    
+    File diskLocationFile = new File(diskLocation);
+    if (diskLocationFile != null && diskLocationFile.exists()) {
+      lastModDate = new Date (diskLocationFile.lastModified());
+      lastModDateStr = dateFormat.format(lastModDate);
+    }
+    
+  }
+  
+  /**
+   Add another bread crumb level. 
+  
+   @param breadcrumbs The starting bread crumbs, to which the latest will be added. 
+   @param levels      The number of levels upwards to point to. 
+   @param parentIndex The parent to point to.
+  
+   @return The bread crumbs after the latest addition. 
+  */
+  private StringBuilder addBreadcrumb (
+      StringBuilder breadcrumbs, 
+      ArrayList<String> parents,
+      int levels, 
+      int parentIndex) {
+    
+    if (breadcrumbs.length() > 0) {
+      breadcrumbs.append(" &gt; ");
+    }
+    breadcrumbs.append("<a href=\"");
+    for (int i = 0; i < levels; i++) {
+      breadcrumbs.append(UP_ONE_FOLDER);
+    }
+    breadcrumbs.append("index.html");
+    breadcrumbs.append("\">");
+    if (parentIndex < 0 || parentIndex >= parents.size()) {
+      breadcrumbs.append("Home");
+    } else {
+      breadcrumbs.append(
+          StringUtils.wordDemarcation(parents.get(parentIndex), " ", 1, 1, -1));
+    }
+    breadcrumbs.append("</a>");
+    return breadcrumbs;
+  }
  
   /**
    Indicate whether the item has a disk location.
@@ -419,11 +646,11 @@ public class Note
   }
   
   public void setLastModDateStandard (String date) {
-    setLastModDate (NoteFactory.STANDARD_FORMAT, date);
+    setLastModDate (NoteParms.STANDARD_FORMAT, date);
   }
     
   public void setLastModDateYMD (String date) {
-    setLastModDate (NoteFactory.YMD_FORMAT, date);
+    setLastModDate (NoteParms.YMD_FORMAT, date);
   }
   
   /**
@@ -482,13 +709,13 @@ public class Note
    */
   public String getLastModDateYMD () {
     
-    return NoteFactory.YMD_FORMAT.format (lastModDate);
+    return NoteParms.YMD_FORMAT.format (lastModDate);
 
   } // end method
   
   public String getLastModDateStandard () {
     
-    return NoteFactory.STANDARD_FORMAT.format (lastModDate);
+    return NoteParms.STANDARD_FORMAT.format (lastModDate);
   }
   
   /**
