@@ -16,6 +16,7 @@
 
 package com.powersurgepub.psdatalib.clubplanner;
 
+import com.powersurgepub.psdatalib.psdata.CalcParser;
   import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psdatalib.pslist.*;
   import com.powersurgepub.psdatalib.pstags.*;

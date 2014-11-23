@@ -16,6 +16,7 @@
 
 package com.powersurgepub.psdatalib.clubplanner;
 
+import com.powersurgepub.psdatalib.psdata.StringDate;
   import com.powersurgepub.pstextio.TextLineReader;
   import com.powersurgepub.pstextio.StringLineReader;
   import com.powersurgepub.psutils.*;
@@ -426,9 +427,15 @@ public class ClubEventCalc {
     
     // Now get the date in a predictable year-month-date format
     if (clubEvent.hasWhen()) {
-      strDate.setNextYear(clubEvent.getStatusAsString());
-      strDate.parse(clubEvent.getWhen());
-      clubEvent.setYmd(strDate.getYMD());
+      String when = clubEvent.getWhen();
+      if (when.equalsIgnoreCase("na")
+          || when.equalsIgnoreCase("n/a")) {
+        clubEvent.setYmd("2099-12-31");
+      } else {
+        strDate.setNextYear(clubEvent.getStatusAsString());
+        strDate.parse(clubEvent.getWhen());
+        clubEvent.setYmd(strDate.getYMD());
+      }
     }
   }
   
