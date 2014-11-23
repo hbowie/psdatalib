@@ -41,6 +41,14 @@ public class DataValueString
     this.value = value;
   }
   
+  public int length() {
+    if (hasData()) {
+      return value.length();
+    } else {
+      return 0;
+    }
+  }
+  
   /**
    Does this value have any data stored in it? 
   
