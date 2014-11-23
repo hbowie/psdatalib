@@ -19,7 +19,7 @@ package com.powersurgepub.psdatalib.psdata;
   import com.powersurgepub.psutils.*;
 
 /**
- A data value stored as a string. 
+ A data value stored as a string, and that supports multiple append operations. 
 
  @author Herb Bowie
  */
@@ -30,12 +30,26 @@ public class DataValueStringBuilder
   
   private StringBuilder value = null;
   
+  private int pendingBlankLines = 0;
+  
+  /**
+   Construct an object with an empty string as the initial value. 
+  */
   public DataValueStringBuilder() {
-    
+    this.value = new StringBuilder();
   }
   
   /**
-   Set the value from a String. 
+   Construct an object with the passed string as the initial value. 
+  
+   @param value The initial value for the object. 
+  */
+  public DataValueStringBuilder(String value) {
+    this.value = new StringBuilder(value);
+  }
+  
+  /**
+   Set the initial value from a String. 
   
    @param value The value as a string. 
   */
@@ -43,18 +57,58 @@ public class DataValueStringBuilder
     this.value = new StringBuilder(value);
   }
   
+  /**
+   Append a string to whatever is already in the object. 
+  
+   @param value The string to be added to the existing string. 
+  */
   public void append(String value) {
+    addPendingBlankLines();
     this.value.append(value);
   }
   
+  /**
+   Append the passed string, and add a line feed. Note that we will try to
+   avoid putting completely blank lines at either the beginning or the end
+   of the field. 
+  
+   @param line The string to be added to the existing string, to be followed by
+               a line feed. 
+  */
   public void appendLine(String line) {
-    if (value == null) {
-      value = new StringBuilder(line);
-    } else {
+    if (line.length() > 0) {
+      addPendingBlankLines();
       value.append(line);
-    }
-    if (value.length() > 0) {
       value.append(GlobalConstants.LINE_FEED);
+    } else {
+      // Blank line
+      if (value.length() == 0) {
+        // Skip it -- let's not put blank lines at the beginning of a field.
+      } else {
+        // Let's hold off on adding blank lines, to make sure we don't
+        // end up with any at the end of the field either.
+        pendingBlankLines++;
+      }
+    }
+  }
+  
+  public void addPendingBlankLines() {
+    while (pendingBlankLines > 0) {
+      value.append(GlobalConstants.LINE_FEED);
+      pendingBlankLines--;
+    }
+  }
+  
+  /**
+   Return the length of the string. 
+  
+   @return Length of the string. 
+  */
+  public int length() {
+    if (value == null) {
+      return 0;
+    } else {
+      return value.length();
     }
   }
   
