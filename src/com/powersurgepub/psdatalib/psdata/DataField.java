@@ -335,11 +335,7 @@ public class DataField {
      @param operand Second field to be used with the operator.
    */
   public void operate (String operator, DataField operand) {
-    // System.out.println("DataField.operate");
-    // System.out.println("  field   is an integer? " 
-    //     + String.valueOf(this.isAnInteger()));
-    // System.out.println("  operand is an integer? " 
-    //     + String.valueOf(operand.isAnInteger()));
+
     if (this.isAnInteger() && operand.isAnInteger()) {
       int o = operand.getDataInteger();
       operate (operator, o);
@@ -363,9 +359,7 @@ public class DataField {
      @param operand Number to be used with the operator.
    */
   public void operate (String operator, int operand) {
-    // System.out.println("DataField.operate, operator: " + operator 
-    //     + ", integer operand: " + String.valueOf(1)
-    //     + ", this field an integer? " + String.valueOf(this.isAnInteger()));
+
     if (this.isAnInteger()) {
       if (operator.equals ("+") || operator.equals ("+=")) {
         dataInteger = dataInteger + operand;
@@ -399,7 +393,6 @@ public class DataField {
    */
   private void setStringFromInt() {
     data.set(String.valueOf (dataInteger));
-    // System.out.println("DataField.setStringFromInt string = \"" + data + "\"");
     processData();
   }
   
@@ -653,7 +646,6 @@ public class DataField {
     } // end 
 
     if (! opFound) {
-      // System.out.println ("Operator " + operator + " could not be found");
       throw new IllegalArgumentException 
         ("Invalid logical operator (" + operator + ")");
     }
@@ -708,12 +700,7 @@ public class DataField {
         trueOrFalse = (! datalc.endsWith (operandlc));
       }
     }
-    /*
-    System.out.println (data + " " + operator 
-        + " (" + String.valueOf (opIndex) + ") "
-        + operand.getData() 
-        + " ? " + String.valueOf (trueOrFalse));
-    */
+
     return trueOrFalse;
   } // end method operateLogically
   

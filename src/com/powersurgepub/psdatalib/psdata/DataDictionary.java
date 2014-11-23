@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2014 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,28 +23,6 @@ package com.powersurgepub.psdatalib.psdata;
 /**
    A dictionary of DataFieldDefinition and DataFieldAlias objects. <p>
   
-   This code is copyright (c) 1999-2003 by Herb Bowie of PowerSurge Publishing. 
-   All rights reserved. <p>
-   
-   Version History: <ul><li>
-    2002/11/19 - Added openForInput method with Record Definition as input,
-                 to comply with DataSource interface. <li>
-    2002/10/12 - Added setDebug method and Debug instance to comply with 
-                 modified DataSource interface. <li>
-    2000/05/11 - Added the ability to handle data dictionary entries
-                 as data records of their own, so that they can be 
-                 saved on disk, edited, and restored. <li>
-    2000/05/05 - Modified to use CommonName class. <li>
-    2000/05/02 - Modified to be consistent with "The Elements of Java Style". </ul>
-  
-   @author Herb Bowie (<a href="mailto:herb@powersurgepub.com">
-           herb@powersurgepub.com</a>)<br>
-           of PowerSurge Publishing (<A href="http://www.powersurgepub.com">
-           www.powersurgepub.com</a>)
-  
-   @version 
-    2003/07/26 - Added additional dictionary entries to support functions. 
-                 Added getDataParent method for consistency with DataSource.
  */
 public class DataDictionary 
     implements  DataSource, 

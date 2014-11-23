@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2014 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,25 +23,6 @@ package com.powersurgepub.psdatalib.psdata;
    A definition of the fields stored in a particular record. Each field is
    associated internally with a particular column number. <p>
    
-   This code is copyright (c) 1999-2000 by Herb Bowie of PowerSurge Publishing. 
-   All rights reserved. <p>
-   
-   Version History: <ul><li>
-     2000/12/13 - Changed columns to use new Column class, which will maintain
-                  statistics about field sizes.
-     2000/11/21 - Added method to return field names as a vector. <li>
-     2000/11/05 - Added method to return number of fields in each record. <li>
-     2000/05/07 - Modified to be consistent with "The Elements of Java Style".
-      </ul>
-  
-   @author Herb Bowie (<a href="mailto:herb@powersurgepub.com">
-           herb@powersurgepub.com</a>)<br>
-           of PowerSurge Publishing (<A href="http://www.powersurgepub.com/software/">
-           www.powersurgepub.com/software</a>)
-  
-   @version 2002/08/28 - Added merge method to allow a second RecordDefinition
-                         to have its field definitions merged into this one.
-                         Added standard iterator.
  */
 
 public class RecordDefinition {
@@ -183,7 +164,9 @@ public class RecordDefinition {
                       already be converted to its common form.
    */
   public int getColumnNumber (CommonName inCommon) {
+
     CommonName common = dict.getAliasOriginal (inCommon);
+
     int i = 0;
     while ((i < columns.size()) 
       && (!(common.equals(dict.getDef(getDefNum(i)).getCommonName())))) {

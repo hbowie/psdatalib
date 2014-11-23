@@ -18,7 +18,6 @@ package com.powersurgepub.psdatalib.psdata;
 
   import com.powersurgepub.psdatalib.pslist.*;
   import com.powersurgepub.psdatalib.pstags.*;
-  import com.powersurgepub.psutils.*;
   import com.powersurgepub.urlvalidator.*;
   import java.util.*;  
   
@@ -26,41 +25,8 @@ package com.powersurgepub.psdatalib.psdata;
    A record or row, consisting of one or more
    Data Fields. Since each field contains its own
    definition, a record definition is not contained
-   within each data record. <p>
-   
-   This code is copyright (c) 1999-2001 by Herb Bowie of PowerSurge Publishing. 
-   All rights reserved. <p>
-   
-   Version History: <ul><li>
-   	 
-     2003/07/28 - Added support for field calculation.
-     2003/02/10 - Added convenience methods getFieldAsInteger and
-                  getFieldAsBoolean. <li>
-     2002/09/02 - Added combine method, to combine two records
-                  whose keys are equal. <br>
-                  Modified getField methods to pass back 
-                  DataField objects with requested field name 
-                  and null data. <li>
-     2002/08/27 - Added record sequence number, to preserve sequence in 
-                  which records were created/added, for use as a precedence 
-                  indicator in combine processing. <li>
-     2001/02/25 - Corrected containsField method to check for new UNKNOWN_FIELD
-                  constant, in addition to null. <li>
-     2001/02/05 - Removed ArrayIndexOutOfBoundsException from getField method
-                  when bad column number is passed. Now return unknown field
-                  instead. <li>
-     2000/11/05 - Added ArrayIndexOutOfBoundsException when bad column
-                         number is passed. <li>
-     2000/05/08 - Modified to be consistent with "The Elements of Java Style".
-      </ul>
+   within each data record. 
   
-   @author Herb Bowie (<a href="mailto:herb@powersurgepub.com">
-           herb@powersurgepub.com</a>)<br>
-           of PowerSurge Publishing (<A href="http://www.powersurgepub.com/software/">
-           www.powersurgepub.com/software</a>)
-  
-   @version 
-     2004/06/01 - Modified toString method to include header literal. 
  */
 
 public class DataRecord 
@@ -181,12 +147,14 @@ public class DataRecord
      @param  data   Data value to be added or updated.
    */
   public int storeField (RecordDefinition recDef, DataField field) {
+
     int columnNumber = getColumnNumber (field.getProperName());
     DataField targetField = getField (columnNumber);
     DataFieldDefinition workDef;
     if (targetField == null
         || targetField == UNKNOWN_FIELD) {
       columnNumber = recDef.getColumnNumber(field.getProperName());
+      
       if (columnNumber >= 0) {
         workDef = recDef.getDef(columnNumber);
         targetField = new DataField (workDef, field.getDataValue());
@@ -200,7 +168,8 @@ public class DataRecord
         DataField missingField = new DataField(missingDef, "");
         addField(missingField);
       }
-      return addField (targetField);
+      int newColumnNumber = addField (targetField);
+      return newColumnNumber;
     } 
     else {
       targetField.setData (field.getDataValue());

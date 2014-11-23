@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2014 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,7 @@
 package com.powersurgepub.psdatalib.txbio;
 
   import com.powersurgepub.pstextio.*;
-import com.powersurgepub.psmkdown.MarkdownDoc;
-import com.powersurgepub.psmkdown.MarkdownLine;
+  import com.powersurgepub.psmkdown.*;
   import com.powersurgepub.psdatalib.elements.*;
   import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psdatalib.pstags.*;
@@ -253,8 +252,6 @@ public class MetaMarkdownReader
   */
   public void setMetadataAsMarkdown (boolean metadataAsMarkdown) {
     this.metadataAsMarkdown = metadataAsMarkdown;
-    // System.out.println("MetaMarkdownReader.setMetadataAsMarkdown to " 
-    //     + String.valueOf(metadataAsMarkdown));
   }
   
   /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2014 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,20 +23,6 @@ package com.powersurgepub.psdatalib.psdata;
 /**
    A definition of a generic data field. <p>
    
-   This code is copyright (c) 1999-2003 by Herb Bowie of PowerSurge Publishing. 
-   All rights reserved. <p>
-   
-   Version History: <ul><li>
-      2000/05/05 - Added references to CommonName class. <li>
-      2000/04/26 - Modified to be consistent with "The Elements of Java Style". </ul>
-  
-   @author Herb Bowie (<a href="mailto:herb@powersurgepub.com">
-           herb@powersurgepub.com</a>)<br>
-           of PowerSurge Publishing (<A href="http://www.powersurgepub.com/software/">
-           www.powersurgepub.com/software</a>)
-  
-   @version 2003/07/23 - Added fields to allow the value in this data field
-                         to be looked up from a lookup table.
  */
 public class DataFieldDefinition {
 
@@ -74,7 +60,7 @@ public class DataFieldDefinition {
   private    	String          dataParent = "";
   
   /** Lookup table. */
-  private    LookupTable	lookupTable;
+  private    LookupTable	    lookupTable;
   
   /** Is this a calculated field? */
   private			boolean					calculated = false;

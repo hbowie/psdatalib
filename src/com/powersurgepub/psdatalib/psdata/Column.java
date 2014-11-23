@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2014 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,6 @@ package com.powersurgepub.psdatalib.psdata;
 /**
    A definition of one column within a particular RecordDefinition.<p>
    
-   This code is copyright (c) 1999-2000 by Herb Bowie of PowerSurge Publishing. 
-   All rights reserved. <p>
-   
-   Version History: <ul><li>
-  		2000/12/12 - Initial creation.
-      </ul>
-  
-   @author Herb Bowie (<a href="mailto:herb@powersurgepub.com">
-           herb@powersurgepub.com</a>)<br>
-           of PowerSurge Publishing (<A href="http://www.powersurgepub.com">
-           www.powersurgepub.com</a>)
-  
-   @version 2002/08/09 - Modified to return default values for average and maximum
-                         column length, if no data is available for analysis. This 
-                         avoids a divide by zero exception.
  */
 
 public class Column {
