@@ -70,6 +70,10 @@ public class GridBagger {
   /** Next Bottom inset to be used. */
   private   int                   nextBottomInset = 0;
   
+  private   int                   ipady = 0;
+  
+  private   int                   ipadx = 0;
+  
   /** Last left inset that was used. */
   private   int                   lastLeftInset = 0;
   
@@ -144,6 +148,10 @@ public class GridBagger {
     setDefaultColumnWeight (0.5);
     setDefaultRowWeight (0.5);
     setByRows (true);
+  }
+  
+  public Container getContainer() {
+    return container;
   }
   
   /**
@@ -221,6 +229,14 @@ public class GridBagger {
    */
   public void setRightInset (int i) {    
     nextRightInset = i;
+  }
+  
+  public void setIpady(int y) {
+    ipady = y;
+  }
+  
+  public void setIpadx(int x) {
+    ipadx = x;
   }
   
   /**
@@ -349,6 +365,8 @@ public class GridBagger {
     constraints.weighty = rowWeight;
     constraints.fill = fill;
     constraints.anchor = anchor;
+    constraints.ipadx = ipadx;
+    constraints.ipady = ipady;
     layout.setConstraints (component, constraints);
     container.add (component);
     if (byRows) {

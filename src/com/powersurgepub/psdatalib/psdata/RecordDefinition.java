@@ -303,11 +303,35 @@ public class RecordDefinition {
   }
   
   /**
+   Remove all columns from the record definition. 
+   */
+  public void clear() {
+    while (columns.size() > 0) {
+      remove(columns.size() - 1);
+    }
+  }
+  
+  /**
+   Remove the column at the given index. 
+  
+   @param i An index to the column to be removed. 
+  
+   @return The column being removed, or null if the index is out of bounds. 
+  */
+  public Object remove(int i) {
+    if (i < 0 || i >= columns.size()) {
+      return null;
+    } else {
+      names.remove(i);
+      return columns.remove(i);
+    }
+  }
+  
+  /**
      Return the number of fields in each record.
     
      @return Number of fields stored in each record.
    */
-   
   public int getNumberOfFields () {
     return columns.size();
   }

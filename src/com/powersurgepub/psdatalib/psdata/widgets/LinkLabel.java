@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.powersurgepub.psdatalib.ui;
+package com.powersurgepub.psdatalib.psdata.widgets;
 
+  import com.powersurgepub.psdatalib.ui.*;
   import com.powersurgepub.psutils.*;
   import com.powersurgepub.xos2.*;
   import java.io.*;

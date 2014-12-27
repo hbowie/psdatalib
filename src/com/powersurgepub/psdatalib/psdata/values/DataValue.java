@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.powersurgepub.psdatalib.psdata;
+package com.powersurgepub.psdatalib.psdata.values;
 
 /**
  A data value that can be converted from and to a string. 

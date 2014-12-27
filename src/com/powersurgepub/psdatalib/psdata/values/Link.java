@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.powersurgepub.psdatalib.psdata;
+package com.powersurgepub.psdatalib.psdata.values;
+
+import com.powersurgepub.psdatalib.psdata.values.DataValue;
 
 /**
  A Link (aka URL).

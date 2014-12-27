@@ -16,6 +16,7 @@
 
 package com.powersurgepub.psdatalib.pstags;
 
+import com.powersurgepub.psdatalib.psdata.widgets.TextSelector;
   import com.powersurgepub.psdatalib.ui.*;
   import com.powersurgepub.psutils.*;
 

@@ -16,6 +16,7 @@
 
 package com.powersurgepub.psdatalib.ui;
 
+import com.powersurgepub.psdatalib.psdata.widgets.TextSelector;
   import java.awt.event.*;
   import javax.swing.*;
   import javax.swing.text.*;

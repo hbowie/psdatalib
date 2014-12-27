@@ -17,8 +17,12 @@
 package com.powersurgepub.psdatalib.notenik;
 
   import com.powersurgepub.psdatalib.psdata.*;
+  import com.powersurgepub.psdatalib.psdata.widgets.*;
+  import com.powersurgepub.psdatalib.ui.*;
   import com.powersurgepub.psutils.*;
+import java.awt.*;
   import java.text.*;
+  import javax.swing.*;
 
 /**
  A set of parameters to specify how a particular Note Collection is configured. 
@@ -194,6 +198,7 @@ public class NoteParms {
     if (recDef == null) {
       recDef = new RecordDefinition();
     }
+    recDef.clear();
     if (noteType == NOTES_ONLY_TYPE 
         || noteType == NOTES_PLUS_TYPE) {
       recDef.addColumn(TITLE_DEF);
@@ -310,6 +315,156 @@ public class NoteParms {
   
   public boolean treatMetadataAsMarkdown() {
     return metadataAsMarkdown;
+  }
+  
+  /**
+   Create a new Swing component that can be used to display and optionally
+   update a data field.
+  
+   @param fieldDef The definition of the type of field.
+   @param gb       The GridBagger object to be used to place this component.
+  
+   @return         The data widget that was created. 
+  */
+  public static WidgetWithLabel getWidgetWithLabel(
+      DataFieldDefinition fieldDef,
+      JFrame frame,
+      GridBagger gb) {
+    
+    // Define needed fields
+    int fieldType = fieldDef.getType();
+    String fieldName = fieldDef.getProperName();
+    JLabel label = new JLabel(fieldName + ": ");
+    WidgetWithLabel widgetWithLabel = new WidgetWithLabel();
+    widgetWithLabel.setLabel(label);
+    
+    // Return label and field appropriate for field type
+    switch (fieldType) {
+      
+      // Tags
+      case DataFieldDefinition.TAGS_TYPE:
+        TextSelector tagsTextSelector = new TextSelector();
+        tagsTextSelector.setEditable(true);
+        label.setLabelFor(tagsTextSelector);
+        
+        setDefaultLabelConstraints(gb);
+        gb.add(label);
+        
+        gb.setAllInsets(8);
+        gb.setIpady(0);
+        gb.setAnchor(GridBagConstraints.WEST);
+        gb.setFill(GridBagConstraints.HORIZONTAL);
+        gb.setColumnWeight(1.0);
+        gb.setRowWeight(0.0);
+        gb.add(tagsTextSelector);
+        
+        widgetWithLabel.setLabel(label);
+        widgetWithLabel.setWidget(tagsTextSelector); 
+        break;
+        
+      // Link  
+      case DataFieldDefinition.LINK_TYPE:
+        LinkLabel linkLabel = new LinkLabel(fieldName + ": ");
+        ScrollingTextArea linkText 
+            = new ScrollingTextArea(60, 2, true, false);
+        linkLabel.setLinkTextArea(linkText.getTextArea());
+        linkLabel.setFrame(frame);
+        
+        setDefaultLabelConstraints(gb);
+        gb.setLeftInset(6);
+        gb.setIpady(0);
+        gb.add(linkLabel);
+        
+        gb.setAllInsets(8);
+        gb.setLeftRightInsets(10);
+        gb.setAnchor(GridBagConstraints.WEST);
+        gb.setFill(GridBagConstraints.HORIZONTAL);
+        gb.setColumnWeight(1.0);
+        gb.setRowWeight(0.0);
+        gb.add(linkText);
+        
+        widgetWithLabel.setLabel(linkLabel);
+        widgetWithLabel.setWidget(linkText);
+        break;
+        
+      // Complex text field  
+      case DataFieldDefinition.STRING_BUILDER_TYPE:
+        ScrollingTextArea scrollingText 
+            = new ScrollingTextArea(60, 5, true, true);
+        label.setLabelFor(scrollingText);
+        
+        setDefaultLabelConstraints(gb);
+        gb.add(label);
+        
+        gb.setAllInsets(8);
+        gb.setIpady(0);
+        gb.setLeftRightInsets(10);
+        gb.setAnchor(GridBagConstraints.CENTER);
+        gb.setFill(GridBagConstraints.BOTH);
+        gb.setColumnWeight(1.0);
+        gb.setRowWeight(0.5);
+        gb.add(scrollingText);
+        
+        widgetWithLabel.setLabel(label);
+        widgetWithLabel.setWidget(scrollingText);
+        break;
+        
+      // Label field (display but no data entry) 
+      case DataFieldDefinition.LABEL_TYPE:
+        LabelWidget labelWidget = new LabelWidget();
+        label.setLabelFor(labelWidget);
+        
+        setDefaultLabelConstraints(gb);
+        gb.add(label);
+        
+        gb.setAllInsets(8);
+        gb.setIpady(0);
+        gb.setAnchor(GridBagConstraints.WEST);
+        gb.setFill(GridBagConstraints.HORIZONTAL);
+        gb.setColumnWeight(1.0);
+        gb.setRowWeight(0.0);
+        gb.add(labelWidget);
+        
+        widgetWithLabel.setLabel(label);
+        widgetWithLabel.setWidget(labelWidget);
+        break;
+        
+      // Single-line Text Field  
+      case DataFieldDefinition.DEFAULT_TYPE:
+      case DataFieldDefinition.STRING_TYPE:
+      case DataFieldDefinition.TITLE_TYPE:  
+      default:
+        OneLiner oneLiner = new OneLiner();
+        label.setLabelFor(oneLiner);
+        
+        setDefaultLabelConstraints(gb);
+        gb.add(label);
+        
+        gb.setAllInsets(8);
+        gb.setIpady(0);
+        gb.setAnchor(GridBagConstraints.WEST);
+        gb.setFill(GridBagConstraints.HORIZONTAL);
+        gb.setColumnWeight(1.0);
+        gb.setRowWeight(0.0);
+        gb.add(oneLiner);
+        
+        widgetWithLabel.setLabel(label);
+        widgetWithLabel.setWidget(oneLiner);
+        break;
+    }
+    
+    // Return the results
+    return widgetWithLabel;
+  }
+  
+  public static GridBagger setDefaultLabelConstraints(GridBagger gb) {
+    gb.setAllInsets(8);
+    gb.setIpady(2);
+    gb.setAnchor(GridBagConstraints.NORTHWEST);
+    gb.setFill(GridBagConstraints.NONE);
+    gb.setColumnWeight(0.0);
+    gb.setRowWeight(0.0);
+    return gb;
   }
 
 }

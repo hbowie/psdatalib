@@ -16,6 +16,7 @@
 
 package com.powersurgepub.psdatalib.clubplanner;
 
+import com.powersurgepub.psdatalib.psdata.values.StringDate;
    import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.pstextio.TextLineReader;
   import com.powersurgepub.pstextio.StringLineReader;

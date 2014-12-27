@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package com.powersurgepub.psdatalib.ui;
+package com.powersurgepub.psdatalib.psdata.widgets;
 
+  import com.powersurgepub.psdatalib.psdata.*;
+  import com.powersurgepub.psdatalib.ui.*;
   import java.awt.*;
   import java.awt.event.*;
   import javax.swing.*;
@@ -37,7 +39,9 @@ package com.powersurgepub.psdatalib.ui;
  from which the user will choose a value.
  */
 public class TextSelector
-    extends javax.swing.JTextField {
+    extends javax.swing.JTextField
+    implements 
+      DataWidget {
   
   private PopupFactory    popupFactory  = PopupFactory.getSharedInstance();
   private Popup           popup         = null;

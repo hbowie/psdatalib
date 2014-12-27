@@ -16,7 +16,7 @@
 
 package com.powersurgepub.psdatalib.ui;
 
-import com.powersurgepub.psdatalib.psdata.StringDate;
+import com.powersurgepub.psdatalib.psdata.values.StringDate;
   import com.powersurgepub.psutils.*;
   import java.awt.*;
   import java.awt.event.*;

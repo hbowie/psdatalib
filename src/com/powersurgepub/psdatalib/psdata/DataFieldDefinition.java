@@ -16,6 +16,10 @@
 
 package com.powersurgepub.psdatalib.psdata;
 
+import com.powersurgepub.psdatalib.psdata.values.Link;
+import com.powersurgepub.psdatalib.psdata.values.DataValueStringBuilder;
+import com.powersurgepub.psdatalib.psdata.values.DataValueString;
+import com.powersurgepub.psdatalib.psdata.values.DataValue;
   import com.powersurgepub.psutils.*;
   import com.powersurgepub.psdatalib.pstags.*;
   
@@ -42,13 +46,16 @@ public class DataFieldDefinition {
   private     int             dataFieldType = DEFAULT_TYPE;
   
   public static final int     MIN_TYPE            = 0;
+  
   public static final int     DEFAULT_TYPE        = 0;
   public static final int     STRING_TYPE         = 1;
   public static final int     TITLE_TYPE          = 2;
   public static final int     STRING_BUILDER_TYPE = 3;
   public static final int     TAGS_TYPE           = 4;
   public static final int     LINK_TYPE           = 5;
-  public static final int     MAX_TYPE            = 5;
+  public static final int     LABEL_TYPE          = 6;
+  
+  public static final int     MAX_TYPE            = 6;
   
   /** 
      If two fields of this type are to be combined, is it OK to do 
