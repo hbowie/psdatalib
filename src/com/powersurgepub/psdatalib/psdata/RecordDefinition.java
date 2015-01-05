@@ -419,6 +419,15 @@ public class RecordDefinition {
     return getDef (columnNumber++);
   }
   
+  public void display() {
+    System.out.println(" ");
+    System.out.println("RecordDefinition.display");
+    for (int i = 0; i < getNumberOfFields(); i++) {
+      DataFieldDefinition fieldDef = getDef(i);
+      System.out.println(String.valueOf(i) + ". " + fieldDef.getProperName());
+    }
+  }
+  
   /**
      Returns an Iterator that can be used to retrieve all
      DataFieldDefinition objects in the collection, one at

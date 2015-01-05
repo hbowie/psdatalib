@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 - 2014 Herb Bowie
+ * Copyright 2013 - 2015 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  */
 package com.powersurgepub.psdatalib.notenik;
 
-import com.powersurgepub.psdatalib.psdata.values.DataValueStringBuilder;
   import com.powersurgepub.psdatalib.psdata.*;
+  import com.powersurgepub.psdatalib.psdata.values.*;
 
 /**
  Represents the current state of a note file that is being parsed. 

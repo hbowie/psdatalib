@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Herb Bowie
+ * Copyright 2014 - 2015 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package com.powersurgepub.psdatalib.notenik;
   import com.powersurgepub.psdatalib.psdata.widgets.*;
   import com.powersurgepub.psdatalib.ui.*;
   import com.powersurgepub.psutils.*;
-import java.awt.*;
+  import java.awt.*;
   import java.text.*;
   import javax.swing.*;
 
@@ -69,6 +69,20 @@ public class NoteParms {
   public static final String  CATEGORIES        = "Categories";
   public static final String  URL               = "URL";
   
+  public static final String  AUTHOR_INFO       = "Author Info";
+  public static final String  AUTHOR_LINK       = "Author Link";
+  
+  public static final String  WORK_TITLE        = "Work Title";
+  public static final String  WORK_TYPE         = "Work Type";
+  public static final String  WORK_MINOR_TITLE  = "Work Minor Title";
+  public static final String  WORK_IDENTIFIER   = "Work ID";
+  public static final String  WORK_PAGE_NUMBERS = "Work Pages";
+  public static final String  WORK_RIGHTS       = "Work Rights";
+  public static final String  WORK_RIGHTS_HOLDER = "Work Rights Holder";
+  public static final String  PUBLISHER         = "Publisher";
+  public static final String  PUBLISHER_CITY    = "Publisher City";
+  
+  
   public static final DataFieldDefinition TITLE_DEF 
       = new DataFieldDefinition(TITLE_FIELD_NAME);
   public static final DataFieldDefinition LINK_DEF 
@@ -110,6 +124,9 @@ public class NoteParms {
   public static final int     DEFINED_TYPE        = 4;
   public static final int     MARKDOWN_TYPE       = 5;
   public static final int     TAG_TYPE            = 6;
+  public static final int     QUOTE_TYPE          = 7;
+  
+  private    String           preferredFileExt    = "txt";
   
   
   private    boolean          metadataAsMarkdown = true;
@@ -166,6 +183,10 @@ public class NoteParms {
     return (noteType == TAG_TYPE);
   }
   
+  public boolean quoteType() {
+    return (noteType == QUOTE_TYPE);
+  }
+  
   public void newRecordDefinition (DataDictionary dict) {
     recDef = new RecordDefinition(dict);
   }
@@ -195,6 +216,7 @@ public class NoteParms {
   }
   
   public RecordDefinition buildRecordDefinition() {
+
     if (recDef == null) {
       recDef = new RecordDefinition();
     }
@@ -233,6 +255,26 @@ public class NoteParms {
           break;
       }
     }
+    if (noteType == QUOTE_TYPE) {
+      recDef.addColumn(TITLE_DEF);
+      recDef.addColumn(TAGS_DEF);
+      recDef.addColumn(AUTHOR_DEF);
+      recDef.addColumn(AUTHOR_INFO);
+      recDef.addColumn(AUTHOR_LINK);
+      recDef.addColumn(WORK_TITLE);
+      recDef.addColumn(WORK_TYPE);
+      recDef.addColumn(DATE_DEF);
+      recDef.addColumn(WORK_MINOR_TITLE);
+      recDef.addColumn(LINK_DEF);
+      recDef.addColumn(WORK_IDENTIFIER);
+      recDef.addColumn(WORK_PAGE_NUMBERS);
+      recDef.addColumn(WORK_RIGHTS);
+      recDef.addColumn(WORK_RIGHTS_HOLDER);
+      recDef.addColumn(PUBLISHER);
+      recDef.addColumn(PUBLISHER_CITY);
+      recDef.addColumn(BODY_DEF);
+    }
+
     return recDef;
   }
   
@@ -315,6 +357,14 @@ public class NoteParms {
   
   public boolean treatMetadataAsMarkdown() {
     return metadataAsMarkdown;
+  }
+  
+  public void setPreferredFileExt(String preferredFileExt) {
+    this.preferredFileExt = preferredFileExt;
+  }
+  
+  public String getPreferredFileExt() {
+    return preferredFileExt;
   }
   
   /**

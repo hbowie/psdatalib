@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2014 Herb Bowie
+ * Copyright 2012 - 2015 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,8 @@ public class NoteIO
   private             Note                nextNote = null;
   
   private             BufferedReader      inBuffered;
-  private             BufferedWriter      outBuffered;
+  // private             BufferedWriter      outBuffered;
+  private             TextLineWriter      writer;
   
   private             int                 ioStyle = IO_STYLE_UNDETERMINED;
   public static final int IO_STYLE_UNDETERMINED   = -1;
@@ -243,7 +244,7 @@ public class NoteIO
   public void openForInput (DataDictionary inDict)
       throws IOException {
     noteParms.newRecordDefinition(inDict);
-    noteParms.buildRecordDefinition();
+    noteParms.buildRecordDefinition ();
     openForInputCommon();
   }
       
@@ -267,7 +268,16 @@ public class NoteIO
     openForInputCommon();
   }
   
+  /**
+   Get the NoteParms instance currently being used by this NoteIO instance. 
+  
+   @return The current NoteParms instance. 
+  */
   public NoteParms getNoteParms() {
+    return noteParms;
+  }
+  
+  public NoteParms readNoteParms() {
     File noteParmsFile = new File (homeFolder, NoteParms.FILENAME);
     if (noteParmsFile.exists() && noteParmsFile.canRead()) {
       NoteParms noteParms = new NoteParms();
@@ -583,6 +593,19 @@ public class NoteIO
     closeOutput();
   }
   
+  public boolean save (Note note, TextLineWriter inWriter) {
+    boolean ok = true;
+    writer = inWriter;
+    ok = writer.openForOutput();
+    if (ok) {
+      ok = saveOneItem(note);
+    }
+    if (ok) {
+      ok = writer.close();
+    }
+    return ok;
+  }
+  
   /**
    Save one note to a sync folder. 
   
@@ -610,56 +633,64 @@ public class NoteIO
    @param outFile The file to be opened.
  
   */
-  private void openOutput (File outFile) 
-      throws IOException {
-
-    FileOutputStream outStream = new FileOutputStream (outFile);
-    OutputStreamWriter outWriter = new OutputStreamWriter (outStream, "UTF-8");
-    outBuffered = new BufferedWriter (outWriter);
+  private boolean openOutput (File outFile) {
+    writer = new FileMaker(outFile);
+    return writer.openForOutput();
   }
  
-  private void saveOneItem (Note note) 
-      throws IOException {
-    for (int i = 0; i < note.getNumberOfFields(); i++) {
+  private boolean saveOneItem (Note note) {
+    boolean ok = true;
+    for (int i = 0; i < note.getNumberOfFields() && ok; i++) {
       DataField nextField = note.getField(i);
       if (nextField != null
           && nextField.hasData()) {
-        writeFieldName (nextField.getProperName());
-        if (nextField.getCommonFormOfName().equals("body")
-            || nextField.getCommonFormOfName().equals("comments")) {
-          writeLine("");
-          writeLine(" ");
+        ok = writeFieldName (nextField.getProperName());
+        if (ok 
+            && (nextField.getCommonFormOfName().equals("body")
+              || nextField.getCommonFormOfName().equals("comments"))) {
+          ok = writeLine("");
+          if (ok) {
+            ok = writeLine(" ");
+          }
         }
-        writeFieldValue (nextField.getData());
-        writeLine("");
+        if (ok) {
+          ok = writeFieldValue (nextField.getData());
+        }
+        if (ok) {
+          ok = writeLine("");
+        }
       }
     }
-
+    return ok;
   } // end of method saveOneItem
  
-  private void writeFieldName (String fieldName) 
-      throws IOException {
-    write(fieldName);
-    write(": ");
-    for (int i = fieldName.length(); i < 6; i++) {
-      write (" ");
+  private boolean writeFieldName (String fieldName) {
+    boolean ok = true;
+    ok = write(fieldName);
+    if (ok) {
+      ok = write(": ");
     }
+    for (int i = fieldName.length(); i < 6 && ok; i++) {
+      ok = write (" ");
+    }
+    return ok;
   }
  
-  private void writeFieldValue (String fieldValue) 
-      throws IOException {
-    writeLine (fieldValue);
+  private boolean writeFieldValue (String fieldValue) {
+    return writeLine (fieldValue);
   }
  
-  private void writeLine (String s) 
-      throws IOException {
-    outBuffered.write (s);
-    outBuffered.newLine();
+  private boolean writeLine (String s) {
+    boolean ok = true;
+    ok = writer.write (s);
+    if (ok) {
+      ok = writer.newLine();
+    }
+    return ok;
   }
  
-  private void write (String s) 
-      throws IOException {
-    outBuffered.write (s);
+  private boolean write (String s) {
+    return writer.write (s);
   }
  
   /**
@@ -667,9 +698,8 @@ public class NoteIO
  
    @return True if close worked ok.
   */
-  public void closeOutput() 
-      throws IOException {
-    outBuffered.close();
+  public boolean closeOutput() {
+    return writer.close();
   }
   
   /* =======================================================================
