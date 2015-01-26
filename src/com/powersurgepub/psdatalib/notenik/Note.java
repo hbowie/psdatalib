@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Herb Bowie
+ * Copyright 2014 - 2015 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,6 +70,10 @@ public class Note
   private DataField           tagsField = null;
   private boolean             tagsAdded = false;
   
+  private Rating              ratingValue = null;
+  private DataField           ratingField = null;
+  private boolean             ratingAdded = false;
+  
   private DataValueStringBuilder bodyValue = null;
   private DataField           bodyField;
   private boolean bodyAdded = false;
@@ -100,6 +104,54 @@ public class Note
     setLastModDateToday();
   }
   
+  /**
+   Copy an existing note to create a new one with the same data. 
+  
+   @param fromNote The existing note to be copied.
+  */
+  public Note(Note fromNote) {
+    this.recDef = fromNote.getRecDef();
+    initNoteFields();
+    setLastModDateToday();
+    for (int i = 0; i < fromNote.getNumberOfFields(); i++) {
+      
+      DataField fromField = fromNote.getField(i);
+      DataValue fromValue = fromField.getDataValue();
+      DataFieldDefinition fromDef = fromField.getDef();
+      CommonName fromCommon = fromDef.getCommonName();
+      
+      if (NoteParms.isTitle(fromCommon)) {
+        setTitle(fromValue.toString());
+      }
+      else
+      if (NoteParms.isAuthor(fromCommon)) {
+        setAuthor(fromValue.toString());
+      }
+      else
+      if (NoteParms.isDate(fromCommon)) {
+        setDate(fromValue.toString());
+      }
+      else
+      if (NoteParms.isLink(fromCommon)) {
+        setLink(fromValue.toString());
+      }
+      else
+      if (NoteParms.isTags(fromCommon)) {
+        setTags(fromValue.toString());
+      }
+      else
+      if (NoteParms.isRating(fromCommon)) {
+        setRating(fromValue.toString());
+      }
+      else {
+        DataValue toValue = DataFactory.makeDataValue(fromDef);
+        toValue.set(fromValue.toString());
+        DataField toField = new DataField(fromDef, toValue);
+        storeField (recDef, toField);
+      }
+    } // end for each from field
+  }
+  
   private void initNoteFields() {
     
     // Build the Title field
@@ -128,6 +180,11 @@ public class Note
     tagsField = new DataField(NoteParms.TAGS_DEF, tagsValue);
     tagsAdded = false;
     
+    // Build the Rating/Priority field
+    ratingValue = new Rating();
+    ratingField = new DataField(NoteParms.RATING_DEF, ratingValue);
+    ratingAdded = false;
+    
     // Build the body field
     bodyValue = new DataValueStringBuilder();
     bodyField = new DataField(NoteParms.BODY_DEF, bodyValue);
@@ -136,6 +193,18 @@ public class Note
   
   public RecordDefinition getRecDef() {
     return recDef;
+  }
+  
+  /**
+   Make an appropriate data value field for the field type. 
+  
+   @param def The definition for the desired field. 
+  
+   @return The appropriate data value. 
+  */
+  public static DataValue makeDataValue(DataFieldDefinition def) {
+    
+    return DataFactory.makeDataValue(def.getType());
   }
   
   public boolean equals (Object obj2) {
@@ -219,27 +288,6 @@ public class Note
     } else {
       setBody (getBody() + " " + note2.getBody());
     }
-  }
-  
-  /**
-     Duplicates this item, making a deep copy.
-   */
-  public Note duplicate () {
-    Note newNote = new Note(recDef);
-    
-    String titleStr = new String(getTitle());
-    newNote.setTitle(titleStr);
-    
-    String tagsStr = new String(getTagsAsString());
-    newNote.setTags(tagsStr);
-    
-    String linkStr = new String(getLinkAsString());
-    newNote.setLink(linkStr);
-    
-    String bodyStr = new String(this.getBody());
-    newNote.setBody(bodyStr);
-	
-		return newNote;
   }
   
   public void setTitle(String title) {
@@ -386,6 +434,14 @@ public class Note
 
   public void lowerCaseTags () {
     tagsValue.makeLowerCase();
+  }
+  
+  public void setRating(String rating) {
+    ratingValue.set(rating);
+    if (! ratingAdded) {
+      storeField (recDef, ratingField);
+      ratingAdded = true;
+    }
   }
   
   public void setLink(String link) {

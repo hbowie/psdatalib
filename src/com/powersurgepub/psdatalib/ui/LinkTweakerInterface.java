@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Herb Bowie
+ * Copyright 2013 - 2015 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 
 package com.powersurgepub.psdatalib.ui;
-
-  import javax.swing.*;
 
 /**
  A generic interface for a utility that can tweak a URL. 
@@ -38,7 +36,7 @@ public interface LinkTweakerInterface {
    Set the location of the link tweaker window. 
   
    @param x
-  @param y 
+   @param y 
   */
   public void setLocation (int x, int y);
   

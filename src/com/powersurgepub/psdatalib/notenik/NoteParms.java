@@ -17,6 +17,7 @@
 package com.powersurgepub.psdatalib.notenik;
 
   import com.powersurgepub.psdatalib.psdata.*;
+  import com.powersurgepub.psdatalib.psdata.values.*;
   import com.powersurgepub.psdatalib.psdata.widgets.*;
   import com.powersurgepub.psdatalib.ui.*;
   import com.powersurgepub.psutils.*;
@@ -47,6 +48,8 @@ public class NoteParms {
   public static final String  DATE_COMMON_NAME  = "date";
   public static final String  STATUS_FIELD_NAME = "Status";
   public static final String  STATUS_COMMON_NAME = "status";
+  public static final String  RATING_FIELD_NAME = "Rating";
+  public static final String  RATING_COMMON_NAME = "rating";
   
   public static final String  COMPLETE_PATH     = "Complete Path";
   public static final String  BASE_PATH         = "Base Path";
@@ -68,6 +71,7 @@ public class NoteParms {
   public static final String  CATEGORY          = "Category";
   public static final String  CATEGORIES        = "Categories";
   public static final String  URL               = "URL";
+  public static final String  PRIORITY          = "Priority";
   
   public static final String  AUTHOR_INFO       = "Author Info";
   public static final String  AUTHOR_LINK       = "Author Link";
@@ -97,6 +101,8 @@ public class NoteParms {
       = new DataFieldDefinition(DATE_FIELD_NAME);
   public static final DataFieldDefinition STATUS_DEF
       = new DataFieldDefinition(STATUS_FIELD_NAME);
+  public static final DataFieldDefinition RATING_DEF
+      = new DataFieldDefinition(RATING_FIELD_NAME);
   
   public static final boolean SLASH_TO_SEPARATE = false;
   
@@ -288,49 +294,43 @@ public class NoteParms {
   */
   public DataFieldDefinition checkForFieldName(String fieldName) {
     
-    String fn = StringUtils.commonName (fieldName);
+    CommonName commonName = new CommonName (fieldName);
     
     // If this is a url, then don't confuse it with a field name.
-    if (fn.endsWith("http")
-         || fn.endsWith("ftp")
-         || fn.endsWith("mailto")) {
+    if (commonName.getCommonForm().endsWith("http")
+         || commonName.getCommonForm().endsWith("ftp")
+         || commonName.getCommonForm().endsWith("mailto")) {
       return null;
     }
     
     // Check for most basic note fields. 
-    if (fn.equals(TITLE_COMMON_NAME)) {
+    if (isTitle(commonName)) {
       return TITLE_DEF;
     }
-    if (fn.equals(TAGS_COMMON_NAME)
-        || fn.equalsIgnoreCase(KEYWORDS)
-        || fn.equalsIgnoreCase(CATEGORY)
-        || fn.equalsIgnoreCase(CATEGORIES)) {
+    if (isTags(commonName)) {
       return TAGS_DEF;
     }
-    if (fn.equals(LINK_COMMON_NAME)
-        || fn.equalsIgnoreCase(URL)) {
+    if (isLink(commonName)) {
       return LINK_DEF;
     }
-    if (fn.equals(BODY_COMMON_NAME)) {
+    if (isBody(commonName)) {
       return BODY_DEF;
     }
     if (notesOnly()) {
       return null;
     }
     
-    if (fn.equals(AUTHOR_COMMON_NAME)
-        || fn.equalsIgnoreCase(BY)
-        || fn.equalsIgnoreCase(CREATOR)) {
+    if (isAuthor(commonName)) {
       return AUTHOR_DEF;
     }
-    if (fn.equals(DATE_COMMON_NAME)) {
+    if (isDate(commonName)) {
       return DATE_DEF;
     }
-    if (fn.equals(STATUS_COMMON_NAME)) {
+    if (isStatus(commonName)) {
       return STATUS_DEF;
     }
     
-    int columnNumber = recDef.getColumnNumber(fn);
+    int columnNumber = recDef.getColumnNumber(commonName);
     if (columnNumber < 0) {
       if (definedType()) {
         return null;
@@ -343,6 +343,45 @@ public class NoteParms {
       return recDef.getDef(columnNumber);
     }
     
+  }
+  
+  public static boolean isTitle(CommonName commonName) {
+    return (commonName.getCommonForm().equals(TITLE_COMMON_NAME));
+  }
+  
+  public static boolean isAuthor(CommonName commonName) {
+    return (commonName.getCommonForm().equals(AUTHOR_COMMON_NAME)
+        || commonName.getCommonForm().equalsIgnoreCase(BY)
+        || commonName.getCommonForm().equalsIgnoreCase(CREATOR));
+  }
+  
+  public static boolean isLink(CommonName commonName) {
+    return (commonName.getCommonForm().equals(LINK_COMMON_NAME)
+        || commonName.getCommonForm().equalsIgnoreCase(URL));
+  }
+  
+  public static boolean isTags(CommonName commonName) {
+    return (commonName.getCommonForm().equals(TAGS_COMMON_NAME)
+        || commonName.getCommonForm().equalsIgnoreCase(KEYWORDS)
+        || commonName.getCommonForm().equalsIgnoreCase(CATEGORY)
+        || commonName.getCommonForm().equalsIgnoreCase(CATEGORIES));
+  }
+  
+  public static boolean isDate(CommonName commonName) {
+    return (commonName.getCommonForm().equals(DATE_COMMON_NAME));
+  }
+  
+  public static boolean isStatus(CommonName commonName) {
+    return (commonName.getCommonForm().equals(STATUS_COMMON_NAME));
+  }
+  
+  public static boolean isRating(CommonName commonName) {
+    return (commonName.getCommonForm().equals(RATING_COMMON_NAME)
+        || commonName.getCommonForm().equalsIgnoreCase(PRIORITY));
+  }
+  
+  public static boolean isBody(CommonName commonName) {
+    return (commonName.getCommonForm().equals(BODY_COMMON_NAME));
   }
   
   /**

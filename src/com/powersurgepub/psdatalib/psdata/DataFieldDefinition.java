@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2014 Herb Bowie
+ * Copyright 1999 - 2015 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,9 @@
 
 package com.powersurgepub.psdatalib.psdata;
 
-import com.powersurgepub.psdatalib.psdata.values.Link;
-import com.powersurgepub.psdatalib.psdata.values.DataValueStringBuilder;
-import com.powersurgepub.psdatalib.psdata.values.DataValueString;
-import com.powersurgepub.psdatalib.psdata.values.DataValue;
-  import com.powersurgepub.psutils.*;
+  import com.powersurgepub.psdatalib.psdata.values.*;
   import com.powersurgepub.psdatalib.pstags.*;
+  import com.powersurgepub.psutils.*;
   
   
 /**
@@ -54,8 +51,11 @@ public class DataFieldDefinition {
   public static final int     TAGS_TYPE           = 4;
   public static final int     LINK_TYPE           = 5;
   public static final int     LABEL_TYPE          = 6;
+  public static final int     AUTHOR_TYPE         = 7;
+  public static final int     DATE_TYPE           = 8;
+  public static final int     RATING_TYPE         = 9;
   
-  public static final int     MAX_TYPE            = 6;
+  public static final int     MAX_TYPE            = 9;
   
   /** 
      If two fields of this type are to be combined, is it OK to do 

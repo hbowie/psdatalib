@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 - 2014 Herb Bowie
+ * Copyright 2010 - 2015 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.powersurgepub.psdatalib.psdata.values;
 
-import com.powersurgepub.psdatalib.psdata.values.DataValue;
+  import com.powersurgepub.psdatalib.psdata.values.*;
   import java.text.*;
   import java.util.*;
 
@@ -381,7 +381,11 @@ public class StringDate
   private void processWhenNumbers() {
     int number = 0;
     if (! colon) {
-      number = Integer.parseInt(word.toString());
+      try {
+        number = Integer.parseInt(word.toString());
+      } catch (NumberFormatException e) {
+        // Number too large to be part of a date
+      }
     }
     if (number > 2000) {
       yyyy = word.toString();
@@ -402,7 +406,9 @@ public class StringDate
       if (number > 12
           || mm.length() > 0) {
         dd = word.toString();
-      } else {
+      } 
+      else
+      if (number > 0) {
         mm = word.toString();
       }
     }
