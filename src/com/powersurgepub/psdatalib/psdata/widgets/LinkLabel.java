@@ -100,7 +100,8 @@ public class LinkLabel
       if (result != null) {
         try {
           String webPage = result.toURI().toURL().toString();
-          linkText.setText (webPage);
+          String tweaked = StringUtils.tweakAnyLink(webPage, false, false, false, "");
+          linkText.setText (tweaked);
         } catch (MalformedURLException e) {
           // do nothing
         }
