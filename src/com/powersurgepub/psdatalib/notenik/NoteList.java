@@ -43,6 +43,10 @@ public class NoteList
     this.recDef = recDef;
     tagsList.registerValue("");
   }
+  
+  public RecordDefinition getRecDef() {
+    return recDef;
+  }
 
   public TagsList getTagsList () {
     return tagsList;
@@ -61,7 +65,9 @@ public class NoteList
   }
 
   /**
-   Add a new note to the list.
+   Add a new note to the list. If a note with the same key (title) already
+   exists in the list, the the note to be added will instead be merged with
+   the existing note. 
    
    @param newNote
    @return A positioned note composed of the resulting note and an index

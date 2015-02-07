@@ -290,6 +290,49 @@ public class Note
     }
   }
   
+  /**
+   Set the appropriate note field, depending on the field name. 
+  
+   @param fieldName The name of the field to be set. 
+   @param data The value to be used. 
+  */
+  public void setField(String fieldName, String data) {
+    
+    DataFieldDefinition fieldDef = new DataFieldDefinition(fieldName);
+    String commonName = fieldDef.getCommonName().getCommonForm();
+
+    if (commonName.equals(NoteParms.TITLE_COMMON_NAME)) {
+      setTitle(data);
+    }
+    else
+    if (commonName.equals(NoteParms.AUTHOR_COMMON_NAME)
+        || commonName.equalsIgnoreCase(NoteParms.BY)
+        || commonName.equalsIgnoreCase(NoteParms.CREATOR)) {
+      setAuthor(data);
+    }
+    else
+    if (commonName.equals(NoteParms.DATE_COMMON_NAME)) {
+      setDate(data);
+    }
+    else
+    if (commonName.equals(NoteParms.LINK_COMMON_NAME)) {
+      setLink(data);
+    }
+    else
+    if (commonName.equals(NoteParms.TAGS_COMMON_NAME)) {
+      setTags(data);
+    }
+    else
+    if (commonName.equals(NoteParms.BODY_COMMON_NAME)) {
+      setBody(data);
+    } else {
+      fieldDef.setType(DataFieldDefinition.STRING_BUILDER_TYPE);
+      DataValueStringBuilder dataValue = new DataValueStringBuilder(data);
+      DataField dataField = new DataField (fieldDef, dataValue);
+      storeField(recDef, dataField);
+    }
+  }
+  
   public void setTitle(String title) {
     titleValue.set(title);
 		if (title == null) {

@@ -1315,7 +1315,7 @@ public class MarkupWriter
         case HTML_FRAGMENT_FORMAT:
         case NETSCAPE_BOOKMARKS_FORMAT:
         case XML_FORMAT:
-          endXML (tag);
+          endXMLforKnownTags (tag);
           break;
         case OPML_FORMAT:
           break;
@@ -1675,7 +1675,7 @@ public class MarkupWriter
         break;
       case NETSCAPE_BOOKMARKS_FORMAT:
       case XML_FORMAT:
-        endXML (TextType.HEADING_PREFIX.toUpperCase() + String.valueOf (level));
+        endXMLforKnownTags (TextType.HEADING_PREFIX.toUpperCase() + String.valueOf (level));
         break;
       case OPML_FORMAT:
         break;
@@ -1754,7 +1754,7 @@ public class MarkupWriter
       case HTML_FORMAT:
       case HTML_FRAGMENT_FORMAT:
       case XML_FORMAT:
-        endXML (TextType.BLOCK_QUOTE);
+        endXMLforKnownTags (TextType.BLOCK_QUOTE);
         break;
       case NETSCAPE_BOOKMARKS_FORMAT:
         break;
@@ -1832,7 +1832,7 @@ public class MarkupWriter
       case HTML_FRAGMENT_FORMAT:
       case NETSCAPE_BOOKMARKS_FORMAT:
       case XML_FORMAT:
-        endXML (TextType.DIV);
+        endXMLforKnownTags (TextType.DIV);
         break;
       case OPML_FORMAT:
         startOutline (TextType.PARAGRAPH, text.toString(), "", true);
@@ -1904,7 +1904,7 @@ public class MarkupWriter
       case HTML_FRAGMENT_FORMAT:
       case NETSCAPE_BOOKMARKS_FORMAT:
       case XML_FORMAT:
-        endXML (TextType.PARAGRAPH);
+        endXMLforKnownTags (TextType.PARAGRAPH);
         break;
       case OPML_FORMAT:
         startOutline (TextType.PARAGRAPH, text.toString(), "", true);
@@ -1963,7 +1963,7 @@ public class MarkupWriter
       case HTML_FRAGMENT_FORMAT:
       case NETSCAPE_BOOKMARKS_FORMAT:
       case XML_FORMAT:
-        endXML (TextType.ORDERED_LIST);
+        endXMLforKnownTags (TextType.ORDERED_LIST);
         break;
       case OPML_FORMAT:
         startOutline (TextType.PARAGRAPH, text.toString(), "", true);
@@ -2051,7 +2051,7 @@ public class MarkupWriter
       case HTML_FRAGMENT_FORMAT:
       case NETSCAPE_BOOKMARKS_FORMAT:
       case XML_FORMAT:
-        endXML (TextType.UNORDERED_LIST);
+        endXMLforKnownTags (TextType.UNORDERED_LIST);
         break;
       case OPML_FORMAT:
         startOutline (TextType.PARAGRAPH, text.toString(), "", true);
@@ -2170,10 +2170,10 @@ public class MarkupWriter
       case HTML_FORMAT:
       case HTML_FRAGMENT_FORMAT:
       case XML_FORMAT:
-        endXML (TextType.DEFINITION_LIST);
+        endXMLforKnownTags (TextType.DEFINITION_LIST);
         break;
       case NETSCAPE_BOOKMARKS_FORMAT:
-        endXML (TextType.DEFINITION_LIST.toUpperCase());
+        endXMLforKnownTags (TextType.DEFINITION_LIST.toUpperCase());
         break;
       case OPML_FORMAT:
         startOutline (TextType.PARAGRAPH, text.toString(), "", true);
@@ -2230,10 +2230,10 @@ public class MarkupWriter
       case HTML_FORMAT:
       case HTML_FRAGMENT_FORMAT:
       case XML_FORMAT:
-        endXML (TextType.DEFINITION_TERM);
+        endXMLforKnownTags (TextType.DEFINITION_TERM);
         break;
       case NETSCAPE_BOOKMARKS_FORMAT:
-        endXML (TextType.DEFINITION_TERM.toUpperCase());
+        endXMLforKnownTags (TextType.DEFINITION_TERM.toUpperCase());
         break;
       case OPML_FORMAT:
         startOutline (TextType.PARAGRAPH, text.toString(), "", true);
@@ -2289,10 +2289,10 @@ public class MarkupWriter
       case HTML_FORMAT:
       case HTML_FRAGMENT_FORMAT:
       case XML_FORMAT:
-        endXML (TextType.DEFINITION_DEF);
+        endXMLforKnownTags (TextType.DEFINITION_DEF);
         break;
       case NETSCAPE_BOOKMARKS_FORMAT:
-        endXML (TextType.DEFINITION_DEF.toUpperCase());
+        endXMLforKnownTags (TextType.DEFINITION_DEF.toUpperCase());
         break;
       case OPML_FORMAT:
         startOutline (TextType.PARAGRAPH, text.toString(), "", true);
@@ -2390,13 +2390,13 @@ public class MarkupWriter
       case HTML_FORMAT:
       case HTML_FRAGMENT_FORMAT:
       case XML_FORMAT:
-        endXML (TextType.TITLE);
+        endXMLforKnownTags (TextType.TITLE);
         break;
       case NETSCAPE_BOOKMARKS_FORMAT:
-        endXML (TextType.TITLE.toUpperCase());
+        endXMLforKnownTags (TextType.TITLE.toUpperCase());
         break;
       case OPML_FORMAT:
-        endXML (TextType.TITLE);
+        endXMLforKnownTags (TextType.TITLE);
         break;
       case STRUCTURED_TEXT_FORMAT:
         endStructuredText (TextType.TITLE);
@@ -2549,7 +2549,7 @@ public class MarkupWriter
       case HTML_FORMAT:
       case HTML_FRAGMENT_FORMAT:
       case XML_FORMAT:
-        endXML (TextType.EMPHASIS);
+        endXMLforKnownTags (TextType.EMPHASIS);
         break;
       case NETSCAPE_BOOKMARKS_FORMAT:
         break;
@@ -2603,7 +2603,7 @@ public class MarkupWriter
       case HTML_FORMAT:
       case HTML_FRAGMENT_FORMAT:
       case XML_FORMAT:
-        endXML (TextType.STRONG);
+        endXMLforKnownTags (TextType.STRONG);
         break;
       case NETSCAPE_BOOKMARKS_FORMAT:
         break;
@@ -2657,7 +2657,7 @@ public class MarkupWriter
       case HTML_FORMAT:
       case HTML_FRAGMENT_FORMAT:
       case XML_FORMAT:
-        endXML (TextType.ITALICS);
+        endXMLforKnownTags (TextType.ITALICS);
         break;
       case NETSCAPE_BOOKMARKS_FORMAT:
         break;
@@ -2702,7 +2702,7 @@ public class MarkupWriter
   public void endCitation () {
     switch (markupFormat) {
       case MARKDOWN_FORMAT:
-        endXML (TextType.CITATION);
+        endXMLforKnownTags (TextType.CITATION);
         break;
       case TEXTILE_SYNTAX_1_FORMAT:
       case TEXTILE_SYNTAX_2_FORMAT: 
@@ -2711,7 +2711,7 @@ public class MarkupWriter
       case HTML_FORMAT:
       case HTML_FRAGMENT_FORMAT:
       case XML_FORMAT:
-        endXML (TextType.CITATION);
+        endXMLforKnownTags (TextType.CITATION);
         break;
       case NETSCAPE_BOOKMARKS_FORMAT:
         break;
@@ -2719,7 +2719,7 @@ public class MarkupWriter
         writeText ('*');
         break;
       case STRUCTURED_TEXT_FORMAT:
-        endXML (TextType.CITATION);
+        endXMLforKnownTags (TextType.CITATION);
         break;
       default:
         break;
@@ -2837,17 +2837,17 @@ public class MarkupWriter
       case HTML_FORMAT:
       case HTML_FRAGMENT_FORMAT:
       case XML_FORMAT:
-        endXML (TextType.ANCHOR);
+        endXMLforKnownTags (TextType.ANCHOR);
         break;
       case NETSCAPE_BOOKMARKS_FORMAT:
         if (link.length() > 0) {
-          endXML (TextType.ANCHOR.toUpperCase());
+          endXMLforKnownTags (TextType.ANCHOR.toUpperCase());
         }
         break;
       case OPML_FORMAT:
         break;
       case STRUCTURED_TEXT_FORMAT:
-        endXML (TextType.ANCHOR);
+        endXMLforKnownTags (TextType.ANCHOR);
         break;
       default:
         break;
@@ -2946,6 +2946,37 @@ public class MarkupWriter
     return ok;
   }
   
+  /* ====================================================================
+  
+   Utility methods for writing XML can be found in the following section.
+  
+     ==================================================================== */
+  
+  public void writeXMLElement(String tag, String text) {
+    startXML (tag, "", true, false, false);
+    writeTextForMarkup(text);
+    endXML   (tag, false, true, false);
+  }
+  
+  public void writeXMLElementLong(String tag, String text) {
+    startXML (tag, "", true, true, false);
+    writeTextForMarkup(text);
+    endXML   (tag, true, true, false);
+  }
+  
+  public void startXML (String tag) {
+    startXML (tag, "", true, true, false);
+  }
+  
+  /**
+   Start a new XML tag. 
+  
+   @param tag
+   @param style
+   @param breakBefore
+   @param breakAfter
+   @param emptyTag 
+  */
   public void startXML (String tag, String style, boolean breakBefore,
       boolean breakAfter, boolean emptyTag) {
     if (breakBefore) {
@@ -3106,6 +3137,12 @@ public class MarkupWriter
     }
   }
   
+  /**
+   Add another attribute-value pair to the tag being built.
+  
+   @param attribute The attribute.
+   @param value     The value.
+  */
   public void writeAttribute (String attribute, String value) {
     if (attribute.length() > 0) {
       writer.write (" " + attribute);
@@ -3116,12 +3153,28 @@ public class MarkupWriter
   }
   
   public void endXML (String tag) {
+    endXML (tag, true, true, false);
+  }
+  
+  /* 
+   End an XHTML element with standard breaks depending on the type of tag. 
+  */
+  public void endXMLforKnownTags (String tag) {
     endXML (tag, 
         TextType.breakBeforeClosingTag(tag), 
         TextType.breakAfterClosingTag(tag),
         TextType.blankLineAfterClosingTag(tag));
   }
   
+  /**
+   End an XML element. 
+  
+   @param tag The tag being ended. 
+  
+   @param breakBefore Line break before?
+   @param breakAfter  Line break after?
+   @param blankLineAfter Blank line after?
+  */
   public void endXML (String tag, 
       boolean breakBefore, 
       boolean breakAfter,
@@ -3142,22 +3195,43 @@ public class MarkupWriter
     }
   }
 
+  /**
+   Increase indentation for following lines. 
+  */
   public void moreIndent () {
     writer.moreIndent();
   }
 
+  /**
+   Decrease indentation for following lines. 
+  */
   public void lessIndent () {
     writer.lessIndent();
   }
   
+  /**
+   Write an opening tag (aka '<').
+  
+   @return True unless an I/O error. 
+  */
   public boolean openTag () {
     return writer.write (OPEN_TAG);
   }
   
+  /**
+   Write an ending tag (aka '/').
+  
+   @return True unless an I/O error. 
+  */
   public boolean endingTag () {
     return writer.write (END_TAG);
   }
   
+  /**
+   Write a closing tag (aka '>'). 
+  
+   @return True unless an I/O error. 
+  */
   public boolean closeTag () {
     return writer.write (CLOSE_TAG);
   }
