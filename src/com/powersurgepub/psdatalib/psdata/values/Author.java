@@ -16,7 +16,6 @@
 
 package com.powersurgepub.psdatalib.psdata.values;
 
-import com.powersurgepub.psdatalib.psdata.values.DataValue;
   import com.powersurgepub.psutils.*;
   import java.util.*;
 
