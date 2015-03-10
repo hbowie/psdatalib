@@ -16,6 +16,8 @@
 
 package com.powersurgepub.psdatalib.psdata.values;
 
+  import com.powersurgepub.psutils.*;
+
 /**
  A string containing name and contact info. Assumes United States info. 
 
@@ -29,6 +31,7 @@ public class ContactInfo
   private int    i     = 0;
   
   private               StringBuilder   word = new StringBuilder();
+  private               String          lastWord = "";
   
   private               char            c = ' ';
   private               int             charType = 0;
@@ -64,6 +67,11 @@ public class ContactInfo
     
   }
   
+  public ContactInfo (String value) {
+    this.value = value;
+    parse();
+  }
+  
   /**
    Set the value from a String. 
   
@@ -71,6 +79,13 @@ public class ContactInfo
   */
   public void set(String value) {
     this.value = value;
+    name = "";
+    address = "";
+    city = "";
+    state = "";
+    zipCode = "";
+    phone = "";
+    email = "";
     parse();
   }
   
@@ -78,9 +93,14 @@ public class ContactInfo
    Break the contact info line down into its constituent pieces. 
   */
   private void parse() {
+    
+    // System.out.println(" ");
+    // System.out.println("ContactInfo.parse: " + value);
+    
     i = 0;
     fieldType = NAME;
     field = new StringBuilder();
+    lastDelim = ' ';
     getNextChar();
     while (i < value.length()) {
       // Parse next field
@@ -92,7 +112,9 @@ public class ContactInfo
       
       // Build the next word
       word = new StringBuilder();
-      lastDelim = ' ';
+      numberOfDigits = 0;
+      numberOfLetters = 0;
+      numberOfAts = 0;
       while (charType != DELIMITER && charType != END) {
         word.append(c);
         if (charType == DIGIT) {
@@ -111,6 +133,33 @@ public class ContactInfo
       
       // Determine what to do with the word
       
+      // See if we have a legitimate usState code
+      USState usState = USState.UNKNOWN;
+      if (numberOfLetters == 2
+          && word.length() == 2) {
+        usState = USState.valueOfAbbreviation(word.toString());
+      }
+      
+      // Check for the word 'at' after the name and before the address
+      if (fieldType == NAME 
+          && field.length() > 0
+          && word.toString().equalsIgnoreCase("at")) {
+        processField();
+        fieldType = ADDRESS;
+      }
+      else
+        
+      // Check for start of a street address
+      if (numberOfDigits > 0
+          && numberOfDigits == word.length()
+          && fieldType == NAME
+          && (! lastWord.equalsIgnoreCase("room"))) {
+        processField();
+        field.append(word);
+        fieldType = ADDRESS;
+      }
+      else   
+        
       // Check for a zip code
       if ((numberOfDigits == 5 
             && word.length() == 5)
@@ -125,8 +174,21 @@ public class ContactInfo
       else
         
       // Check for a state code
-      if (numberOfLetters == 2
-          && word.length() == 2) {
+      if (usState != USState.UNKNOWN
+          && fieldType >= CITY) {
+        processField();
+        field.append(word);
+        fieldType = STATE;
+        processField();
+      }
+      else
+        
+      // Check for a state code
+      if (usState != USState.UNKNOWN
+          && fieldType == NAME
+          && field.length() > 2
+          && state.length() == 0
+          && lastDelim == ',') {
         processField();
         field.append(word);
         fieldType = STATE;
@@ -154,38 +216,42 @@ public class ContactInfo
       }
       else
         
-      // Check for start of a street address
-      if (numberOfDigits > 0
-          && numberOfDigits == word.length()
-          && fieldType == NAME) {
-        processField();
-        field.append(word);
+      // Check for Suite or Apt
+      if (fieldType == CITY
+          && address.length() > 0
+          && field.length() == 0
+          && (word.toString().equalsIgnoreCase("suite")
+           || word.toString().equalsIgnoreCase("apt")
+           || word.toString().equals("#"))) {
+        field = new StringBuilder(address);
+        lastDelim = ',';
         fieldType = ADDRESS;
+        appendWordToField();
       }
       else
         
       // Check for delimiter
       if (c == ','
           && fieldType == ADDRESS) {
+        appendWordToField();
         processField();
-        fieldType++;
-        field.append(word);
       } 
       else
         
       // Add new word to existing field
       {
-        if (field.length() > 0) {
-          field.append(lastDelim);
-          if (lastDelim != ' ') {
-            field.append(' ');
-          }
-        }
-        field.append(word);
-        lastDelim = c;
+        appendWordToField();
       }
     } // end while more characters to parse
     processField();
+    // System.out.println("  name:    " + name);
+    // System.out.println("  address: " + address);
+    // System.out.println("  city:    " + city);
+    // System.out.println("  state:   " + state);
+    // System.out.println("  zip:     " + zipCode);
+    // System.out.println("  email:   " + email);
+    // System.out.println("  phone:   " + phone);
+    // System.out.println("  map url: " + getMapURL());
   } // end method parse
   
   /**
@@ -206,7 +272,9 @@ public class ContactInfo
         charType = DELIMITER;
       }
       else
-      if (c == ',' || c == ';') {
+      if (c == ',' || c == ';' 
+          || c == '[' || c == ']'
+          || c == '<' || c == '>') {
         charType = DELIMITER;
       } else {
         charType = PUNCTUATION;
@@ -216,6 +284,20 @@ public class ContactInfo
       charType = END;
     }
     i++;
+  }
+  
+  private void appendWordToField() {
+    if (word.length() > 0) {
+      if (field.length() > 0) {
+        field.append(lastDelim);
+        if (lastDelim != ' ') {
+          field.append(' ');
+        }
+      }
+      field.append(word);
+      lastWord = word.toString();
+      lastDelim = c;
+    }
   }
   
   private void processField() {
@@ -246,6 +328,7 @@ public class ContactInfo
       fieldType++;
     } // end if we have a field to process
     field = new StringBuilder();
+    lastDelim = ' ';
   }
   
   public int length() {
@@ -389,17 +472,21 @@ public class ContactInfo
   }
   
   public String getMapURL() {
-    StringBuilder url = new StringBuilder("https://www.google.com/maps/place/");
-    mapsAppend(url, address);
-    mapsAppend(url, city);
-    mapsAppend(url, state);
-    mapsAppend(url, zipCode);
+    StringBuilder url = new StringBuilder();
+    if (address != null && address.length() > 0) {
+      url.append("https://www.google.com/maps/place/");
+      mapsAppend(url, address);
+      mapsAppend(url, city);
+      mapsAppend(url, state);
+      mapsAppend(url, zipCode);
+    }
     return url.toString();
   }
   
   private void mapsAppend(StringBuilder builder, String str) {
     if (str != null && str.length() > 0) {
-      if (builder.charAt(builder.length() - 1) != '/') {
+      if (builder.charAt(builder.length() - 1) != '/'
+          && builder.charAt(builder.length() - 1) != '+') {
         builder.append('+');
       }
       for (int j = 0; j < str.length(); j++) {

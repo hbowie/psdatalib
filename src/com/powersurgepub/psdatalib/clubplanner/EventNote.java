@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Herb Bowie
+ * Copyright 2012 - 2015 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.powersurgepub.psdatalib.clubplanner;
 
   import com.powersurgepub.psdatalib.psdata.*;
+  import com.powersurgepub.psdatalib.psdata.values.*;
   import com.powersurgepub.psdatalib.pslist.*;
   import com.powersurgepub.psdatalib.pstags.*;
   import com.powersurgepub.psutils.*;

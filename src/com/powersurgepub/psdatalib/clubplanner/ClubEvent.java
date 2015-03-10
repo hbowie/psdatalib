@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Herb Bowie
+ * Copyright 2012 - 2015 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package com.powersurgepub.psdatalib.clubplanner;
 
-import com.powersurgepub.psdatalib.psdata.CalcParser;
   import com.powersurgepub.psdatalib.psdata.*;
+  import com.powersurgepub.psdatalib.psdata.values.*;
   import com.powersurgepub.psdatalib.pslist.*;
   import com.powersurgepub.psdatalib.pstags.*;
   import com.powersurgepub.psutils.*;
@@ -186,7 +186,7 @@ public class ClubEvent
   /**
    The location of the event, including the name of the venue and its address.
    */
-  private String where = null;
+  private ContactInfo where = null;
  
   public static final String WHERE_FIELD_NAME = "Where";
  
@@ -200,9 +200,137 @@ public class ClubEvent
  
 
   /**
+   The extracted name from the Where field.
+   */
+  private String whereName = null;
+ 
+  public static final String WHERE_NAME_FIELD_NAME = "Where Name";
+ 
+  public static final String WHERE_NAME_COLUMN_NAME = "Where Name";
+ 
+  public static final String WHERE_NAME_COMMON_NAME = "wherename";
+ 
+  public static final int WHERE_NAME_COLUMN_INDEX = 9;
+ 
+  public static final int WHERE_NAME_COLUMN_WIDTH = 20;
+ 
+
+  /**
+   The extracted street address from the Where field.
+   */
+  private String whereAddress = null;
+ 
+  public static final String WHERE_ADDRESS_FIELD_NAME = "Where Address";
+ 
+  public static final String WHERE_ADDRESS_COLUMN_NAME = "Where Address";
+ 
+  public static final String WHERE_ADDRESS_COMMON_NAME = "whereaddress";
+ 
+  public static final int WHERE_ADDRESS_COLUMN_INDEX = 10;
+ 
+  public static final int WHERE_ADDRESS_COLUMN_WIDTH = 20;
+ 
+
+  /**
+   The extracted city from the Where field.
+   */
+  private String whereCity = null;
+ 
+  public static final String WHERE_CITY_FIELD_NAME = "Where City";
+ 
+  public static final String WHERE_CITY_COLUMN_NAME = "Where City";
+ 
+  public static final String WHERE_CITY_COMMON_NAME = "wherecity";
+ 
+  public static final int WHERE_CITY_COLUMN_INDEX = 11;
+ 
+  public static final int WHERE_CITY_COLUMN_WIDTH = 15;
+ 
+
+  /**
+   The extracted state from the Where field.
+   */
+  private String whereState = null;
+ 
+  public static final String WHERE_STATE_FIELD_NAME = "Where State";
+ 
+  public static final String WHERE_STATE_COLUMN_NAME = "Where State";
+ 
+  public static final String WHERE_STATE_COMMON_NAME = "wherestate";
+ 
+  public static final int WHERE_STATE_COLUMN_INDEX = 12;
+ 
+  public static final int WHERE_STATE_COLUMN_WIDTH = 2;
+ 
+
+  /**
+   The extracted zip code from the Where field.
+   */
+  private String whereZip = null;
+ 
+  public static final String WHERE_ZIP_FIELD_NAME = "Where Zip";
+ 
+  public static final String WHERE_ZIP_COLUMN_NAME = "Where Zip";
+ 
+  public static final String WHERE_ZIP_COMMON_NAME = "wherezip";
+ 
+  public static final int WHERE_ZIP_COLUMN_INDEX = 13;
+ 
+  public static final int WHERE_ZIP_COLUMN_WIDTH = 5;
+ 
+
+  /**
+   The extracted phone number from the Where field.
+   */
+  private String wherePhone = null;
+ 
+  public static final String WHERE_PHONE_FIELD_NAME = "Where Phone";
+ 
+  public static final String WHERE_PHONE_COLUMN_NAME = "Where Phone";
+ 
+  public static final String WHERE_PHONE_COMMON_NAME = "wherephone";
+ 
+  public static final int WHERE_PHONE_COLUMN_INDEX = 14;
+ 
+  public static final int WHERE_PHONE_COLUMN_WIDTH = 13;
+ 
+
+  /**
+   The extracted e-mail address from the Where field.
+   */
+  private String whereEmail = null;
+ 
+  public static final String WHERE_EMAIL_FIELD_NAME = "Where Email";
+ 
+  public static final String WHERE_EMAIL_COLUMN_NAME = "Where Email";
+ 
+  public static final String WHERE_EMAIL_COMMON_NAME = "whereemail";
+ 
+  public static final int WHERE_EMAIL_COLUMN_INDEX = 15;
+ 
+  public static final int WHERE_EMAIL_COLUMN_WIDTH = 15;
+ 
+
+  /**
+   The generated map URL for the Where field.
+   */
+  private String whereMapUrl = null;
+ 
+  public static final String WHERE_MAP_URL_FIELD_NAME = "Where MapURL";
+ 
+  public static final String WHERE_MAP_URL_COLUMN_NAME = "Where MapURL";
+ 
+  public static final String WHERE_MAP_URL_COMMON_NAME = "wheremapurl";
+ 
+  public static final int WHERE_MAP_URL_COLUMN_INDEX = 16;
+ 
+  public static final int WHERE_MAP_URL_COLUMN_WIDTH = 30;
+ 
+
+  /**
    Who is assigned to plan, coordinate and host the event. Can include multiple names. Can include email addresses and phone numbers.
    */
-  private String who = null;
+  private ContactInfo who = null;
  
   public static final String WHO_FIELD_NAME = "Who";
  
@@ -210,9 +338,137 @@ public class ClubEvent
  
   public static final String WHO_COMMON_NAME = "who";
  
-  public static final int WHO_COLUMN_INDEX = 9;
+  public static final int WHO_COLUMN_INDEX = 17;
  
   public static final int WHO_COLUMN_WIDTH = 20;
+ 
+
+  /**
+   The extracted name from the Who field.
+   */
+  private String whoName = null;
+ 
+  public static final String WHO_NAME_FIELD_NAME = "Who Name";
+ 
+  public static final String WHO_NAME_COLUMN_NAME = "Who Name";
+ 
+  public static final String WHO_NAME_COMMON_NAME = "whoname";
+ 
+  public static final int WHO_NAME_COLUMN_INDEX = 18;
+ 
+  public static final int WHO_NAME_COLUMN_WIDTH = 20;
+ 
+
+  /**
+   The extracted street address from the Who field.
+   */
+  private String whoAddress = null;
+ 
+  public static final String WHO_ADDRESS_FIELD_NAME = "Who Address";
+ 
+  public static final String WHO_ADDRESS_COLUMN_NAME = "Who Address";
+ 
+  public static final String WHO_ADDRESS_COMMON_NAME = "whoaddress";
+ 
+  public static final int WHO_ADDRESS_COLUMN_INDEX = 19;
+ 
+  public static final int WHO_ADDRESS_COLUMN_WIDTH = 20;
+ 
+
+  /**
+   The extracted city from the Who field.
+   */
+  private String whoCity = null;
+ 
+  public static final String WHO_CITY_FIELD_NAME = "Who City";
+ 
+  public static final String WHO_CITY_COLUMN_NAME = "Who City";
+ 
+  public static final String WHO_CITY_COMMON_NAME = "whocity";
+ 
+  public static final int WHO_CITY_COLUMN_INDEX = 20;
+ 
+  public static final int WHO_CITY_COLUMN_WIDTH = 15;
+ 
+
+  /**
+   The extracted state from the Who field.
+   */
+  private String whoState = null;
+ 
+  public static final String WHO_STATE_FIELD_NAME = "Who State";
+ 
+  public static final String WHO_STATE_COLUMN_NAME = "Who State";
+ 
+  public static final String WHO_STATE_COMMON_NAME = "whostate";
+ 
+  public static final int WHO_STATE_COLUMN_INDEX = 21;
+ 
+  public static final int WHO_STATE_COLUMN_WIDTH = 2;
+ 
+
+  /**
+   The extracted zip code from the Who field.
+   */
+  private String whoZip = null;
+ 
+  public static final String WHO_ZIP_FIELD_NAME = "Who Zip";
+ 
+  public static final String WHO_ZIP_COLUMN_NAME = "Who Zip";
+ 
+  public static final String WHO_ZIP_COMMON_NAME = "whozip";
+ 
+  public static final int WHO_ZIP_COLUMN_INDEX = 22;
+ 
+  public static final int WHO_ZIP_COLUMN_WIDTH = 5;
+ 
+
+  /**
+   The extracted phone number from the Who field.
+   */
+  private String whoPhone = null;
+ 
+  public static final String WHO_PHONE_FIELD_NAME = "Who Phone";
+ 
+  public static final String WHO_PHONE_COLUMN_NAME = "Who Phone";
+ 
+  public static final String WHO_PHONE_COMMON_NAME = "whophone";
+ 
+  public static final int WHO_PHONE_COLUMN_INDEX = 23;
+ 
+  public static final int WHO_PHONE_COLUMN_WIDTH = 13;
+ 
+
+  /**
+   The extracted e-mail address from the Who field.
+   */
+  private String whoEmail = null;
+ 
+  public static final String WHO_EMAIL_FIELD_NAME = "Who Email";
+ 
+  public static final String WHO_EMAIL_COLUMN_NAME = "Who Email";
+ 
+  public static final String WHO_EMAIL_COMMON_NAME = "whoemail";
+ 
+  public static final int WHO_EMAIL_COLUMN_INDEX = 24;
+ 
+  public static final int WHO_EMAIL_COLUMN_WIDTH = 15;
+ 
+
+  /**
+   The generated map URL for the Who field.
+   */
+  private String whoMapUrl = null;
+ 
+  public static final String WHO_MAP_URL_FIELD_NAME = "Who MapURL";
+ 
+  public static final String WHO_MAP_URL_COLUMN_NAME = "Who MapURL";
+ 
+  public static final String WHO_MAP_URL_COMMON_NAME = "whomapurl";
+ 
+  public static final int WHO_MAP_URL_COLUMN_INDEX = 25;
+ 
+  public static final int WHO_MAP_URL_COLUMN_WIDTH = 30;
  
 
   /**
@@ -226,7 +482,7 @@ public class ClubEvent
  
   public static final String DISCUSS_COMMON_NAME = "discuss";
  
-  public static final int DISCUSS_COLUMN_INDEX = 10;
+  public static final int DISCUSS_COLUMN_INDEX = 26;
  
   public static final int DISCUSS_COLUMN_WIDTH = 40;
  
@@ -242,7 +498,7 @@ public class ClubEvent
  
   public static final String ACTIONS_COMMON_NAME = "actions";
  
-  public static final int ACTIONS_COLUMN_INDEX = 11;
+  public static final int ACTIONS_COLUMN_INDEX = 27;
  
   public static final int ACTIONS_COLUMN_WIDTH = 40;
  
@@ -258,7 +514,7 @@ public class ClubEvent
  
   public static final String ACTIONS_AS_HTML_COMMON_NAME = "actionsashtml";
  
-  public static final int ACTIONS_AS_HTML_COLUMN_INDEX = 12;
+  public static final int ACTIONS_AS_HTML_COLUMN_INDEX = 28;
  
   public static final int ACTIONS_AS_HTML_COLUMN_WIDTH = 50;
  
@@ -274,7 +530,7 @@ public class ClubEvent
  
   public static final String WHY_COMMON_NAME = "why";
  
-  public static final int WHY_COLUMN_INDEX = 13;
+  public static final int WHY_COLUMN_INDEX = 29;
  
   public static final int WHY_COLUMN_WIDTH = 40;
  
@@ -290,7 +546,7 @@ public class ClubEvent
  
   public static final String TEASER_COMMON_NAME = "teaser";
  
-  public static final int TEASER_COLUMN_INDEX = 14;
+  public static final int TEASER_COLUMN_INDEX = 30;
  
   public static final int TEASER_COLUMN_WIDTH = 40;
  
@@ -306,7 +562,7 @@ public class ClubEvent
  
   public static final String BLURB_COMMON_NAME = "blurb";
  
-  public static final int BLURB_COLUMN_INDEX = 15;
+  public static final int BLURB_COLUMN_INDEX = 31;
  
   public static final int BLURB_COLUMN_WIDTH = 40;
  
@@ -322,7 +578,7 @@ public class ClubEvent
  
   public static final String BLURB_AS_HTML_COMMON_NAME = "blurbashtml";
  
-  public static final int BLURB_AS_HTML_COLUMN_INDEX = 16;
+  public static final int BLURB_AS_HTML_COLUMN_INDEX = 32;
  
   public static final int BLURB_AS_HTML_COLUMN_WIDTH = 50;
  
@@ -338,7 +594,7 @@ public class ClubEvent
  
   public static final String COST_COMMON_NAME = "cost";
  
-  public static final int COST_COLUMN_INDEX = 17;
+  public static final int COST_COLUMN_INDEX = 33;
  
   public static final int COST_COLUMN_WIDTH = 15;
  
@@ -354,7 +610,7 @@ public class ClubEvent
  
   public static final String PURCHASE_COMMON_NAME = "purchase";
  
-  public static final int PURCHASE_COLUMN_INDEX = 18;
+  public static final int PURCHASE_COLUMN_INDEX = 34;
  
   public static final int PURCHASE_COLUMN_WIDTH = 40;
  
@@ -370,7 +626,7 @@ public class ClubEvent
  
   public static final String TICKETS_COMMON_NAME = "tickets";
  
-  public static final int TICKETS_COLUMN_INDEX = 19;
+  public static final int TICKETS_COLUMN_INDEX = 35;
  
   public static final int TICKETS_COLUMN_WIDTH = 30;
  
@@ -386,7 +642,7 @@ public class ClubEvent
  
   public static final String QUANTITY_COMMON_NAME = "quantity";
  
-  public static final int QUANTITY_COLUMN_INDEX = 20;
+  public static final int QUANTITY_COLUMN_INDEX = 36;
  
   public static final int QUANTITY_COLUMN_WIDTH = 8;
  
@@ -402,7 +658,7 @@ public class ClubEvent
  
   public static final String PLANNED_INCOME_COMMON_NAME = "plannedincome";
  
-  public static final int PLANNED_INCOME_COLUMN_INDEX = 21;
+  public static final int PLANNED_INCOME_COLUMN_INDEX = 37;
  
   public static final int PLANNED_INCOME_COLUMN_WIDTH = 40;
  
@@ -418,7 +674,7 @@ public class ClubEvent
  
   public static final String ACTUAL_INCOME_COMMON_NAME = "actualincome";
  
-  public static final int ACTUAL_INCOME_COLUMN_INDEX = 22;
+  public static final int ACTUAL_INCOME_COLUMN_INDEX = 38;
  
   public static final int ACTUAL_INCOME_COLUMN_WIDTH = 40;
  
@@ -434,7 +690,7 @@ public class ClubEvent
  
   public static final String PLANNED_EXPENSE_COMMON_NAME = "plannedexpense";
  
-  public static final int PLANNED_EXPENSE_COLUMN_INDEX = 23;
+  public static final int PLANNED_EXPENSE_COLUMN_INDEX = 39;
  
   public static final int PLANNED_EXPENSE_COLUMN_WIDTH = 40;
  
@@ -450,7 +706,7 @@ public class ClubEvent
  
   public static final String ACTUAL_EXPENSE_COMMON_NAME = "actualexpense";
  
-  public static final int ACTUAL_EXPENSE_COLUMN_INDEX = 24;
+  public static final int ACTUAL_EXPENSE_COLUMN_INDEX = 40;
  
   public static final int ACTUAL_EXPENSE_COLUMN_WIDTH = 40;
  
@@ -466,7 +722,7 @@ public class ClubEvent
  
   public static final String PLANNED_ATTENDANCE_COMMON_NAME = "plannedattendance";
  
-  public static final int PLANNED_ATTENDANCE_COLUMN_INDEX = 25;
+  public static final int PLANNED_ATTENDANCE_COLUMN_INDEX = 41;
  
   public static final int PLANNED_ATTENDANCE_COLUMN_WIDTH = 8;
  
@@ -482,7 +738,7 @@ public class ClubEvent
  
   public static final String ACTUAL_ATTENDANCE_COMMON_NAME = "actualattendance";
  
-  public static final int ACTUAL_ATTENDANCE_COLUMN_INDEX = 26;
+  public static final int ACTUAL_ATTENDANCE_COLUMN_INDEX = 42;
  
   public static final int ACTUAL_ATTENDANCE_COLUMN_WIDTH = 8;
  
@@ -498,7 +754,7 @@ public class ClubEvent
  
   public static final String OVER_UNDER_COMMON_NAME = "overunder";
  
-  public static final int OVER_UNDER_COLUMN_INDEX = 27;
+  public static final int OVER_UNDER_COLUMN_INDEX = 43;
  
   public static final int OVER_UNDER_COLUMN_WIDTH = 8;
  
@@ -514,7 +770,7 @@ public class ClubEvent
  
   public static final String FINANCE_PROJECTION_COMMON_NAME = "financeprojection";
  
-  public static final int FINANCE_PROJECTION_COLUMN_INDEX = 28;
+  public static final int FINANCE_PROJECTION_COLUMN_INDEX = 44;
  
   public static final int FINANCE_PROJECTION_COLUMN_WIDTH = 8;
  
@@ -530,7 +786,7 @@ public class ClubEvent
  
   public static final String RECAP_COMMON_NAME = "recap";
  
-  public static final int RECAP_COLUMN_INDEX = 29;
+  public static final int RECAP_COLUMN_INDEX = 45;
  
   public static final int RECAP_COLUMN_WIDTH = 40;
  
@@ -546,7 +802,7 @@ public class ClubEvent
  
   public static final String RECAP_AS_HTML_COMMON_NAME = "recapashtml";
  
-  public static final int RECAP_AS_HTML_COLUMN_INDEX = 30;
+  public static final int RECAP_AS_HTML_COLUMN_INDEX = 46;
  
   public static final int RECAP_AS_HTML_COLUMN_WIDTH = 50;
  
@@ -562,7 +818,7 @@ public class ClubEvent
  
   public static final String ID_COMMON_NAME = "id";
  
-  public static final int ID_COLUMN_INDEX = 31;
+  public static final int ID_COLUMN_INDEX = 47;
  
   public static final int ID_COLUMN_WIDTH = 30;
  
@@ -578,7 +834,7 @@ public class ClubEvent
  
   public static final String LINK_COMMON_NAME = "link";
  
-  public static final int LINK_COLUMN_INDEX = 32;
+  public static final int LINK_COLUMN_INDEX = 48;
  
   public static final int LINK_COLUMN_WIDTH = 30;
  
@@ -594,7 +850,7 @@ public class ClubEvent
  
   public static final String VENUE_COMMON_NAME = "venue";
  
-  public static final int VENUE_COLUMN_INDEX = 33;
+  public static final int VENUE_COLUMN_INDEX = 49;
  
   public static final int VENUE_COLUMN_WIDTH = 30;
  
@@ -610,7 +866,7 @@ public class ClubEvent
  
   public static final String IMAGE_COMMON_NAME = "image";
  
-  public static final int IMAGE_COLUMN_INDEX = 34;
+  public static final int IMAGE_COLUMN_INDEX = 50;
  
   public static final int IMAGE_COLUMN_WIDTH = 30;
  
@@ -626,7 +882,7 @@ public class ClubEvent
  
   public static final String NEWS_IMAGE_COMMON_NAME = "newsimage";
  
-  public static final int NEWS_IMAGE_COLUMN_INDEX = 35;
+  public static final int NEWS_IMAGE_COLUMN_INDEX = 51;
  
   public static final int NEWS_IMAGE_COLUMN_WIDTH = 30;
  
@@ -642,7 +898,7 @@ public class ClubEvent
  
   public static final String SHORT_DATE_COMMON_NAME = "shortdate";
  
-  public static final int SHORT_DATE_COLUMN_INDEX = 36;
+  public static final int SHORT_DATE_COLUMN_INDEX = 52;
  
   public static final int SHORT_DATE_COLUMN_WIDTH = 12;
  
@@ -658,7 +914,7 @@ public class ClubEvent
  
   public static final String NOTES_COMMON_NAME = "notes";
  
-  public static final int NOTES_COLUMN_INDEX = 37;
+  public static final int NOTES_COLUMN_INDEX = 53;
  
   public static final int NOTES_COLUMN_WIDTH = 40;
  
@@ -674,12 +930,12 @@ public class ClubEvent
  
   public static final String NOTES_AS_HTML_COMMON_NAME = "notesashtml";
  
-  public static final int NOTES_AS_HTML_COLUMN_INDEX = 38;
+  public static final int NOTES_AS_HTML_COLUMN_INDEX = 54;
  
   public static final int NOTES_AS_HTML_COLUMN_WIDTH = 50;
  
 
-  public static final int COLUMN_COUNT = 39;
+  public static final int COLUMN_COUNT = 55;
 
 
   /*
@@ -1120,7 +1376,7 @@ public class ClubEvent
     if (getCategory() != null
         && getCategory().length() > 0) {
       fieldStart = StringUtils.indexOfIgnoreCase (findLower, findUpper,
-            getCategory(), 0);
+            getCategoryAsString(), 0);
       if (fieldStart >= 0) {
         found = true;
       }
@@ -1129,7 +1385,7 @@ public class ClubEvent
     if (getWhat() != null
         && getWhat().length() > 0) {
       fieldStart = StringUtils.indexOfIgnoreCase (findLower, findUpper,
-            getWhat(), 0);
+            getWhatAsString(), 0);
       if (fieldStart >= 0) {
         found = true;
       }
@@ -1138,7 +1394,7 @@ public class ClubEvent
     if (getWhere() != null
         && getWhere().length() > 0) {
       fieldStart = StringUtils.indexOfIgnoreCase (findLower, findUpper,
-            getWhere(), 0);
+            getWhereAsString(), 0);
       if (fieldStart >= 0) {
         found = true;
       }
@@ -1147,7 +1403,7 @@ public class ClubEvent
     if (getWho() != null
         && getWho().length() > 0) {
       fieldStart = StringUtils.indexOfIgnoreCase (findLower, findUpper,
-            getWho(), 0);
+            getWhoAsString(), 0);
       if (fieldStart >= 0) {
         found = true;
       }
@@ -1281,7 +1537,95 @@ public class ClubEvent
       if (str2.equals ("")) {
         // No value available -- leave current value as-is
       } else {
-        setWhere ((String)obj2);
+        setWhere ((ContactInfo)obj2);
+      }
+    }
+    obj2 = clubEvent2.getWhereName();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setWhereName ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getWhereAddress();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setWhereAddress ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getWhereCity();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setWhereCity ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getWhereState();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setWhereState ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getWhereZip();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setWhereZip ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getWherePhone();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setWherePhone ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getWhereEmail();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setWhereEmail ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getWhereMapUrl();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setWhereMapUrl ((String)obj2);
       }
     }
     obj2 = clubEvent2.getWho();
@@ -1292,7 +1636,95 @@ public class ClubEvent
       if (str2.equals ("")) {
         // No value available -- leave current value as-is
       } else {
-        setWho ((String)obj2);
+        setWho ((ContactInfo)obj2);
+      }
+    }
+    obj2 = clubEvent2.getWhoName();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setWhoName ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getWhoAddress();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setWhoAddress ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getWhoCity();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setWhoCity ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getWhoState();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setWhoState ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getWhoZip();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setWhoZip ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getWhoPhone();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setWhoPhone ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getWhoEmail();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setWhoEmail ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getWhoMapUrl();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setWhoMapUrl ((String)obj2);
       }
     }
     obj2 = clubEvent2.getDiscuss();
@@ -1660,8 +2092,56 @@ public class ClubEvent
       case WHERE_COLUMN_INDEX:
           setWhere (columnValue);
           break;
+      case WHERE_NAME_COLUMN_INDEX:
+          setWhereName (columnValue);
+          break;
+      case WHERE_ADDRESS_COLUMN_INDEX:
+          setWhereAddress (columnValue);
+          break;
+      case WHERE_CITY_COLUMN_INDEX:
+          setWhereCity (columnValue);
+          break;
+      case WHERE_STATE_COLUMN_INDEX:
+          setWhereState (columnValue);
+          break;
+      case WHERE_ZIP_COLUMN_INDEX:
+          setWhereZip (columnValue);
+          break;
+      case WHERE_PHONE_COLUMN_INDEX:
+          setWherePhone (columnValue);
+          break;
+      case WHERE_EMAIL_COLUMN_INDEX:
+          setWhereEmail (columnValue);
+          break;
+      case WHERE_MAP_URL_COLUMN_INDEX:
+          setWhereMapUrl (columnValue);
+          break;
       case WHO_COLUMN_INDEX:
           setWho (columnValue);
+          break;
+      case WHO_NAME_COLUMN_INDEX:
+          setWhoName (columnValue);
+          break;
+      case WHO_ADDRESS_COLUMN_INDEX:
+          setWhoAddress (columnValue);
+          break;
+      case WHO_CITY_COLUMN_INDEX:
+          setWhoCity (columnValue);
+          break;
+      case WHO_STATE_COLUMN_INDEX:
+          setWhoState (columnValue);
+          break;
+      case WHO_ZIP_COLUMN_INDEX:
+          setWhoZip (columnValue);
+          break;
+      case WHO_PHONE_COLUMN_INDEX:
+          setWhoPhone (columnValue);
+          break;
+      case WHO_EMAIL_COLUMN_INDEX:
+          setWhoEmail (columnValue);
+          break;
+      case WHO_MAP_URL_COLUMN_INDEX:
+          setWhoMapUrl (columnValue);
           break;
       case DISCUSS_COLUMN_INDEX:
           setDiscuss (columnValue);
@@ -1783,8 +2263,40 @@ public class ClubEvent
           return what;
       case WHERE_COLUMN_INDEX:
           return where;
+      case WHERE_NAME_COLUMN_INDEX:
+          return whereName;
+      case WHERE_ADDRESS_COLUMN_INDEX:
+          return whereAddress;
+      case WHERE_CITY_COLUMN_INDEX:
+          return whereCity;
+      case WHERE_STATE_COLUMN_INDEX:
+          return whereState;
+      case WHERE_ZIP_COLUMN_INDEX:
+          return whereZip;
+      case WHERE_PHONE_COLUMN_INDEX:
+          return wherePhone;
+      case WHERE_EMAIL_COLUMN_INDEX:
+          return whereEmail;
+      case WHERE_MAP_URL_COLUMN_INDEX:
+          return whereMapUrl;
       case WHO_COLUMN_INDEX:
           return who;
+      case WHO_NAME_COLUMN_INDEX:
+          return whoName;
+      case WHO_ADDRESS_COLUMN_INDEX:
+          return whoAddress;
+      case WHO_CITY_COLUMN_INDEX:
+          return whoCity;
+      case WHO_STATE_COLUMN_INDEX:
+          return whoState;
+      case WHO_ZIP_COLUMN_INDEX:
+          return whoZip;
+      case WHO_PHONE_COLUMN_INDEX:
+          return whoPhone;
+      case WHO_EMAIL_COLUMN_INDEX:
+          return whoEmail;
+      case WHO_MAP_URL_COLUMN_INDEX:
+          return whoMapUrl;
       case DISCUSS_COLUMN_INDEX:
           return discuss;
       case ACTIONS_COLUMN_INDEX:
@@ -1877,8 +2389,40 @@ public class ClubEvent
           return WHAT_COLUMN_NAME;
       case WHERE_COLUMN_INDEX:
           return WHERE_COLUMN_NAME;
+      case WHERE_NAME_COLUMN_INDEX:
+          return WHERE_NAME_COLUMN_NAME;
+      case WHERE_ADDRESS_COLUMN_INDEX:
+          return WHERE_ADDRESS_COLUMN_NAME;
+      case WHERE_CITY_COLUMN_INDEX:
+          return WHERE_CITY_COLUMN_NAME;
+      case WHERE_STATE_COLUMN_INDEX:
+          return WHERE_STATE_COLUMN_NAME;
+      case WHERE_ZIP_COLUMN_INDEX:
+          return WHERE_ZIP_COLUMN_NAME;
+      case WHERE_PHONE_COLUMN_INDEX:
+          return WHERE_PHONE_COLUMN_NAME;
+      case WHERE_EMAIL_COLUMN_INDEX:
+          return WHERE_EMAIL_COLUMN_NAME;
+      case WHERE_MAP_URL_COLUMN_INDEX:
+          return WHERE_MAP_URL_COLUMN_NAME;
       case WHO_COLUMN_INDEX:
           return WHO_COLUMN_NAME;
+      case WHO_NAME_COLUMN_INDEX:
+          return WHO_NAME_COLUMN_NAME;
+      case WHO_ADDRESS_COLUMN_INDEX:
+          return WHO_ADDRESS_COLUMN_NAME;
+      case WHO_CITY_COLUMN_INDEX:
+          return WHO_CITY_COLUMN_NAME;
+      case WHO_STATE_COLUMN_INDEX:
+          return WHO_STATE_COLUMN_NAME;
+      case WHO_ZIP_COLUMN_INDEX:
+          return WHO_ZIP_COLUMN_NAME;
+      case WHO_PHONE_COLUMN_INDEX:
+          return WHO_PHONE_COLUMN_NAME;
+      case WHO_EMAIL_COLUMN_INDEX:
+          return WHO_EMAIL_COLUMN_NAME;
+      case WHO_MAP_URL_COLUMN_INDEX:
+          return WHO_MAP_URL_COLUMN_NAME;
       case DISCUSS_COLUMN_INDEX:
           return DISCUSS_COLUMN_NAME;
       case ACTIONS_COLUMN_INDEX:
@@ -1972,8 +2516,40 @@ public class ClubEvent
           return WHAT_COMMON_NAME;
       case WHERE_COLUMN_INDEX:
           return WHERE_COMMON_NAME;
+      case WHERE_NAME_COLUMN_INDEX:
+          return WHERE_NAME_COMMON_NAME;
+      case WHERE_ADDRESS_COLUMN_INDEX:
+          return WHERE_ADDRESS_COMMON_NAME;
+      case WHERE_CITY_COLUMN_INDEX:
+          return WHERE_CITY_COMMON_NAME;
+      case WHERE_STATE_COLUMN_INDEX:
+          return WHERE_STATE_COMMON_NAME;
+      case WHERE_ZIP_COLUMN_INDEX:
+          return WHERE_ZIP_COMMON_NAME;
+      case WHERE_PHONE_COLUMN_INDEX:
+          return WHERE_PHONE_COMMON_NAME;
+      case WHERE_EMAIL_COLUMN_INDEX:
+          return WHERE_EMAIL_COMMON_NAME;
+      case WHERE_MAP_URL_COLUMN_INDEX:
+          return WHERE_MAP_URL_COMMON_NAME;
       case WHO_COLUMN_INDEX:
           return WHO_COMMON_NAME;
+      case WHO_NAME_COLUMN_INDEX:
+          return WHO_NAME_COMMON_NAME;
+      case WHO_ADDRESS_COLUMN_INDEX:
+          return WHO_ADDRESS_COMMON_NAME;
+      case WHO_CITY_COLUMN_INDEX:
+          return WHO_CITY_COMMON_NAME;
+      case WHO_STATE_COLUMN_INDEX:
+          return WHO_STATE_COMMON_NAME;
+      case WHO_ZIP_COLUMN_INDEX:
+          return WHO_ZIP_COMMON_NAME;
+      case WHO_PHONE_COLUMN_INDEX:
+          return WHO_PHONE_COMMON_NAME;
+      case WHO_EMAIL_COLUMN_INDEX:
+          return WHO_EMAIL_COMMON_NAME;
+      case WHO_MAP_URL_COLUMN_INDEX:
+          return WHO_MAP_URL_COMMON_NAME;
       case DISCUSS_COLUMN_INDEX:
           return DISCUSS_COMMON_NAME;
       case ACTIONS_COLUMN_INDEX:
@@ -2066,8 +2642,40 @@ public class ClubEvent
           return WHAT_COLUMN_WIDTH;
       case WHERE_COLUMN_INDEX:
           return WHERE_COLUMN_WIDTH;
+      case WHERE_NAME_COLUMN_INDEX:
+          return WHERE_NAME_COLUMN_WIDTH;
+      case WHERE_ADDRESS_COLUMN_INDEX:
+          return WHERE_ADDRESS_COLUMN_WIDTH;
+      case WHERE_CITY_COLUMN_INDEX:
+          return WHERE_CITY_COLUMN_WIDTH;
+      case WHERE_STATE_COLUMN_INDEX:
+          return WHERE_STATE_COLUMN_WIDTH;
+      case WHERE_ZIP_COLUMN_INDEX:
+          return WHERE_ZIP_COLUMN_WIDTH;
+      case WHERE_PHONE_COLUMN_INDEX:
+          return WHERE_PHONE_COLUMN_WIDTH;
+      case WHERE_EMAIL_COLUMN_INDEX:
+          return WHERE_EMAIL_COLUMN_WIDTH;
+      case WHERE_MAP_URL_COLUMN_INDEX:
+          return WHERE_MAP_URL_COLUMN_WIDTH;
       case WHO_COLUMN_INDEX:
           return WHO_COLUMN_WIDTH;
+      case WHO_NAME_COLUMN_INDEX:
+          return WHO_NAME_COLUMN_WIDTH;
+      case WHO_ADDRESS_COLUMN_INDEX:
+          return WHO_ADDRESS_COLUMN_WIDTH;
+      case WHO_CITY_COLUMN_INDEX:
+          return WHO_CITY_COLUMN_WIDTH;
+      case WHO_STATE_COLUMN_INDEX:
+          return WHO_STATE_COLUMN_WIDTH;
+      case WHO_ZIP_COLUMN_INDEX:
+          return WHO_ZIP_COLUMN_WIDTH;
+      case WHO_PHONE_COLUMN_INDEX:
+          return WHO_PHONE_COLUMN_WIDTH;
+      case WHO_EMAIL_COLUMN_INDEX:
+          return WHO_EMAIL_COLUMN_WIDTH;
+      case WHO_MAP_URL_COLUMN_INDEX:
+          return WHO_MAP_URL_COLUMN_WIDTH;
       case DISCUSS_COLUMN_INDEX:
           return DISCUSS_COLUMN_WIDTH;
       case ACTIONS_COLUMN_INDEX:
@@ -2159,8 +2767,40 @@ public class ClubEvent
       case WHAT_COLUMN_INDEX:
           return String.class;
       case WHERE_COLUMN_INDEX:
+          return ContactInfo.class;
+      case WHERE_NAME_COLUMN_INDEX:
+          return String.class;
+      case WHERE_ADDRESS_COLUMN_INDEX:
+          return String.class;
+      case WHERE_CITY_COLUMN_INDEX:
+          return String.class;
+      case WHERE_STATE_COLUMN_INDEX:
+          return String.class;
+      case WHERE_ZIP_COLUMN_INDEX:
+          return String.class;
+      case WHERE_PHONE_COLUMN_INDEX:
+          return String.class;
+      case WHERE_EMAIL_COLUMN_INDEX:
+          return String.class;
+      case WHERE_MAP_URL_COLUMN_INDEX:
           return String.class;
       case WHO_COLUMN_INDEX:
+          return ContactInfo.class;
+      case WHO_NAME_COLUMN_INDEX:
+          return String.class;
+      case WHO_ADDRESS_COLUMN_INDEX:
+          return String.class;
+      case WHO_CITY_COLUMN_INDEX:
+          return String.class;
+      case WHO_STATE_COLUMN_INDEX:
+          return String.class;
+      case WHO_ZIP_COLUMN_INDEX:
+          return String.class;
+      case WHO_PHONE_COLUMN_INDEX:
+          return String.class;
+      case WHO_EMAIL_COLUMN_INDEX:
+          return String.class;
+      case WHO_MAP_URL_COLUMN_INDEX:
           return String.class;
       case DISCUSS_COLUMN_INDEX:
           return String.class;
@@ -2687,8 +3327,18 @@ public class ClubEvent
  
      @param  where The where for this club event.
    */
-  public void setWhere (String where) {
+  public void setWhere (ContactInfo where) {
     this.where = where;
+    setModified (true);
+  }
+
+  /**
+     Sets the where for this club event.
+ 
+     @param  where The where for this club event.
+   */
+  public void setWhere (String where) {
+    this.where = new ContactInfo(where);
     setModified (true);
   }
 
@@ -2730,8 +3380,424 @@ public class ClubEvent
  
     @return The where for this club event.
    */
-  public String getWhere () {
+  public ContactInfo getWhere () {
     return where;
+  }
+ 
+  /**
+     Sets the where name for this club event.
+ 
+     @param  whereName The where name for this club event.
+   */
+  public void setWhereName (String whereName) {
+    this.whereName = whereName;
+    setModified (true);
+  }
+
+  /**
+    Returns the where name for this club event as a string.
+ 
+    @return The where name for this club event as a string.
+   */
+  public String getWhereNameAsString () {
+    if (hasWhereName()) {
+      return getWhereName().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the where name for this club event is null.
+ 
+    @return True if the where name for this club event is not null.
+   */
+  public boolean hasWhereName () {
+    return (whereName != null);
+  }
+
+  /**
+    Determines if the where name for this club event
+    is null or is empty.
+ 
+    @return True if the where name for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhereNameWithData () {
+    return (whereName != null && whereName.length() > 0);
+  }
+
+  /**
+    Returns the where name for this club event.
+ 
+    @return The where name for this club event.
+   */
+  public String getWhereName () {
+    return whereName;
+  }
+ 
+  /**
+     Sets the where address for this club event.
+ 
+     @param  whereAddress The where address for this club event.
+   */
+  public void setWhereAddress (String whereAddress) {
+    this.whereAddress = whereAddress;
+    setModified (true);
+  }
+
+  /**
+    Returns the where address for this club event as a string.
+ 
+    @return The where address for this club event as a string.
+   */
+  public String getWhereAddressAsString () {
+    if (hasWhereAddress()) {
+      return getWhereAddress().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the where address for this club event is null.
+ 
+    @return True if the where address for this club event is not null.
+   */
+  public boolean hasWhereAddress () {
+    return (whereAddress != null);
+  }
+
+  /**
+    Determines if the where address for this club event
+    is null or is empty.
+ 
+    @return True if the where address for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhereAddressWithData () {
+    return (whereAddress != null && whereAddress.length() > 0);
+  }
+
+  /**
+    Returns the where address for this club event.
+ 
+    @return The where address for this club event.
+   */
+  public String getWhereAddress () {
+    return whereAddress;
+  }
+ 
+  /**
+     Sets the where city for this club event.
+ 
+     @param  whereCity The where city for this club event.
+   */
+  public void setWhereCity (String whereCity) {
+    this.whereCity = whereCity;
+    setModified (true);
+  }
+
+  /**
+    Returns the where city for this club event as a string.
+ 
+    @return The where city for this club event as a string.
+   */
+  public String getWhereCityAsString () {
+    if (hasWhereCity()) {
+      return getWhereCity().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the where city for this club event is null.
+ 
+    @return True if the where city for this club event is not null.
+   */
+  public boolean hasWhereCity () {
+    return (whereCity != null);
+  }
+
+  /**
+    Determines if the where city for this club event
+    is null or is empty.
+ 
+    @return True if the where city for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhereCityWithData () {
+    return (whereCity != null && whereCity.length() > 0);
+  }
+
+  /**
+    Returns the where city for this club event.
+ 
+    @return The where city for this club event.
+   */
+  public String getWhereCity () {
+    return whereCity;
+  }
+ 
+  /**
+     Sets the where state for this club event.
+ 
+     @param  whereState The where state for this club event.
+   */
+  public void setWhereState (String whereState) {
+    this.whereState = whereState;
+    setModified (true);
+  }
+
+  /**
+    Returns the where state for this club event as a string.
+ 
+    @return The where state for this club event as a string.
+   */
+  public String getWhereStateAsString () {
+    if (hasWhereState()) {
+      return getWhereState().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the where state for this club event is null.
+ 
+    @return True if the where state for this club event is not null.
+   */
+  public boolean hasWhereState () {
+    return (whereState != null);
+  }
+
+  /**
+    Determines if the where state for this club event
+    is null or is empty.
+ 
+    @return True if the where state for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhereStateWithData () {
+    return (whereState != null && whereState.length() > 0);
+  }
+
+  /**
+    Returns the where state for this club event.
+ 
+    @return The where state for this club event.
+   */
+  public String getWhereState () {
+    return whereState;
+  }
+ 
+  /**
+     Sets the where zip for this club event.
+ 
+     @param  whereZip The where zip for this club event.
+   */
+  public void setWhereZip (String whereZip) {
+    this.whereZip = whereZip;
+    setModified (true);
+  }
+
+  /**
+    Returns the where zip for this club event as a string.
+ 
+    @return The where zip for this club event as a string.
+   */
+  public String getWhereZipAsString () {
+    if (hasWhereZip()) {
+      return getWhereZip().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the where zip for this club event is null.
+ 
+    @return True if the where zip for this club event is not null.
+   */
+  public boolean hasWhereZip () {
+    return (whereZip != null);
+  }
+
+  /**
+    Determines if the where zip for this club event
+    is null or is empty.
+ 
+    @return True if the where zip for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhereZipWithData () {
+    return (whereZip != null && whereZip.length() > 0);
+  }
+
+  /**
+    Returns the where zip for this club event.
+ 
+    @return The where zip for this club event.
+   */
+  public String getWhereZip () {
+    return whereZip;
+  }
+ 
+  /**
+     Sets the where phone for this club event.
+ 
+     @param  wherePhone The where phone for this club event.
+   */
+  public void setWherePhone (String wherePhone) {
+    this.wherePhone = wherePhone;
+    setModified (true);
+  }
+
+  /**
+    Returns the where phone for this club event as a string.
+ 
+    @return The where phone for this club event as a string.
+   */
+  public String getWherePhoneAsString () {
+    if (hasWherePhone()) {
+      return getWherePhone().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the where phone for this club event is null.
+ 
+    @return True if the where phone for this club event is not null.
+   */
+  public boolean hasWherePhone () {
+    return (wherePhone != null);
+  }
+
+  /**
+    Determines if the where phone for this club event
+    is null or is empty.
+ 
+    @return True if the where phone for this club event
+    is not null and not empty.
+   */
+  public boolean hasWherePhoneWithData () {
+    return (wherePhone != null && wherePhone.length() > 0);
+  }
+
+  /**
+    Returns the where phone for this club event.
+ 
+    @return The where phone for this club event.
+   */
+  public String getWherePhone () {
+    return wherePhone;
+  }
+ 
+  /**
+     Sets the where email for this club event.
+ 
+     @param  whereEmail The where email for this club event.
+   */
+  public void setWhereEmail (String whereEmail) {
+    this.whereEmail = whereEmail;
+    setModified (true);
+  }
+
+  /**
+    Returns the where email for this club event as a string.
+ 
+    @return The where email for this club event as a string.
+   */
+  public String getWhereEmailAsString () {
+    if (hasWhereEmail()) {
+      return getWhereEmail().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the where email for this club event is null.
+ 
+    @return True if the where email for this club event is not null.
+   */
+  public boolean hasWhereEmail () {
+    return (whereEmail != null);
+  }
+
+  /**
+    Determines if the where email for this club event
+    is null or is empty.
+ 
+    @return True if the where email for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhereEmailWithData () {
+    return (whereEmail != null && whereEmail.length() > 0);
+  }
+
+  /**
+    Returns the where email for this club event.
+ 
+    @return The where email for this club event.
+   */
+  public String getWhereEmail () {
+    return whereEmail;
+  }
+ 
+  /**
+     Sets the where map url for this club event.
+ 
+     @param  whereMapUrl The where map url for this club event.
+   */
+  public void setWhereMapUrl (String whereMapUrl) {
+    this.whereMapUrl = whereMapUrl;
+    setModified (true);
+  }
+
+  /**
+    Returns the where map url for this club event as a string.
+ 
+    @return The where map url for this club event as a string.
+   */
+  public String getWhereMapUrlAsString () {
+    if (hasWhereMapUrl()) {
+      return getWhereMapUrl().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the where map url for this club event is null.
+ 
+    @return True if the where map url for this club event is not null.
+   */
+  public boolean hasWhereMapUrl () {
+    return (whereMapUrl != null);
+  }
+
+  /**
+    Determines if the where map url for this club event
+    is null or is empty.
+ 
+    @return True if the where map url for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhereMapUrlWithData () {
+    return (whereMapUrl != null && whereMapUrl.length() > 0);
+  }
+
+  /**
+    Returns the where map url for this club event.
+ 
+    @return The where map url for this club event.
+   */
+  public String getWhereMapUrl () {
+    return whereMapUrl;
   }
  
   /**
@@ -2739,8 +3805,18 @@ public class ClubEvent
  
      @param  who The who for this club event.
    */
-  public void setWho (String who) {
+  public void setWho (ContactInfo who) {
     this.who = who;
+    setModified (true);
+  }
+
+  /**
+     Sets the who for this club event.
+ 
+     @param  who The who for this club event.
+   */
+  public void setWho (String who) {
+    this.who = new ContactInfo(who);
     setModified (true);
   }
 
@@ -2782,8 +3858,424 @@ public class ClubEvent
  
     @return The who for this club event.
    */
-  public String getWho () {
+  public ContactInfo getWho () {
     return who;
+  }
+ 
+  /**
+     Sets the who name for this club event.
+ 
+     @param  whoName The who name for this club event.
+   */
+  public void setWhoName (String whoName) {
+    this.whoName = whoName;
+    setModified (true);
+  }
+
+  /**
+    Returns the who name for this club event as a string.
+ 
+    @return The who name for this club event as a string.
+   */
+  public String getWhoNameAsString () {
+    if (hasWhoName()) {
+      return getWhoName().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the who name for this club event is null.
+ 
+    @return True if the who name for this club event is not null.
+   */
+  public boolean hasWhoName () {
+    return (whoName != null);
+  }
+
+  /**
+    Determines if the who name for this club event
+    is null or is empty.
+ 
+    @return True if the who name for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhoNameWithData () {
+    return (whoName != null && whoName.length() > 0);
+  }
+
+  /**
+    Returns the who name for this club event.
+ 
+    @return The who name for this club event.
+   */
+  public String getWhoName () {
+    return whoName;
+  }
+ 
+  /**
+     Sets the who address for this club event.
+ 
+     @param  whoAddress The who address for this club event.
+   */
+  public void setWhoAddress (String whoAddress) {
+    this.whoAddress = whoAddress;
+    setModified (true);
+  }
+
+  /**
+    Returns the who address for this club event as a string.
+ 
+    @return The who address for this club event as a string.
+   */
+  public String getWhoAddressAsString () {
+    if (hasWhoAddress()) {
+      return getWhoAddress().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the who address for this club event is null.
+ 
+    @return True if the who address for this club event is not null.
+   */
+  public boolean hasWhoAddress () {
+    return (whoAddress != null);
+  }
+
+  /**
+    Determines if the who address for this club event
+    is null or is empty.
+ 
+    @return True if the who address for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhoAddressWithData () {
+    return (whoAddress != null && whoAddress.length() > 0);
+  }
+
+  /**
+    Returns the who address for this club event.
+ 
+    @return The who address for this club event.
+   */
+  public String getWhoAddress () {
+    return whoAddress;
+  }
+ 
+  /**
+     Sets the who city for this club event.
+ 
+     @param  whoCity The who city for this club event.
+   */
+  public void setWhoCity (String whoCity) {
+    this.whoCity = whoCity;
+    setModified (true);
+  }
+
+  /**
+    Returns the who city for this club event as a string.
+ 
+    @return The who city for this club event as a string.
+   */
+  public String getWhoCityAsString () {
+    if (hasWhoCity()) {
+      return getWhoCity().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the who city for this club event is null.
+ 
+    @return True if the who city for this club event is not null.
+   */
+  public boolean hasWhoCity () {
+    return (whoCity != null);
+  }
+
+  /**
+    Determines if the who city for this club event
+    is null or is empty.
+ 
+    @return True if the who city for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhoCityWithData () {
+    return (whoCity != null && whoCity.length() > 0);
+  }
+
+  /**
+    Returns the who city for this club event.
+ 
+    @return The who city for this club event.
+   */
+  public String getWhoCity () {
+    return whoCity;
+  }
+ 
+  /**
+     Sets the who state for this club event.
+ 
+     @param  whoState The who state for this club event.
+   */
+  public void setWhoState (String whoState) {
+    this.whoState = whoState;
+    setModified (true);
+  }
+
+  /**
+    Returns the who state for this club event as a string.
+ 
+    @return The who state for this club event as a string.
+   */
+  public String getWhoStateAsString () {
+    if (hasWhoState()) {
+      return getWhoState().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the who state for this club event is null.
+ 
+    @return True if the who state for this club event is not null.
+   */
+  public boolean hasWhoState () {
+    return (whoState != null);
+  }
+
+  /**
+    Determines if the who state for this club event
+    is null or is empty.
+ 
+    @return True if the who state for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhoStateWithData () {
+    return (whoState != null && whoState.length() > 0);
+  }
+
+  /**
+    Returns the who state for this club event.
+ 
+    @return The who state for this club event.
+   */
+  public String getWhoState () {
+    return whoState;
+  }
+ 
+  /**
+     Sets the who zip for this club event.
+ 
+     @param  whoZip The who zip for this club event.
+   */
+  public void setWhoZip (String whoZip) {
+    this.whoZip = whoZip;
+    setModified (true);
+  }
+
+  /**
+    Returns the who zip for this club event as a string.
+ 
+    @return The who zip for this club event as a string.
+   */
+  public String getWhoZipAsString () {
+    if (hasWhoZip()) {
+      return getWhoZip().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the who zip for this club event is null.
+ 
+    @return True if the who zip for this club event is not null.
+   */
+  public boolean hasWhoZip () {
+    return (whoZip != null);
+  }
+
+  /**
+    Determines if the who zip for this club event
+    is null or is empty.
+ 
+    @return True if the who zip for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhoZipWithData () {
+    return (whoZip != null && whoZip.length() > 0);
+  }
+
+  /**
+    Returns the who zip for this club event.
+ 
+    @return The who zip for this club event.
+   */
+  public String getWhoZip () {
+    return whoZip;
+  }
+ 
+  /**
+     Sets the who phone for this club event.
+ 
+     @param  whoPhone The who phone for this club event.
+   */
+  public void setWhoPhone (String whoPhone) {
+    this.whoPhone = whoPhone;
+    setModified (true);
+  }
+
+  /**
+    Returns the who phone for this club event as a string.
+ 
+    @return The who phone for this club event as a string.
+   */
+  public String getWhoPhoneAsString () {
+    if (hasWhoPhone()) {
+      return getWhoPhone().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the who phone for this club event is null.
+ 
+    @return True if the who phone for this club event is not null.
+   */
+  public boolean hasWhoPhone () {
+    return (whoPhone != null);
+  }
+
+  /**
+    Determines if the who phone for this club event
+    is null or is empty.
+ 
+    @return True if the who phone for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhoPhoneWithData () {
+    return (whoPhone != null && whoPhone.length() > 0);
+  }
+
+  /**
+    Returns the who phone for this club event.
+ 
+    @return The who phone for this club event.
+   */
+  public String getWhoPhone () {
+    return whoPhone;
+  }
+ 
+  /**
+     Sets the who email for this club event.
+ 
+     @param  whoEmail The who email for this club event.
+   */
+  public void setWhoEmail (String whoEmail) {
+    this.whoEmail = whoEmail;
+    setModified (true);
+  }
+
+  /**
+    Returns the who email for this club event as a string.
+ 
+    @return The who email for this club event as a string.
+   */
+  public String getWhoEmailAsString () {
+    if (hasWhoEmail()) {
+      return getWhoEmail().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the who email for this club event is null.
+ 
+    @return True if the who email for this club event is not null.
+   */
+  public boolean hasWhoEmail () {
+    return (whoEmail != null);
+  }
+
+  /**
+    Determines if the who email for this club event
+    is null or is empty.
+ 
+    @return True if the who email for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhoEmailWithData () {
+    return (whoEmail != null && whoEmail.length() > 0);
+  }
+
+  /**
+    Returns the who email for this club event.
+ 
+    @return The who email for this club event.
+   */
+  public String getWhoEmail () {
+    return whoEmail;
+  }
+ 
+  /**
+     Sets the who map url for this club event.
+ 
+     @param  whoMapUrl The who map url for this club event.
+   */
+  public void setWhoMapUrl (String whoMapUrl) {
+    this.whoMapUrl = whoMapUrl;
+    setModified (true);
+  }
+
+  /**
+    Returns the who map url for this club event as a string.
+ 
+    @return The who map url for this club event as a string.
+   */
+  public String getWhoMapUrlAsString () {
+    if (hasWhoMapUrl()) {
+      return getWhoMapUrl().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the who map url for this club event is null.
+ 
+    @return True if the who map url for this club event is not null.
+   */
+  public boolean hasWhoMapUrl () {
+    return (whoMapUrl != null);
+  }
+
+  /**
+    Determines if the who map url for this club event
+    is null or is empty.
+ 
+    @return True if the who map url for this club event
+    is not null and not empty.
+   */
+  public boolean hasWhoMapUrlWithData () {
+    return (whoMapUrl != null && whoMapUrl.length() > 0);
+  }
+
+  /**
+    Returns the who map url for this club event.
+ 
+    @return The who map url for this club event.
+   */
+  public String getWhoMapUrl () {
+    return whoMapUrl;
   }
  
   /**

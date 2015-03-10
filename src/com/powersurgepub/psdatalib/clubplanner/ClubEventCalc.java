@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2014 Herb Bowie
+ * Copyright 2012 - 2015 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package com.powersurgepub.psdatalib.clubplanner;
 
-import com.powersurgepub.psdatalib.psdata.values.StringDate;
-   import com.powersurgepub.psdatalib.psdata.*;
+  import com.powersurgepub.psdatalib.psdata.*;
+  import com.powersurgepub.psdatalib.psdata.values.*;
   import com.powersurgepub.pstextio.TextLineReader;
   import com.powersurgepub.pstextio.StringLineReader;
   import com.powersurgepub.psutils.*;
@@ -269,6 +269,8 @@ public class ClubEventCalc {
     
     calcItemType (clubEvent);
     calcCategory (clubEvent);
+    calcWho (clubEvent);
+    calcWhere (clubEvent);
     calcBlurbAsHtml (clubEvent);
     calcRecapAsHtml (clubEvent);
     calcActionsAsHtml (clubEvent);
@@ -313,6 +315,34 @@ public class ClubEventCalc {
       category.delete(0, pipeIndex);
     }
     clubEvent.setCategory (category.toString());
+  }
+  
+  public void calcWho (ClubEvent clubEvent) {
+    ContactInfo who = clubEvent.getWho();
+    if (who != null) {
+      clubEvent.setWhoAddress(who.getAddress());
+      clubEvent.setWhoCity(who.getCity());
+      clubEvent.setWhoEmail(who.getEmail());
+      clubEvent.setWhoMapUrl(who.getMapURL());
+      clubEvent.setWhoName(who.getName());
+      clubEvent.setWhoPhone(who.getPhone());
+      clubEvent.setWhoState(who.getState());
+      clubEvent.setWhoZip(who.getZipCode());
+    }
+  }
+  
+  public void calcWhere (ClubEvent clubEvent) {
+    ContactInfo where = clubEvent.getWhere();
+    if (where != null) {
+      clubEvent.setWhereAddress(where.getAddress());
+      clubEvent.setWhereCity(where.getCity());
+      clubEvent.setWhereEmail(where.getEmail());
+      clubEvent.setWhereMapUrl(where.getMapURL());
+      clubEvent.setWhereName(where.getName());
+      clubEvent.setWherePhone(where.getPhone());
+      clubEvent.setWhereState(where.getState());
+      clubEvent.setWhereZip(where.getZipCode());
+    }
   }
   
   public void calcActionsAsHtml (ClubEvent clubEvent) {
