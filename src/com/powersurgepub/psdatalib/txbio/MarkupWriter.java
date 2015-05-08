@@ -780,6 +780,44 @@ public class MarkupWriter
     return ok;
   }
   
+  public boolean startOutlineOpen() {
+    boolean ok;
+    ok = openTag();
+    if (ok) {
+      ok = writer.write (TextType.OUTLINE);
+    }
+    return ok;
+  }
+  
+  /**
+   Add another attribute-value pair to the tag being built.
+  
+   @param attribute The attribute.
+   @param value     The value.
+  */
+  public void writeOutlineAttribute (String attribute, String value) {
+    if (attribute.length() > 0) {
+      writer.write (" " + attribute);
+      String v;
+      if (value == null || value.length() == 0) {
+        v = " ";
+      } else {
+        v = formatTextForMarkup (value);
+      }
+      writer.write ("=\"" + v + "\"");
+    }
+  }
+  
+  public boolean startOutlineClose() {
+    boolean ok;
+    ok = closeTag();
+    if (ok) {
+      ok = writer.newLine();
+    }
+    writer.moreIndent();
+    return ok;
+  }
+  
   public boolean endOutline () {
     boolean ok = true;
     endXML (TextType.OUTLINE, true, true, true);
