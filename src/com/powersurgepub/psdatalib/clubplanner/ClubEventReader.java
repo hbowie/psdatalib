@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Herb Bowie
+ * Copyright 2012 - 2015 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,9 @@ package com.powersurgepub.psdatalib.clubplanner;
      extends File
          implements  
              DataSource {
+   
+   public static final String STATUS = "Status";
+   public static final String FLAGS   = "Flags";
   
   /** 
      The number of levels of directories and sub-directories to be read. 
@@ -338,7 +341,7 @@ package com.powersurgepub.psdatalib.clubplanner;
     }
     // clubEvent.setFileName(inPathFileName.getBase());
     if (clubEventCalc.ifStatusFromFolder()) {
-      clubEvent.setStatus(clubEventCalc.getStatusFromFolder());
+      clubEvent.setFlags(clubEventCalc.getStatusFromFolder());
     }
     if (clubEventCalc.ifCategoryFromFolder()) {
       clubEvent.setCategory(clubEventCalc.getCategoryFromFolder());
@@ -491,7 +494,13 @@ package com.powersurgepub.psdatalib.clubplanner;
           && Character.isWhitespace(line.charAt(dataStartFollowingColon))) {
         dataStartFollowingColon++;
       }
+      
+      if (possibleFieldName.equalsIgnoreCase(STATUS)) {
+        possibleFieldName = FLAGS;
+      }
+      
       commonNameIndex = ClubEvent.commonNameStartsWith(possibleFieldName);
+
       if (commonNameIndex >= 0) {
         valueStart = dataStartFollowingColon;
       }

@@ -36,9 +36,9 @@ public class ClubEventCalc {
   
   public static final String BLANK = "Blank";
   
-  private ResourceList statusResource;
+  private ResourceList flagsResource;
    
-  private ArrayList statusList = new ArrayList();
+  private ArrayList flagsList = new ArrayList();
   
   private ResourceList categoryResource;
   
@@ -47,9 +47,9 @@ public class ClubEventCalc {
   private    StringDate         strDate = new StringDate();
   private    PegDownProcessor   pegDown;
   
-  private    String             status = "";
+  private    String             flags = "";
   private    String             category = "";
-  private    boolean            statusFromFolder = false;
+  private    boolean            flagsFromFolder = false;
   private    boolean            categoryFromFolder = false;
   private    String             opYearFolder = "";
   private    String             year = "";
@@ -88,8 +88,8 @@ public class ClubEventCalc {
     pegDownOptions = pegDownOptions + Extensions.SMARTYPANTS;
     pegDown = new PegDownProcessor(pegDownOptions);
     
-    statusResource = new ResourceList(getClass(), "status");
-    statusResource.load(statusList);
+    flagsResource = new ResourceList(getClass(), "flags");
+    flagsResource.load(flagsList);
     
     categoryResource = new ResourceList (getClass(), "category");
     categoryResource.load(categoryList);
@@ -118,11 +118,11 @@ public class ClubEventCalc {
     // Get information from the names of the folders containing this file
     int folderDepth = inPathFileName.getNumberOfFolders();
 
-    // Get the category or status from the deepest folder
+    // Get the category or flags from the deepest folder
     categoryFromFolder = false;
     category = "";
-    statusFromFolder = false;
-    status = "";
+    flagsFromFolder = false;
+    flags = "";
     if (folderDepth > 0) {
       String categoryOrStatus = inPathFileName.getFolder(folderDepth);
       if (categoryOrStatus.equalsIgnoreCase(BLANK)) {
@@ -133,10 +133,10 @@ public class ClubEventCalc {
         categoryFromFolder = true;
       }
       else
-      if (statusList.indexOf(categoryOrStatus) >= 0) {
-        status = categoryOrStatus;
-        setFuture(status);
-        statusFromFolder = true;
+      if (flagsList.indexOf(categoryOrStatus) >= 0) {
+        flags = categoryOrStatus;
+        setFuture(flags);
+        flagsFromFolder = true;
       }
     }
 
@@ -144,7 +144,7 @@ public class ClubEventCalc {
     // operating year. Note that the year may be a pair of years, to
     // indicate an operating year starting in July and ending in June. 
     opYearFolder = "";
-    if (categoryFromFolder || statusFromFolder) {
+    if (categoryFromFolder || flagsFromFolder) {
       folderDepth--;
     }
     opYearFound = false;
@@ -164,17 +164,17 @@ public class ClubEventCalc {
   }
   
   public boolean ifStatusFromFolder() {
-    return statusFromFolder;
+    return flagsFromFolder;
   }
   
   /**
-   If the status was found in the file path, then return it.
+   If the flags was found in the file path, then return it.
   
-   @return Status as found in file location, or null, if no status was found. 
+   @return Status as found in file location, or null, if no flags was found. 
    */
   public String getStatusFromFolder() {
-    if (statusFromFolder) {
-      return status;
+    if (flagsFromFolder) {
+      return flags;
     } else {
       return null;
     }
@@ -225,10 +225,10 @@ public class ClubEventCalc {
   }
   
   /**
-   If the status of an item is "Future", then adjust the year to be a future 
+   If the flags of an item is "Future", then adjust the year to be a future 
    year. 
   
-   @param futureStr The status of an item. If it says "Future", then 
+   @param futureStr The flags of an item. If it says "Future", then 
                     adjust the year to be a future year. 
   */
   public void setFuture(String futureStr) {
@@ -269,6 +269,7 @@ public class ClubEventCalc {
     
     calcItemType (clubEvent);
     calcCategory (clubEvent);
+    calcState(clubEvent);
     calcWho (clubEvent);
     calcWhere (clubEvent);
     calcBlurbAsHtml (clubEvent);
@@ -292,9 +293,9 @@ public class ClubEventCalc {
       if (clubEvent.hasWhat()) {
         whatLower = clubEvent.getWhat().toLowerCase();
       }
-      String statusLower = clubEvent.getStatusAsString().toLowerCase();
+      String flagsLower = clubEvent.getFlagsAsString().toLowerCase();
       if (whatLower.contains("budget")
-          || statusLower.contains("budget")) {
+          || flagsLower.contains("budget")) {
         clubEvent.setItemType("Budget");
       } else {
         clubEvent.setItemType("Member Event");
@@ -315,6 +316,40 @@ public class ClubEventCalc {
       category.delete(0, pipeIndex);
     }
     clubEvent.setCategory (category.toString());
+  }
+  
+  public void calcState(ClubEvent clubEvent) {
+    String state = clubEvent.getState();
+    if (state == null || state.length() == 0) {
+      String flags = clubEvent.getFlagsAsString();
+      if (flags.contains("archive")) {
+        clubEvent.setState("6 - Completed");
+      }
+      else
+      if (flags.contains("news")) {
+        clubEvent.setState("3 - Planned");
+      }
+      else
+      if (flags.contains("current")) {
+        clubEvent.setState("1 - Proposed");
+      }
+      else
+      if (flags.contains("discards")) {
+        clubEvent.setState("5 - Canceled");
+      }
+      else
+      if (flags.contains("ideas")) {
+        clubEvent.setState("0 - Suggested");
+      }
+      else
+      if (flags.contains("proposed")) {
+        clubEvent.setState("1 - Proposed");
+      }
+      else
+      if (flags.contains("rotate")) {
+        clubEvent.setState("9 - Rotating");
+      }
+    }
   }
   
   public void calcWho (ClubEvent clubEvent) {
@@ -463,7 +498,7 @@ public class ClubEventCalc {
           || when.equalsIgnoreCase("n/a")) {
         clubEvent.setYmd("2099-12-31");
       } else {
-        strDate.setNextYear(clubEvent.getStatusAsString());
+        strDate.setNextYear(clubEvent.getFlagsAsString());
         strDate.parse(clubEvent.getWhen());
         clubEvent.setYmd(strDate.getYMD());
       }
@@ -478,7 +513,7 @@ public class ClubEventCalc {
   */
   public void calcSeq (ClubEvent clubEvent) {
     String categoryLower = clubEvent.getCategory().toString().toLowerCase();
-    String statusLower = clubEvent.getStatusAsString().toLowerCase();
+    String flagsLower = clubEvent.getFlagsAsString().toLowerCase();
     if (categoryLower.indexOf("open meeting") >= 0) {
       clubEvent.setSeq("1");
     }
@@ -501,10 +536,10 @@ public class ClubEventCalc {
     else
     if (clubEvent.hasWhen() 
         && strDate.isInThePast()
-        && statusLower.indexOf("future") < 0
-        && statusLower.indexOf("discards") < 0
-        && statusLower.indexOf("ideas") < 0
-        && statusLower.indexOf("next year") < 0) {
+        && flagsLower.indexOf("future") < 0
+        && flagsLower.indexOf("discards") < 0
+        && flagsLower.indexOf("ideas") < 0
+        && flagsLower.indexOf("next year") < 0) {
       clubEvent.setSeq("4");
     } else {
       clubEvent.setSeq("5");
@@ -515,7 +550,7 @@ public class ClubEventCalc {
     
     // Now set a short, human readable date
     if (clubEvent.hasWhen()) {
-      strDate.setNextYear(clubEvent.getStatusAsString());
+      strDate.setNextYear(clubEvent.getFlagsAsString());
       strDate.parse(clubEvent.getWhen());
       clubEvent.setShortDate(strDate.getShort());
     }

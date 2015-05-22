@@ -1,0 +1,10 @@
+
+0 - Suggested
+1 - Proposed
+2 - Approved
+3 - Planned
+4 - On Hold
+5 - Canceled
+6 - Completed
+9 - Rotating
+
