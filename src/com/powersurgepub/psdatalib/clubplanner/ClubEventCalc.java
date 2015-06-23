@@ -267,6 +267,7 @@ public class ClubEventCalc {
    */
   public void calcAll (ClubEvent clubEvent) {
     
+    calcCleanup (clubEvent);
     calcItemType (clubEvent);
     calcCategory (clubEvent);
     calcState(clubEvent);
@@ -283,6 +284,18 @@ public class ClubEventCalc {
     calcShortDate (clubEvent);
     calcEventNotes (clubEvent);
     calcEventActions (clubEvent);
+  }
+  
+  public void calcCleanup (ClubEvent clubEvent) {
+    if (clubEvent.getBlurbAsString().equalsIgnoreCase("Summary:")) {
+      clubEvent.setBlurb("");
+    }
+    if (clubEvent.getWhyAsString().equalsIgnoreCase("Budget:")) {
+      clubEvent.setWhy("");
+    }
+    if (clubEvent.getLinkAsString().equalsIgnoreCase("Budget:")) {
+      clubEvent.setLink("");
+    }
   }
   
   public void calcItemType (ClubEvent clubEvent) {
@@ -514,6 +527,7 @@ public class ClubEventCalc {
   public void calcSeq (ClubEvent clubEvent) {
     String categoryLower = clubEvent.getCategory().toString().toLowerCase();
     String flagsLower = clubEvent.getFlagsAsString().toLowerCase();
+    String stateLower = clubEvent.getStateAsString().toLowerCase();
     if (categoryLower.indexOf("open meeting") >= 0) {
       clubEvent.setSeq("1");
     }
@@ -540,6 +554,10 @@ public class ClubEventCalc {
         && flagsLower.indexOf("discards") < 0
         && flagsLower.indexOf("ideas") < 0
         && flagsLower.indexOf("next year") < 0) {
+      clubEvent.setSeq("4");
+    }
+    else
+    if (stateLower.equalsIgnoreCase("9 - Completed")) {
       clubEvent.setSeq("4");
     } else {
       clubEvent.setSeq("5");
