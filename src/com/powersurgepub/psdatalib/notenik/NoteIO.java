@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package com.powersurgepub.psdatalib.notenik;
 
   import com.powersurgepub.psdatalib.psdata.*;
@@ -485,7 +484,9 @@ public class NoteIO
         || candidate.getName().endsWith (".md")
         || candidate.getName().endsWith (".mdown")
         || candidate.getName().endsWith (".mkdown")
-        || candidate.getName().endsWith (".mdtext")) {
+        || candidate.getName().endsWith (".mdtext")
+        || candidate.getName().endsWith (".nnk")
+        || candidate.getName().endsWith (".notenik")) {
       return true;
     } else {
       return false;
@@ -585,6 +586,10 @@ public class NoteIO
   public void save (File folder, Note note, boolean primaryLocation) 
       throws IOException {
     File file = getFile(folder, note);
+    save (note, file, primaryLocation);
+  }
+  
+  public void save(Note note, File file, boolean primaryLocation) {
     openOutput (file);
     String oldDiskLocation = note.getDiskLocation();
     saveOneItem (note);
@@ -640,15 +645,19 @@ public class NoteIO
   }
  
   private boolean saveOneItem (Note note) {
+    
+    NoteFieldSeqList fields = new NoteFieldSeqList();
+    fields.addAll(note);
     boolean ok = true;
-    for (int i = 0; i < note.getNumberOfFields() && ok; i++) {
-      DataField nextField = note.getField(i);
+    for (int i = 0; i < fields.getNumberOfFields() && ok; i++) {
+      DataField nextField = fields.getField(note, i);
       if (nextField != null
           && nextField.hasData()) {
         ok = writeFieldName (nextField.getProperName());
         if (ok 
-            && (nextField.getCommonFormOfName().equals("body")
-              || nextField.getCommonFormOfName().equals("comments"))) {
+            && (nextField.getCommonFormOfName().equals(NoteParms.BODY_COMMON_NAME)
+              || nextField.getCommonFormOfName().equals("comments")
+              || nextField.getCommonFormOfName().equals(NoteParms.TEASER_COMMON_NAME))) {
           ok = writeLine("");
           if (ok) {
             ok = writeLine(" ");
