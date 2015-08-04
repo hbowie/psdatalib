@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2014 Herb Bowie
+ * Copyright 2003 - 2015 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,24 +25,7 @@ package com.powersurgepub.psdatalib.pstags;
    An object representing the tags or categories assigned to an object. A
    tags field may consist of multiple levels, with the first
    level being the primary tags and subsequent levels being
-   sub-categories. <p>
-  
-   This code is copyright (c) 2003-2009 by Herb Bowie.
-   All rights reserved. <p>
-  
-   Version History: <ul><li>
-      2003/11/17 - Originally written.
-       </ul>
-  
-   @author Herb Bowie (<a href="mailto:herb@powersurgepub.com">
-           herb@powersurgepub.com</a>)<br>
-           of PowerSurge Publishing 
-           (<a href="http://www.powersurgepub.com">
-           www.powersurgepub.com</a>)
-  
-   @version 
-      2004/01/17 - Modified to allow sub-categories to be set
-                   one level at a time. 
+   sub-categories. 
  */
 public class Tags
       implements 
