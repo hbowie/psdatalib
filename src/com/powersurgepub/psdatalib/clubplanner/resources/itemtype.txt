@@ -1,5 +1,6 @@
 Agenda Item
 Board Activity
+Board Event
 Board Meeting
 Committee Meeting
 Budget
