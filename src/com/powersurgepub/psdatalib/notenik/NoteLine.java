@@ -229,6 +229,7 @@ public class NoteLine {
             addNoteLineLeadingSymbol();
             metaKey = fieldDef.getCommonName().getCommonForm();
             builder.setLastStringBuilder(null);
+            
             if (metaKey.equals(NoteParms.TITLE_COMMON_NAME)) {
               note.setTitle(getMetaData());
               builder.setLastStringBuilder(null);
@@ -253,6 +254,26 @@ public class NoteLine {
             else
             if (metaKey.equals(NoteParms.TAGS_COMMON_NAME)) {
               note.setTags(getMetaData());
+              builder.setLastStringBuilder(null);
+            }
+            else
+            if (metaKey.equals(NoteParms.RATING_COMMON_NAME)) {
+              note.setRating(getMetaData());
+              builder.setLastStringBuilder(null);
+            }
+            else
+            if (metaKey.equals(NoteParms.TYPE_COMMON_NAME)) {
+              note.setType(getMetaData());
+              builder.setLastStringBuilder(null);
+            }
+            else
+            if (metaKey.equals(NoteParms.STATUS_COMMON_NAME)) {
+              note.setStatus(getMetaData());
+              builder.setLastStringBuilder(null);
+            }
+            else
+            if (metaKey.equals(NoteParms.TEASER_COMMON_NAME)) {
+              note.setTeaser(getMetaData());
               builder.setLastStringBuilder(null);
             }
             else

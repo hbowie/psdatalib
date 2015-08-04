@@ -50,6 +50,10 @@ public class NoteParms {
   public static final String  STATUS_COMMON_NAME = "status";
   public static final String  RATING_FIELD_NAME = "Rating";
   public static final String  RATING_COMMON_NAME = "rating";
+  public static final String  TEASER_FIELD_NAME = "Teaser";
+  public static final String  TEASER_COMMON_NAME = "teaser";
+  public static final String  TYPE_FIELD_NAME   = "Type";
+  public static final String  TYPE_COMMON_NAME  = "type";
   
   public static final String  COMPLETE_PATH     = "Complete Path";
   public static final String  BASE_PATH         = "Base Path";
@@ -103,11 +107,16 @@ public class NoteParms {
       = new DataFieldDefinition(STATUS_FIELD_NAME);
   public static final DataFieldDefinition RATING_DEF
       = new DataFieldDefinition(RATING_FIELD_NAME);
+  public static final DataFieldDefinition TEASER_DEF
+      = new DataFieldDefinition(TEASER_FIELD_NAME);
+  public static final DataFieldDefinition TYPE_DEF
+      = new DataFieldDefinition(TYPE_FIELD_NAME);
   
   public static final boolean SLASH_TO_SEPARATE = false;
   
   public final static String   YMD_FORMAT_STRING = "yyyy-MM-dd";
   public final static String   MDY_FORMAT_STRING = "MM-dd-yyyy";
+  public final static String   HUMAN_DATE_FORMAT_STRING = "EEE MMM d, yyyy";
   public final static String   STANDARD_FORMAT_STRING 
       = "yyyy-MM-dd'T'HH:mm:ssz";
   public final static String   
@@ -117,6 +126,8 @@ public class NoteParms {
       = new SimpleDateFormat (YMD_FORMAT_STRING);
   public final static DateFormat MDY_FORMAT
       = new SimpleDateFormat (MDY_FORMAT_STRING);
+  public final static DateFormat HUMAN_DATE_FORMAT
+      = new SimpleDateFormat (HUMAN_DATE_FORMAT_STRING);
   public final static DateFormat COMPLETE_FORMAT
       = new SimpleDateFormat (COMPLETE_FORMAT_STRING);
   public final static DateFormat STANDARD_FORMAT
@@ -131,6 +142,7 @@ public class NoteParms {
   public static final int     MARKDOWN_TYPE       = 5;
   public static final int     TAG_TYPE            = 6;
   public static final int     QUOTE_TYPE          = 7;
+  public static final int     NOTES_EXPANDED_TYPE = 8;
   
   private    String           preferredFileExt    = "txt";
   
@@ -140,13 +152,16 @@ public class NoteParms {
   private    RecordDefinition recDef = new RecordDefinition();
 
   static {
-    TITLE_DEF.setType (DataFieldDefinition.TITLE_TYPE);
-    LINK_DEF.setType  (DataFieldDefinition.LINK_TYPE);
-    TAGS_DEF.setType  (DataFieldDefinition.TAGS_TYPE);
-    BODY_DEF.setType  (DataFieldDefinition.STRING_BUILDER_TYPE);
-    AUTHOR_DEF.setType(DataFieldDefinition.STRING_TYPE);
-    DATE_DEF.setType(DataFieldDefinition.STRING_TYPE);
-    STATUS_DEF.setType(DataFieldDefinition.STRING_TYPE);
+    TITLE_DEF.setType  (DataFieldDefinition.TITLE_TYPE);
+    LINK_DEF.setType   (DataFieldDefinition.LINK_TYPE);
+    TAGS_DEF.setType   (DataFieldDefinition.TAGS_TYPE);
+    BODY_DEF.setType   (DataFieldDefinition.STRING_BUILDER_TYPE);
+    AUTHOR_DEF.setType (DataFieldDefinition.STRING_TYPE);
+    DATE_DEF.setType   (DataFieldDefinition.STRING_TYPE);
+    STATUS_DEF.setType (DataFieldDefinition.STRING_TYPE);
+    RATING_DEF.setType (DataFieldDefinition.RATING_TYPE);
+    TEASER_DEF.setType (DataFieldDefinition.STRING_BUILDER_TYPE);
+    TYPE_DEF.setType   (DataFieldDefinition.STRING_TYPE);
   }
   
   public NoteParms () {
@@ -167,6 +182,10 @@ public class NoteParms {
   
   public boolean notesOnly() {
     return (noteType == NOTES_ONLY_TYPE);
+  }
+  
+  public boolean notesExpanded() {
+    return (noteType == NOTES_EXPANDED_TYPE);
   }
   
   public boolean notesPlus() {
@@ -234,6 +253,17 @@ public class NoteParms {
       recDef.addColumn(LINK_DEF);
       recDef.addColumn(BODY_DEF);
     }
+    if (noteType == NOTES_EXPANDED_TYPE) {
+      recDef.addColumn(TITLE_DEF);
+      recDef.addColumn (AUTHOR_DEF);
+      recDef.addColumn(DATE_DEF);
+      recDef.addColumn(STATUS_DEF);
+      recDef.addColumn(TAGS_DEF);
+      recDef.addColumn(LINK_DEF);
+      recDef.addColumn(RATING_DEF);
+      recDef.addColumn(TEASER_DEF);
+      recDef.addColumn(BODY_DEF);
+    }
     if (noteType == MARKDOWN_TYPE 
         || noteType == TAG_TYPE) {
       recDef.addColumn(TITLE_DEF);
@@ -284,6 +314,47 @@ public class NoteParms {
     return recDef;
   }
   
+  public static int getNormalSeq(CommonName commonName) {
+    if (isTitle(commonName)) {
+      return 0;
+    }
+    else
+    if (isAuthor(commonName)) {
+      return 1;
+    } 
+    else
+    if (isDate(commonName)) {
+      return 2;
+    }
+    else
+    if (isStatus(commonName)) {
+      return 3;
+    }
+    else
+    if (isTags(commonName)) {
+      return 4;
+    }
+    else
+    if (isLink(commonName)) {
+      return 5;
+    } 
+    else
+    if (isRating(commonName)) {
+      return 6;
+    }
+    else
+    if (isTeaser(commonName)) {
+      return 98;
+    }
+    else
+    if (isBody(commonName)) {
+      return 99;
+    }
+    else {
+      return 50;
+    }
+  }
+  
   /**
    Check to see if the passed field name is valid for this type of note. 
   
@@ -316,6 +387,7 @@ public class NoteParms {
     if (isBody(commonName)) {
       return BODY_DEF;
     }
+    
     if (notesOnly()) {
       return null;
     }
@@ -328,6 +400,19 @@ public class NoteParms {
     }
     if (isStatus(commonName)) {
       return STATUS_DEF;
+    }
+    if (isTeaser(commonName)) {
+      return TEASER_DEF;
+    }
+    if (isRating(commonName)) {
+      return RATING_DEF;
+    }
+    if (isType(commonName)) {
+      return TYPE_DEF;
+    }
+    
+    if (notesExpanded()) {
+      return null;
     }
     
     int columnNumber = recDef.getColumnNumber(commonName);
@@ -347,6 +432,10 @@ public class NoteParms {
   
   public static boolean isTitle(CommonName commonName) {
     return (commonName.getCommonForm().equals(TITLE_COMMON_NAME));
+  }
+  
+  public static boolean isType(CommonName commonName) {
+    return (commonName.getCommonForm().equals(TYPE_COMMON_NAME));
   }
   
   public static boolean isAuthor(CommonName commonName) {
@@ -378,6 +467,10 @@ public class NoteParms {
   public static boolean isRating(CommonName commonName) {
     return (commonName.getCommonForm().equals(RATING_COMMON_NAME)
         || commonName.getCommonForm().equalsIgnoreCase(PRIORITY));
+  }
+  
+  public static boolean isTeaser(CommonName commonName) {
+    return (commonName.getCommonForm().equals(TEASER_COMMON_NAME));
   }
   
   public static boolean isBody(CommonName commonName) {

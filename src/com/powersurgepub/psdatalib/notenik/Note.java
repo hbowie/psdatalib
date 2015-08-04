@@ -54,9 +54,17 @@ public class Note
   private DataValueString     titleValue = null;
   private DataField           titleField = null;
   
+  private DataValueString     typeValue   = null;
+  private DataField           typeField   = null;
+  private boolean             typeAdded   = false;
+  
   private Author              authorValue = null;
   private DataField           authorField = null;
   private boolean             authorAdded = false;
+  
+  private ActionStatus        statusValue = null;
+  private DataField           statusField = null;
+  private boolean             statusAdded = false;
   
   private StringDate          dateValue = null;
   private DataField           dateField = null;
@@ -74,9 +82,13 @@ public class Note
   private DataField           ratingField = null;
   private boolean             ratingAdded = false;
   
+  private DataValueStringBuilder teaserValue = null;
+  private DataField           teaserField;
+  private boolean             teaserAdded = false;
+  
   private DataValueStringBuilder bodyValue = null;
   private DataField           bodyField;
-  private boolean bodyAdded = false;
+  private boolean             bodyAdded = false;
   
   public static final String    UP_ONE_FOLDER   = "../";
   
@@ -124,12 +136,20 @@ public class Note
         setTitle(fromValue.toString());
       }
       else
+      if (NoteParms.isType(fromCommon)) {
+        setType(fromValue.toString());
+      }
+      else
       if (NoteParms.isAuthor(fromCommon)) {
         setAuthor(fromValue.toString());
       }
       else
       if (NoteParms.isDate(fromCommon)) {
         setDate(fromValue.toString());
+      }
+      else
+      if (NoteParms.isStatus(fromCommon)) {
+        setStatus(fromValue.toString());
       }
       else
       if (NoteParms.isLink(fromCommon)) {
@@ -142,6 +162,10 @@ public class Note
       else
       if (NoteParms.isRating(fromCommon)) {
         setRating(fromValue.toString());
+      }
+      else
+      if (NoteParms.isTeaser(fromCommon)) {
+        setTeaser(fromValue.toString());
       }
       else {
         DataValue toValue = DataFactory.makeDataValue(fromDef);
@@ -165,6 +189,16 @@ public class Note
     authorField = new DataField(NoteParms.AUTHOR_DEF, authorValue);
     authorAdded = false;
     
+    // Build the Type field
+    typeValue = new DataValueString();
+    typeField = new DataField(NoteParms.TYPE_DEF, typeValue);
+    typeAdded = false;
+    
+    // Build the Status field
+    statusValue = new ActionStatus();
+    statusField = new DataField(NoteParms.STATUS_DEF, statusValue);
+    statusAdded = false;
+    
     // Build the Date field
     dateValue = new StringDate();
     dateField = new DataField(NoteParms.DATE_DEF, dateValue);
@@ -184,6 +218,10 @@ public class Note
     ratingValue = new Rating();
     ratingField = new DataField(NoteParms.RATING_DEF, ratingValue);
     ratingAdded = false;
+    
+    // Build the Teaser field
+    teaserValue = new DataValueStringBuilder();
+    teaserField = new DataField(NoteParms.TEASER_DEF, teaserValue);
     
     // Build the body field
     bodyValue = new DataValueStringBuilder();
@@ -311,6 +349,14 @@ public class Note
       setAuthor(data);
     }
     else
+    if (commonName.equalsIgnoreCase(NoteParms.TYPE_COMMON_NAME)) {
+      setType(data);
+    }
+    else
+    if (commonName.equals((NoteParms.STATUS_COMMON_NAME))) {
+      setStatus(data);
+    }
+    else
     if (commonName.equals(NoteParms.DATE_COMMON_NAME)) {
       setDate(data);
     }
@@ -321,6 +367,10 @@ public class Note
     else
     if (commonName.equals(NoteParms.TAGS_COMMON_NAME)) {
       setTags(data);
+    }
+    else
+    if (commonName.equals(NoteParms.TEASER_COMMON_NAME)) {
+      setTeaser(data);
     }
     else
     if (commonName.equals(NoteParms.BODY_COMMON_NAME)) {
@@ -396,6 +446,66 @@ public class Note
   public String getAuthorAsString() {
     if (authorAdded && authorValue != null) {
       return authorValue.toString();
+    } else {
+      return "";
+    }
+  }
+  
+  public void setType(String type) {
+    typeValue.set(type);
+    if (! typeAdded) {
+      storeField (recDef, typeField);
+      typeAdded = true;
+    }
+  }
+  
+  public boolean hasType() {
+    return (typeAdded && typeValue != null && typeValue.hasData());
+  }
+  
+  public String getType() {
+    return typeValue.toString();
+  }
+  
+  public String getTypeAsString() {
+    return typeValue.toString();
+  }
+  
+  public void setStatus(String status) {
+    statusValue.set(status);
+    if (! statusAdded) {
+      storeField (recDef, statusField);
+      statusAdded = true;
+    }
+  }
+  
+  public void setStatus(ActionStatus status) {
+    statusValue.set(status.toString());
+    if (! statusAdded) {
+      storeField (recDef, statusField);
+      statusAdded = true;
+    }
+  }
+  
+  public void setStatus(int status) {
+    statusValue.setStatus(status);
+    if (! statusAdded) {
+      storeField (recDef, statusField);
+      statusAdded = true;
+    }
+  }
+  
+  public boolean hasStatus() {
+    return (statusAdded && statusValue != null && statusValue.hasData());
+  }
+  
+  public ActionStatus getStatus() {
+    return statusValue;
+  }
+  
+  public String getStatusAsString() {
+    if (hasStatus()) {
+      return statusValue.toString();
     } else {
       return "";
     }
@@ -536,6 +646,42 @@ public class Note
     } else {
       return "";
     }
+  }
+  
+  public void setTeaser(String teaser) {
+    teaserValue.set(teaser);
+    if (! teaserAdded) {
+      storeField (recDef, teaserField);
+      teaserAdded = true;
+    }
+  }
+  
+  public void appendLineToTeaser(String line) {
+    teaserValue.appendLine(line);
+    if (! teaserAdded) {
+      storeField (recDef, teaserField);
+      teaserAdded = true;
+    }
+  }
+  
+  public boolean hasTeaser() {
+    if (teaserAdded && teaserValue != null) {
+      return (teaserValue.toString().length() > 0);
+    } else {
+      return false;
+    }
+  }
+  
+  public String getTeaser() {
+    if (hasTeaser()) {
+      return teaserValue.toString();
+    } else {
+      return "";
+    }
+  }
+  
+  public DataValueStringBuilder getTeaserAsDataValue() {
+    return teaserValue;
   }
   
   public void setBody(String body) {
