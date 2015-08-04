@@ -45,6 +45,19 @@ public class StringDate
     "December"
   };
   
+  private    static final     SimpleDateFormat  SHORT_FORMAT 
+      = new SimpleDateFormat("EEE MMM dd");
+  private    static final     SimpleDateFormat  YMD_FORMAT   
+      = new SimpleDateFormat("yyyy-MM-dd");
+  private    static final     SimpleDateFormat  YM_FORMAT    
+      = new SimpleDateFormat("yyyy-MM");  
+  public     static final     String            NEXT_YEAR = "next year";
+  private    static final     Calendar          TODAY = Calendar.getInstance();
+  private    static final     String            TODAY_YMD;
+  private    static final     String            TODAY_YM;
+  private    static final     int               CURRENT_YEAR;
+  private    static final     int               CURRENT_MONTH;
+  
   private    String           strDate = null;
   
   private    StringBuilder    year1 = new StringBuilder();
@@ -52,11 +65,6 @@ public class StringDate
   private    StringBuilder    opYear = new StringBuilder();
   
   private    boolean          nextYear = false;
-  public     static final String NEXT_YEAR = "next year";
-  private    Calendar         today = Calendar.getInstance();
-  private    String           todayYMD = "";
-  private    int              currentYear;
-  private    int              currentMonth;
   
   private    StringBuilder    word = new StringBuilder();
   private    boolean          numbers = false;
@@ -70,13 +78,32 @@ public class StringDate
   private    StringBuilder    start = new StringBuilder();
   private    StringBuilder    end = new StringBuilder();
   
-  private    SimpleDateFormat shortFormat = new SimpleDateFormat("EEE MMM dd");
-  private    SimpleDateFormat ymdFormat   = new SimpleDateFormat("yyyy-MM-dd");
+  static {
+    CURRENT_YEAR = TODAY.get(Calendar.YEAR);
+    CURRENT_MONTH = TODAY.get(Calendar.MONTH);
+    TODAY_YMD = YMD_FORMAT.format(TODAY.getTime());
+    TODAY_YM  = YM_FORMAT.format(TODAY.getTime());
+  }
+  
+  /**
+   Return today's date in Year-Month-Day format. 
+  
+   @return Current date in yyyy-mm-dd format. 
+  */
+  public static String getTodayYMD() {
+    return TODAY_YMD;
+  }
+  
+  /**
+   Return today's date in Year-Month format. 
+  
+  @return Current date in yyyy-mm format. 
+  */
+  public static String getTodayYM() {
+    return TODAY_YM;
+  }
   
   public StringDate() {
-    currentYear = today.get(Calendar.YEAR);
-    currentMonth = today.get(Calendar.MONTH);
-    todayYMD = ymdFormat.format(today.getTime());
     strDate = getShort();
   }
   
@@ -306,8 +333,8 @@ public class StringDate
         // do nothing
       }
       while (nextYear
-          && ((year < currentYear)
-            || (year == currentYear && month <= currentMonth))) {
+          && ((year < CURRENT_YEAR)
+            || (year == CURRENT_YEAR && month <= CURRENT_MONTH))) {
         year++;
         yyyy = zeroPad(year, 4);
       }
@@ -443,7 +470,7 @@ public class StringDate
   */
   public boolean isInThePast() {
     String ymd = getYMD();
-    return (ymd.length() > 9 && ymd.compareTo(todayYMD) < 0);
+    return (ymd.length() > 9 && ymd.compareTo(TODAY_YMD) < 0);
   }
   
   /**
@@ -468,15 +495,6 @@ public class StringDate
   }
   
   /**
-   Return today's date in Year-Month-Day format. 
-  
-   @return Current date in yyyy-mm-dd format. 
-  */
-  public String getTodayYMD() {
-    return todayYMD;
-  }
-  
-  /**
    Get a short but easily human-readable version of the date, consisting 
    of a three-letter abbreviation for the day of the week, a three-letter
    abbreviation for the month plus the day of the month (year is assumed to 
@@ -489,7 +507,7 @@ public class StringDate
     Calendar cal = getCalendar();
     
     if (cal != null) {
-      return shortFormat.format(cal.getTime());
+      return SHORT_FORMAT.format(cal.getTime());
     } else {
       StringBuilder shortDate = new StringBuilder();
       try {
