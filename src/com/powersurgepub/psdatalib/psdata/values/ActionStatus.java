@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2015 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package com.powersurgepub.psdatalib.elements;
+package com.powersurgepub.psdatalib.psdata.values;
 
 /**
- An action status data element.
+ An action status data value.
  
  @author Herb Bowie.
  */
 public class ActionStatus 
-    implements DataElement {
+    implements 
+        DataValue {
 
   public final static String  SIMPLE_NAME   = "status";
   public final static String  DISPLAY_NAME  = "Status";
@@ -59,6 +60,10 @@ public class ActionStatus
 
   public ActionStatus(int status) {
     setValue(status);
+  }
+  
+  public void set(String value) {
+    setValue(value);
   }
 
   public void setValue(int value) {
@@ -198,5 +203,38 @@ public class ActionStatus
   public int getColumnWidth() {
     return COLUMN_WIDTH;
   }
+  
+  /**
+     Compares this data value to another and indicates which is greater.
+    
+     @return Zero if the fields are equal, negative if this field is less than value2,
+             or positive if this field is greater than value2.
+    
+     @param  value2 Another data value to be compared to this one.
+   */
+  public int compareTo(DataValue value2) {
+    if (value2 instanceof ActionStatus) {
+      ActionStatus status2 = (ActionStatus)value2;
+      if (status < status2.getStatus()) {
+        return -1;
+      }
+      else
+      if (status > status2.getStatus()) {
+        return 1;
+      } else {
+        return 0;
+      }
+    } else {
+      return toString().compareTo(value2.toString());
+    }
+  }
 
+    /**
+   Does this value have any data stored in it? 
+  
+   @return True if data, false if empty. 
+  */
+  public boolean hasData() {
+    return (status >= STATUS_LOW && status <= STATUS_HIGH);
+  }
 }
