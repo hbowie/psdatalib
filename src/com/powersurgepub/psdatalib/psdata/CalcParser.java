@@ -135,6 +135,10 @@ public class CalcParser {
     // System.out.println("StringUtils.calc output = " + finalResult.toPlainString());
   } // end method set
 
+  /**
+   Process one transaction at a time within the string to be parsed. Each new
+   transaction after the first should begin with an arithmetic operand. 
+  */
   private void buildTransaction() {
     transaction = new CalcTransaction();
     transaction.setDate(defaultDate);
@@ -165,6 +169,10 @@ public class CalcParser {
     }
   }
   
+  /**
+   Build one word at a time. The character '#' is always recognized as a word;
+   otherwise, words are strings of characters delimited by whitespace. 
+  */
   private void buildWord() {
     
     getNextCharacter();
@@ -309,6 +317,9 @@ public class CalcParser {
 
   } // end method buildWord
   
+  /**
+   Add the latest word to the current phrase we're building. 
+  */
   private void addWordToPhrase() {
     if (word.length() > 0) {
       if (phrase.length() > 0) {
@@ -319,6 +330,9 @@ public class CalcParser {
     }
   }
   
+  /**
+   Process the last phrase built before starting to build the next one. 
+  */
   private void processPhrase() {
     if (phrase.length() > 0) {
       switch (phraseType) {

@@ -16,7 +16,6 @@
 
 package com.powersurgepub.psdatalib.clubplanner;
 
-  import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psdatalib.psdata.values.*;
   import com.powersurgepub.pstextio.TextLineReader;
   import com.powersurgepub.pstextio.StringLineReader;
@@ -273,6 +272,7 @@ public class ClubEventCalc {
     calcState(clubEvent);
     calcWho (clubEvent);
     calcWhere (clubEvent);
+    calcDiscussAsHtml (clubEvent);
     calcBlurbAsHtml (clubEvent);
     calcRecapAsHtml (clubEvent);
     calcActionsAsHtml (clubEvent);
@@ -390,6 +390,14 @@ public class ClubEventCalc {
       clubEvent.setWherePhone(where.getPhone());
       clubEvent.setWhereState(where.getState());
       clubEvent.setWhereZip(where.getZipCode());
+    }
+  }
+  
+  public void calcDiscussAsHtml (ClubEvent clubEvent) {
+    if (clubEvent.getDiscuss() != null
+        && clubEvent.getDiscuss().length() > 0) {
+      clubEvent.setDiscussAsHtml
+          (pegDown.markdownToHtml(clubEvent.getDiscuss()));
     }
   }
   
@@ -541,7 +549,7 @@ public class ClubEventCalc {
     }
     else
     if (categoryLower.indexOf("communication") >= 0) {
-      clubEvent.setSeq("8");
+      clubEvent.setSeq("4");
     }
     else
     if (categoryLower.indexOf("close meeting") >= 0) {
@@ -554,13 +562,13 @@ public class ClubEventCalc {
         && flagsLower.indexOf("discards") < 0
         && flagsLower.indexOf("ideas") < 0
         && flagsLower.indexOf("next year") < 0) {
-      clubEvent.setSeq("4");
+      clubEvent.setSeq("5");
     }
     else
     if (stateLower.equalsIgnoreCase("9 - Completed")) {
-      clubEvent.setSeq("4");
-    } else {
       clubEvent.setSeq("5");
+    } else {
+      clubEvent.setSeq("6");
     }
   }
   

@@ -16,7 +16,6 @@
 
 package com.powersurgepub.psdatalib.psdata.values;
 
-  import com.powersurgepub.psdatalib.psdata.values.*;
   import java.text.*;
   import java.util.*;
 
@@ -71,6 +70,7 @@ public class StringDate
   private    boolean          letters = false;
   private    boolean          colon = false;
   private    boolean          lookingForTime = false;
+  private    boolean          startOfDateRangeCompleted = false;
   
   private    String           yyyy = "";
   private    String           mm = "";
@@ -214,36 +214,6 @@ public class StringDate
   }
   
   /**
-   Does this value have any data stored in it? 
-  
-   @return True if data, false if empty. 
-  */
-  public boolean hasData() {
-    return (strDate != null && strDate.length() > 0);
-  }
-  
-  /** 
-   Converts the value to a String.
-  
-   @return the value as a string. 
-  */
-  public String toString() {
-    return strDate;
-  }
-  
-  /**
-     Compares this data value to another and indicates which is greater.
-    
-     @return Zero if the fields are equal, negative if this field is less than value2,
-             or positive if this field is greater than value2.
-    
-     @param  value2 Another data value to be compared to this one.
-   */
-  public int compareTo(DataValue value2) {
-    return (getYMD().compareTo(value2.toString()));
-  }
-  
-  /**
    Parse a human-readable date string.
   
    @param when Human-readable date string.
@@ -267,14 +237,18 @@ public class StringDate
     start.setLength(0);
     end.setLength(0);
     lookingForTime = false;
+    startOfDateRangeCompleted = false;
 
     int i = 0;
+    char c = ' ';
+    char lastChar = ' ';
     resetWhenWord();
 
+    // Examine one character at a time, building words as we go. 
     while (i <= when.length()) {
       
       // Get next character
-      char c;
+      lastChar = c;
       if (i < when.length()) {
         c = when.charAt(i);
       } else {
@@ -313,6 +287,13 @@ public class StringDate
           if (c == ',' && dd.length() > 0) {
             lookingForTime = true;
           }
+        }
+        if (c == '-'
+            && lastChar == ' '
+            && mm.length() > 0
+            && dd.length() > 0
+            && (! lookingForTime)) {
+          startOfDateRangeCompleted = true;
         }
       }
       i++;
@@ -419,12 +400,44 @@ public class StringDate
     }
     else
     if (lookingForTime) {
+      // Let's use the number as part of the time of day
       if (start.length() == 0) {
         start.append(word);
       } else {
         end.append(word);
       }
+    }
+    else
+    if (startOfDateRangeCompleted) {
+      // Let's not overwrite the start of the range with an ending date
     } else {
+      // Let's use the number as part of a date
+      if (mm.length() == 0
+          && number >= 1
+          && number <= 12) {
+        mm = word.toString();
+      }
+      else
+      if (dd.length() == 0
+          && number >= 1
+          && number <= 31) {
+        dd = word.toString();
+      }
+      else
+      if (yyyy.length() == 0) {
+        if (number > 1900) {
+          // OK as-is
+        }
+        else
+        if (number > 9) {
+          word.insert(0, "20");
+        }
+        else {
+          word.insert(0, "200");
+        }
+        yyyy = word.toString();
+      }
+      /* Following logic replaced on Aug 15, 2015
       if (number > 31
           || (mm.length() > 0 && dd.length() > 0) && word.length() > 3) {
         yyyy = word.toString();
@@ -438,6 +451,7 @@ public class StringDate
       if (number > 0) {
         mm = word.toString();
       }
+      */
     }
     resetWhenWord();
   }
@@ -460,6 +474,36 @@ public class StringDate
     } catch (NumberFormatException e) {
       // Skip it      
     }
+  }
+  
+  /**
+   Does this value have any data stored in it? 
+  
+   @return True if data, false if empty. 
+  */
+  public boolean hasData() {
+    return (strDate != null && strDate.length() > 0);
+  }
+  
+  /** 
+   Converts the value to a String.
+  
+   @return the value as a string. 
+  */
+  public String toString() {
+    return strDate;
+  }
+  
+  /**
+     Compares this data value to another and indicates which is greater.
+    
+     @return Zero if the fields are equal, negative if this field is less than value2,
+             or positive if this field is greater than value2.
+    
+     @param  value2 Another data value to be compared to this one.
+   */
+  public int compareTo(DataValue value2) {
+    return (getYMD().compareTo(value2.toString()));
   }
   
   /**

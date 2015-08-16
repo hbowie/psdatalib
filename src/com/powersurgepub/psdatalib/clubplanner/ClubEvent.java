@@ -488,6 +488,22 @@ public class ClubEvent
  
 
   /**
+   The Discussion points, formatted as HTML.
+   */
+  private String discussAsHtml = null;
+ 
+  public static final String DISCUSS_AS_HTML_FIELD_NAME = "Discuss as HTML";
+ 
+  public static final String DISCUSS_AS_HTML_COLUMN_NAME = "Discuss as HTML";
+ 
+  public static final String DISCUSS_AS_HTML_COMMON_NAME = "discussashtml";
+ 
+  public static final int DISCUSS_AS_HTML_COLUMN_INDEX = 27;
+ 
+  public static final int DISCUSS_AS_HTML_COLUMN_WIDTH = 50;
+ 
+
+  /**
    Identification of any action items to be worked.
    */
   private String actions = null;
@@ -498,7 +514,7 @@ public class ClubEvent
  
   public static final String ACTIONS_COMMON_NAME = "actions";
  
-  public static final int ACTIONS_COLUMN_INDEX = 27;
+  public static final int ACTIONS_COLUMN_INDEX = 28;
  
   public static final int ACTIONS_COLUMN_WIDTH = 40;
  
@@ -514,7 +530,7 @@ public class ClubEvent
  
   public static final String ACTIONS_AS_HTML_COMMON_NAME = "actionsashtml";
  
-  public static final int ACTIONS_AS_HTML_COLUMN_INDEX = 28;
+  public static final int ACTIONS_AS_HTML_COLUMN_INDEX = 29;
  
   public static final int ACTIONS_AS_HTML_COLUMN_WIDTH = 50;
  
@@ -530,7 +546,7 @@ public class ClubEvent
  
   public static final String WHY_COMMON_NAME = "why";
  
-  public static final int WHY_COLUMN_INDEX = 29;
+  public static final int WHY_COLUMN_INDEX = 30;
  
   public static final int WHY_COLUMN_WIDTH = 40;
  
@@ -546,7 +562,7 @@ public class ClubEvent
  
   public static final String TEASER_COMMON_NAME = "teaser";
  
-  public static final int TEASER_COLUMN_INDEX = 30;
+  public static final int TEASER_COLUMN_INDEX = 31;
  
   public static final int TEASER_COLUMN_WIDTH = 40;
  
@@ -562,7 +578,7 @@ public class ClubEvent
  
   public static final String BLURB_COMMON_NAME = "blurb";
  
-  public static final int BLURB_COLUMN_INDEX = 31;
+  public static final int BLURB_COLUMN_INDEX = 32;
  
   public static final int BLURB_COLUMN_WIDTH = 40;
  
@@ -578,7 +594,7 @@ public class ClubEvent
  
   public static final String BLURB_AS_HTML_COMMON_NAME = "blurbashtml";
  
-  public static final int BLURB_AS_HTML_COLUMN_INDEX = 32;
+  public static final int BLURB_AS_HTML_COLUMN_INDEX = 33;
  
   public static final int BLURB_AS_HTML_COLUMN_WIDTH = 50;
  
@@ -594,7 +610,7 @@ public class ClubEvent
  
   public static final String COST_COMMON_NAME = "cost";
  
-  public static final int COST_COLUMN_INDEX = 33;
+  public static final int COST_COLUMN_INDEX = 34;
  
   public static final int COST_COLUMN_WIDTH = 15;
  
@@ -610,7 +626,7 @@ public class ClubEvent
  
   public static final String PURCHASE_COMMON_NAME = "purchase";
  
-  public static final int PURCHASE_COLUMN_INDEX = 34;
+  public static final int PURCHASE_COLUMN_INDEX = 35;
  
   public static final int PURCHASE_COLUMN_WIDTH = 40;
  
@@ -626,7 +642,7 @@ public class ClubEvent
  
   public static final String TICKETS_COMMON_NAME = "tickets";
  
-  public static final int TICKETS_COLUMN_INDEX = 35;
+  public static final int TICKETS_COLUMN_INDEX = 36;
  
   public static final int TICKETS_COLUMN_WIDTH = 30;
  
@@ -642,7 +658,7 @@ public class ClubEvent
  
   public static final String QUANTITY_COMMON_NAME = "quantity";
  
-  public static final int QUANTITY_COLUMN_INDEX = 36;
+  public static final int QUANTITY_COLUMN_INDEX = 37;
  
   public static final int QUANTITY_COLUMN_WIDTH = 8;
  
@@ -658,7 +674,7 @@ public class ClubEvent
  
   public static final String PLANNED_INCOME_COMMON_NAME = "plannedincome";
  
-  public static final int PLANNED_INCOME_COLUMN_INDEX = 37;
+  public static final int PLANNED_INCOME_COLUMN_INDEX = 38;
  
   public static final int PLANNED_INCOME_COLUMN_WIDTH = 40;
  
@@ -674,7 +690,7 @@ public class ClubEvent
  
   public static final String ACTUAL_INCOME_COMMON_NAME = "actualincome";
  
-  public static final int ACTUAL_INCOME_COLUMN_INDEX = 38;
+  public static final int ACTUAL_INCOME_COLUMN_INDEX = 39;
  
   public static final int ACTUAL_INCOME_COLUMN_WIDTH = 40;
  
@@ -690,7 +706,7 @@ public class ClubEvent
  
   public static final String PLANNED_EXPENSE_COMMON_NAME = "plannedexpense";
  
-  public static final int PLANNED_EXPENSE_COLUMN_INDEX = 39;
+  public static final int PLANNED_EXPENSE_COLUMN_INDEX = 40;
  
   public static final int PLANNED_EXPENSE_COLUMN_WIDTH = 40;
  
@@ -706,7 +722,7 @@ public class ClubEvent
  
   public static final String ACTUAL_EXPENSE_COMMON_NAME = "actualexpense";
  
-  public static final int ACTUAL_EXPENSE_COLUMN_INDEX = 40;
+  public static final int ACTUAL_EXPENSE_COLUMN_INDEX = 41;
  
   public static final int ACTUAL_EXPENSE_COLUMN_WIDTH = 40;
  
@@ -722,7 +738,7 @@ public class ClubEvent
  
   public static final String PLANNED_ATTENDANCE_COMMON_NAME = "plannedattendance";
  
-  public static final int PLANNED_ATTENDANCE_COLUMN_INDEX = 41;
+  public static final int PLANNED_ATTENDANCE_COLUMN_INDEX = 42;
  
   public static final int PLANNED_ATTENDANCE_COLUMN_WIDTH = 8;
  
@@ -738,7 +754,7 @@ public class ClubEvent
  
   public static final String ACTUAL_ATTENDANCE_COMMON_NAME = "actualattendance";
  
-  public static final int ACTUAL_ATTENDANCE_COLUMN_INDEX = 42;
+  public static final int ACTUAL_ATTENDANCE_COLUMN_INDEX = 43;
  
   public static final int ACTUAL_ATTENDANCE_COLUMN_WIDTH = 8;
  
@@ -754,7 +770,7 @@ public class ClubEvent
  
   public static final String OVER_UNDER_COMMON_NAME = "overunder";
  
-  public static final int OVER_UNDER_COLUMN_INDEX = 43;
+  public static final int OVER_UNDER_COLUMN_INDEX = 44;
  
   public static final int OVER_UNDER_COLUMN_WIDTH = 8;
  
@@ -770,7 +786,7 @@ public class ClubEvent
  
   public static final String FINANCE_PROJECTION_COMMON_NAME = "financeprojection";
  
-  public static final int FINANCE_PROJECTION_COLUMN_INDEX = 44;
+  public static final int FINANCE_PROJECTION_COLUMN_INDEX = 45;
  
   public static final int FINANCE_PROJECTION_COLUMN_WIDTH = 8;
  
@@ -786,7 +802,7 @@ public class ClubEvent
  
   public static final String RECAP_COMMON_NAME = "recap";
  
-  public static final int RECAP_COLUMN_INDEX = 45;
+  public static final int RECAP_COLUMN_INDEX = 46;
  
   public static final int RECAP_COLUMN_WIDTH = 40;
  
@@ -802,7 +818,7 @@ public class ClubEvent
  
   public static final String RECAP_AS_HTML_COMMON_NAME = "recapashtml";
  
-  public static final int RECAP_AS_HTML_COLUMN_INDEX = 46;
+  public static final int RECAP_AS_HTML_COLUMN_INDEX = 47;
  
   public static final int RECAP_AS_HTML_COLUMN_WIDTH = 50;
  
@@ -818,7 +834,7 @@ public class ClubEvent
  
   public static final String ID_COMMON_NAME = "id";
  
-  public static final int ID_COLUMN_INDEX = 47;
+  public static final int ID_COLUMN_INDEX = 48;
  
   public static final int ID_COLUMN_WIDTH = 30;
  
@@ -834,7 +850,7 @@ public class ClubEvent
  
   public static final String LINK_COMMON_NAME = "link";
  
-  public static final int LINK_COLUMN_INDEX = 48;
+  public static final int LINK_COLUMN_INDEX = 49;
  
   public static final int LINK_COLUMN_WIDTH = 30;
  
@@ -850,7 +866,7 @@ public class ClubEvent
  
   public static final String VENUE_COMMON_NAME = "venue";
  
-  public static final int VENUE_COLUMN_INDEX = 49;
+  public static final int VENUE_COLUMN_INDEX = 50;
  
   public static final int VENUE_COLUMN_WIDTH = 30;
  
@@ -866,7 +882,7 @@ public class ClubEvent
  
   public static final String IMAGE_COMMON_NAME = "image";
  
-  public static final int IMAGE_COLUMN_INDEX = 50;
+  public static final int IMAGE_COLUMN_INDEX = 51;
  
   public static final int IMAGE_COLUMN_WIDTH = 30;
  
@@ -882,7 +898,7 @@ public class ClubEvent
  
   public static final String NEWS_IMAGE_COMMON_NAME = "newsimage";
  
-  public static final int NEWS_IMAGE_COLUMN_INDEX = 51;
+  public static final int NEWS_IMAGE_COLUMN_INDEX = 52;
  
   public static final int NEWS_IMAGE_COLUMN_WIDTH = 30;
  
@@ -898,7 +914,7 @@ public class ClubEvent
  
   public static final String SHORT_DATE_COMMON_NAME = "shortdate";
  
-  public static final int SHORT_DATE_COLUMN_INDEX = 52;
+  public static final int SHORT_DATE_COLUMN_INDEX = 53;
  
   public static final int SHORT_DATE_COLUMN_WIDTH = 12;
  
@@ -914,7 +930,7 @@ public class ClubEvent
  
   public static final String NOTES_COMMON_NAME = "notes";
  
-  public static final int NOTES_COLUMN_INDEX = 53;
+  public static final int NOTES_COLUMN_INDEX = 54;
  
   public static final int NOTES_COLUMN_WIDTH = 40;
  
@@ -930,7 +946,7 @@ public class ClubEvent
  
   public static final String NOTES_AS_HTML_COMMON_NAME = "notesashtml";
  
-  public static final int NOTES_AS_HTML_COLUMN_INDEX = 54;
+  public static final int NOTES_AS_HTML_COLUMN_INDEX = 55;
  
   public static final int NOTES_AS_HTML_COLUMN_WIDTH = 50;
  
@@ -946,7 +962,7 @@ public class ClubEvent
  
   public static final String PRIOR_YR_PLN_INC_COMMON_NAME = "prioryrplninc";
  
-  public static final int PRIOR_YR_PLN_INC_COLUMN_INDEX = 55;
+  public static final int PRIOR_YR_PLN_INC_COLUMN_INDEX = 56;
  
   public static final int PRIOR_YR_PLN_INC_COLUMN_WIDTH = 40;
  
@@ -962,7 +978,7 @@ public class ClubEvent
  
   public static final String PRIOR_YR_ACT_INC_COMMON_NAME = "prioryractinc";
  
-  public static final int PRIOR_YR_ACT_INC_COLUMN_INDEX = 56;
+  public static final int PRIOR_YR_ACT_INC_COLUMN_INDEX = 57;
  
   public static final int PRIOR_YR_ACT_INC_COLUMN_WIDTH = 40;
  
@@ -978,7 +994,7 @@ public class ClubEvent
  
   public static final String PRIOR_YR_PLN_EXP_COMMON_NAME = "prioryrplnexp";
  
-  public static final int PRIOR_YR_PLN_EXP_COLUMN_INDEX = 57;
+  public static final int PRIOR_YR_PLN_EXP_COLUMN_INDEX = 58;
  
   public static final int PRIOR_YR_PLN_EXP_COLUMN_WIDTH = 40;
  
@@ -994,7 +1010,7 @@ public class ClubEvent
  
   public static final String PRIOR_YR_ACT_EXP_COMMON_NAME = "prioryractexp";
  
-  public static final int PRIOR_YR_ACT_EXP_COLUMN_INDEX = 58;
+  public static final int PRIOR_YR_ACT_EXP_COLUMN_INDEX = 59;
  
   public static final int PRIOR_YR_ACT_EXP_COLUMN_WIDTH = 40;
  
@@ -1010,12 +1026,12 @@ public class ClubEvent
  
   public static final String STATE_COMMON_NAME = "state";
  
-  public static final int STATE_COLUMN_INDEX = 59;
+  public static final int STATE_COLUMN_INDEX = 60;
  
   public static final int STATE_COLUMN_WIDTH = 20;
  
 
-  public static final int COLUMN_COUNT = 60;
+  public static final int COLUMN_COUNT = 61;
 
 
   /*
@@ -1828,6 +1844,17 @@ public class ClubEvent
         setDiscuss ((String)obj2);
       }
     }
+    obj2 = clubEvent2.getDiscussAsHtml();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setDiscussAsHtml ((String)obj2);
+      }
+    }
     obj2 = clubEvent2.getActions();
     if (obj2 == null) {
       // No value available -- leave current value as-is
@@ -2291,6 +2318,9 @@ public class ClubEvent
       case DISCUSS_COLUMN_INDEX:
           setDiscuss (columnValue);
           break;
+      case DISCUSS_AS_HTML_COLUMN_INDEX:
+          setDiscussAsHtml (columnValue);
+          break;
       case ACTIONS_COLUMN_INDEX:
           setActions (columnValue);
           break;
@@ -2459,6 +2489,8 @@ public class ClubEvent
           return whoMapUrl;
       case DISCUSS_COLUMN_INDEX:
           return discuss;
+      case DISCUSS_AS_HTML_COLUMN_INDEX:
+          return discussAsHtml;
       case ACTIONS_COLUMN_INDEX:
           return actions;
       case ACTIONS_AS_HTML_COLUMN_INDEX:
@@ -2595,6 +2627,8 @@ public class ClubEvent
           return WHO_MAP_URL_COLUMN_NAME;
       case DISCUSS_COLUMN_INDEX:
           return DISCUSS_COLUMN_NAME;
+      case DISCUSS_AS_HTML_COLUMN_INDEX:
+          return DISCUSS_AS_HTML_COLUMN_NAME;
       case ACTIONS_COLUMN_INDEX:
           return ACTIONS_COLUMN_NAME;
       case ACTIONS_AS_HTML_COLUMN_INDEX:
@@ -2732,6 +2766,8 @@ public class ClubEvent
           return WHO_MAP_URL_COMMON_NAME;
       case DISCUSS_COLUMN_INDEX:
           return DISCUSS_COMMON_NAME;
+      case DISCUSS_AS_HTML_COLUMN_INDEX:
+          return DISCUSS_AS_HTML_COMMON_NAME;
       case ACTIONS_COLUMN_INDEX:
           return ACTIONS_COMMON_NAME;
       case ACTIONS_AS_HTML_COLUMN_INDEX:
@@ -2868,6 +2904,8 @@ public class ClubEvent
           return WHO_MAP_URL_COLUMN_WIDTH;
       case DISCUSS_COLUMN_INDEX:
           return DISCUSS_COLUMN_WIDTH;
+      case DISCUSS_AS_HTML_COLUMN_INDEX:
+          return DISCUSS_AS_HTML_COLUMN_WIDTH;
       case ACTIONS_COLUMN_INDEX:
           return ACTIONS_COLUMN_WIDTH;
       case ACTIONS_AS_HTML_COLUMN_INDEX:
@@ -3004,6 +3042,8 @@ public class ClubEvent
           return String.class;
       case DISCUSS_COLUMN_INDEX:
           return String.class;
+      case DISCUSS_AS_HTML_COLUMN_INDEX:
+          return String.class;
       case ACTIONS_COLUMN_INDEX:
           return String.class;
       case ACTIONS_AS_HTML_COLUMN_INDEX:
@@ -3086,6 +3126,8 @@ public class ClubEvent
    */
   public static boolean isMarkdownFormat (int columnIndex) {
     switch (columnIndex) {
+      case DISCUSS_COLUMN_INDEX:
+          return true;
       case ACTIONS_COLUMN_INDEX:
           return true;
       case BLURB_COLUMN_INDEX:
@@ -4538,6 +4580,58 @@ public class ClubEvent
    */
   public String getDiscuss () {
     return discuss;
+  }
+ 
+  /**
+     Sets the discuss as html for this club event.
+ 
+     @param  discussAsHtml The discuss as html for this club event.
+   */
+  public void setDiscussAsHtml (String discussAsHtml) {
+    this.discussAsHtml = discussAsHtml;
+    setModified (true);
+  }
+
+  /**
+    Returns the discuss as html for this club event as a string.
+ 
+    @return The discuss as html for this club event as a string.
+   */
+  public String getDiscussAsHtmlAsString () {
+    if (hasDiscussAsHtml()) {
+      return getDiscussAsHtml().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the discuss as html for this club event is null.
+ 
+    @return True if the discuss as html for this club event is not null.
+   */
+  public boolean hasDiscussAsHtml () {
+    return (discussAsHtml != null);
+  }
+
+  /**
+    Determines if the discuss as html for this club event
+    is null or is empty.
+ 
+    @return True if the discuss as html for this club event
+    is not null and not empty.
+   */
+  public boolean hasDiscussAsHtmlWithData () {
+    return (discussAsHtml != null && discussAsHtml.length() > 0);
+  }
+
+  /**
+    Returns the discuss as html for this club event.
+ 
+    @return The discuss as html for this club event.
+   */
+  public String getDiscussAsHtml () {
+    return discussAsHtml;
   }
  
   /**
