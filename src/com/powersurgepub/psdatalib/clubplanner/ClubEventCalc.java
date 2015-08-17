@@ -572,6 +572,56 @@ public class ClubEventCalc {
     }
   }
   
+  /**
+   Interpret the meaning of the sequence number. 
+  
+   @param seqStr The sequence number. 
+  
+   @return A string containing the meaning of the number. 
+  */
+  public static String getSeqMeaning(String seqStr) {
+    int seq = Integer.parseInt(seqStr);
+    return getSeqMeaning(seq);
+  }
+  
+  /**
+   Interpret the meaning of the sequence number. 
+  
+   @param seq The sequence number. 
+  
+   @return A string containing the meaning of the number. 
+  */
+  public static String getSeqMeaning(int seq) {
+    String meaning = "???";
+    switch (seq) {
+      case 1:
+        meaning = "Open Meeting";
+        break;
+      case 2:
+        meaning = "Finance";
+        break;
+      case 3:
+        meaning = "Board Info";
+        break;
+      case 4:
+        meaning = "Communication";
+        break;
+      case 5:
+        meaning = "Recent Events";
+        break;
+      case 6:
+        meaning = "Upcoming";
+        break;
+      case 8:
+        meaning = "Communication";
+        break;
+      case 9:
+        meaning = "Close Meeting";
+        break;
+    }
+    return meaning;
+  }
+  
   public void calcShortDate (ClubEvent clubEvent) {
     
     // Now set a short, human readable date
