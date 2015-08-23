@@ -119,6 +119,22 @@ public class ClubEvent
  
 
   /**
+   The state, or status, of the event.
+   */
+  private ItemStatus state = new ItemStatus();
+ 
+  public static final String STATE_FIELD_NAME = "State";
+ 
+  public static final String STATE_COLUMN_NAME = "State";
+ 
+  public static final String STATE_COMMON_NAME = "state";
+ 
+  public static final int STATE_COLUMN_INDEX = 4;
+ 
+  public static final int STATE_COLUMN_WIDTH = 20;
+ 
+
+  /**
    One or more tags indicating the status of the event.
    */
   private Tags flags = new Tags();
@@ -129,7 +145,7 @@ public class ClubEvent
  
   public static final String FLAGS_COMMON_NAME = "flags";
  
-  public static final int FLAGS_COLUMN_INDEX = 4;
+  public static final int FLAGS_COLUMN_INDEX = 5;
  
   public static final int FLAGS_COLUMN_WIDTH = 12;
  
@@ -146,7 +162,7 @@ public class ClubEvent
  
   public static final String WHEN_COMMON_NAME = "when";
  
-  public static final int WHEN_COLUMN_INDEX = 5;
+  public static final int WHEN_COLUMN_INDEX = 6;
  
   public static final int WHEN_COLUMN_WIDTH = 20;
  
@@ -162,7 +178,7 @@ public class ClubEvent
  
   public static final String YMD_COMMON_NAME = "ymd";
  
-  public static final int YMD_COLUMN_INDEX = 6;
+  public static final int YMD_COLUMN_INDEX = 7;
  
   public static final int YMD_COLUMN_WIDTH = 10;
  
@@ -178,7 +194,7 @@ public class ClubEvent
  
   public static final String WHAT_COMMON_NAME = "what";
  
-  public static final int WHAT_COLUMN_INDEX = 7;
+  public static final int WHAT_COLUMN_INDEX = 8;
  
   public static final int WHAT_COLUMN_WIDTH = 35;
  
@@ -186,7 +202,7 @@ public class ClubEvent
   /**
    The location of the event, including the name of the venue and its address.
    */
-  private ContactInfo where = null;
+  private ContactInfo where = new ContactInfo();
  
   public static final String WHERE_FIELD_NAME = "Where";
  
@@ -194,7 +210,7 @@ public class ClubEvent
  
   public static final String WHERE_COMMON_NAME = "where";
  
-  public static final int WHERE_COLUMN_INDEX = 8;
+  public static final int WHERE_COLUMN_INDEX = 9;
  
   public static final int WHERE_COLUMN_WIDTH = 30;
  
@@ -210,7 +226,7 @@ public class ClubEvent
  
   public static final String WHERE_NAME_COMMON_NAME = "wherename";
  
-  public static final int WHERE_NAME_COLUMN_INDEX = 9;
+  public static final int WHERE_NAME_COLUMN_INDEX = 10;
  
   public static final int WHERE_NAME_COLUMN_WIDTH = 20;
  
@@ -226,7 +242,7 @@ public class ClubEvent
  
   public static final String WHERE_ADDRESS_COMMON_NAME = "whereaddress";
  
-  public static final int WHERE_ADDRESS_COLUMN_INDEX = 10;
+  public static final int WHERE_ADDRESS_COLUMN_INDEX = 11;
  
   public static final int WHERE_ADDRESS_COLUMN_WIDTH = 20;
  
@@ -242,7 +258,7 @@ public class ClubEvent
  
   public static final String WHERE_CITY_COMMON_NAME = "wherecity";
  
-  public static final int WHERE_CITY_COLUMN_INDEX = 11;
+  public static final int WHERE_CITY_COLUMN_INDEX = 12;
  
   public static final int WHERE_CITY_COLUMN_WIDTH = 15;
  
@@ -258,7 +274,7 @@ public class ClubEvent
  
   public static final String WHERE_STATE_COMMON_NAME = "wherestate";
  
-  public static final int WHERE_STATE_COLUMN_INDEX = 12;
+  public static final int WHERE_STATE_COLUMN_INDEX = 13;
  
   public static final int WHERE_STATE_COLUMN_WIDTH = 2;
  
@@ -274,7 +290,7 @@ public class ClubEvent
  
   public static final String WHERE_ZIP_COMMON_NAME = "wherezip";
  
-  public static final int WHERE_ZIP_COLUMN_INDEX = 13;
+  public static final int WHERE_ZIP_COLUMN_INDEX = 14;
  
   public static final int WHERE_ZIP_COLUMN_WIDTH = 5;
  
@@ -290,7 +306,7 @@ public class ClubEvent
  
   public static final String WHERE_PHONE_COMMON_NAME = "wherephone";
  
-  public static final int WHERE_PHONE_COLUMN_INDEX = 14;
+  public static final int WHERE_PHONE_COLUMN_INDEX = 15;
  
   public static final int WHERE_PHONE_COLUMN_WIDTH = 13;
  
@@ -306,7 +322,7 @@ public class ClubEvent
  
   public static final String WHERE_EMAIL_COMMON_NAME = "whereemail";
  
-  public static final int WHERE_EMAIL_COLUMN_INDEX = 15;
+  public static final int WHERE_EMAIL_COLUMN_INDEX = 16;
  
   public static final int WHERE_EMAIL_COLUMN_WIDTH = 15;
  
@@ -322,7 +338,7 @@ public class ClubEvent
  
   public static final String WHERE_MAP_URL_COMMON_NAME = "wheremapurl";
  
-  public static final int WHERE_MAP_URL_COLUMN_INDEX = 16;
+  public static final int WHERE_MAP_URL_COLUMN_INDEX = 17;
  
   public static final int WHERE_MAP_URL_COLUMN_WIDTH = 30;
  
@@ -330,7 +346,7 @@ public class ClubEvent
   /**
    Who is assigned to plan, coordinate and host the event. Can include multiple names. Can include email addresses and phone numbers.
    */
-  private ContactInfo who = null;
+  private ContactInfo who = new ContactInfo();
  
   public static final String WHO_FIELD_NAME = "Who";
  
@@ -338,7 +354,7 @@ public class ClubEvent
  
   public static final String WHO_COMMON_NAME = "who";
  
-  public static final int WHO_COLUMN_INDEX = 17;
+  public static final int WHO_COLUMN_INDEX = 18;
  
   public static final int WHO_COLUMN_WIDTH = 20;
  
@@ -354,7 +370,7 @@ public class ClubEvent
  
   public static final String WHO_NAME_COMMON_NAME = "whoname";
  
-  public static final int WHO_NAME_COLUMN_INDEX = 18;
+  public static final int WHO_NAME_COLUMN_INDEX = 19;
  
   public static final int WHO_NAME_COLUMN_WIDTH = 20;
  
@@ -370,7 +386,7 @@ public class ClubEvent
  
   public static final String WHO_ADDRESS_COMMON_NAME = "whoaddress";
  
-  public static final int WHO_ADDRESS_COLUMN_INDEX = 19;
+  public static final int WHO_ADDRESS_COLUMN_INDEX = 20;
  
   public static final int WHO_ADDRESS_COLUMN_WIDTH = 20;
  
@@ -386,7 +402,7 @@ public class ClubEvent
  
   public static final String WHO_CITY_COMMON_NAME = "whocity";
  
-  public static final int WHO_CITY_COLUMN_INDEX = 20;
+  public static final int WHO_CITY_COLUMN_INDEX = 21;
  
   public static final int WHO_CITY_COLUMN_WIDTH = 15;
  
@@ -402,7 +418,7 @@ public class ClubEvent
  
   public static final String WHO_STATE_COMMON_NAME = "whostate";
  
-  public static final int WHO_STATE_COLUMN_INDEX = 21;
+  public static final int WHO_STATE_COLUMN_INDEX = 22;
  
   public static final int WHO_STATE_COLUMN_WIDTH = 2;
  
@@ -418,7 +434,7 @@ public class ClubEvent
  
   public static final String WHO_ZIP_COMMON_NAME = "whozip";
  
-  public static final int WHO_ZIP_COLUMN_INDEX = 22;
+  public static final int WHO_ZIP_COLUMN_INDEX = 23;
  
   public static final int WHO_ZIP_COLUMN_WIDTH = 5;
  
@@ -434,7 +450,7 @@ public class ClubEvent
  
   public static final String WHO_PHONE_COMMON_NAME = "whophone";
  
-  public static final int WHO_PHONE_COLUMN_INDEX = 23;
+  public static final int WHO_PHONE_COLUMN_INDEX = 24;
  
   public static final int WHO_PHONE_COLUMN_WIDTH = 13;
  
@@ -450,7 +466,7 @@ public class ClubEvent
  
   public static final String WHO_EMAIL_COMMON_NAME = "whoemail";
  
-  public static final int WHO_EMAIL_COLUMN_INDEX = 24;
+  public static final int WHO_EMAIL_COLUMN_INDEX = 25;
  
   public static final int WHO_EMAIL_COLUMN_WIDTH = 15;
  
@@ -466,7 +482,7 @@ public class ClubEvent
  
   public static final String WHO_MAP_URL_COMMON_NAME = "whomapurl";
  
-  public static final int WHO_MAP_URL_COLUMN_INDEX = 25;
+  public static final int WHO_MAP_URL_COLUMN_INDEX = 26;
  
   public static final int WHO_MAP_URL_COLUMN_WIDTH = 30;
  
@@ -482,7 +498,7 @@ public class ClubEvent
  
   public static final String DISCUSS_COMMON_NAME = "discuss";
  
-  public static final int DISCUSS_COLUMN_INDEX = 26;
+  public static final int DISCUSS_COLUMN_INDEX = 27;
  
   public static final int DISCUSS_COLUMN_WIDTH = 40;
  
@@ -498,7 +514,7 @@ public class ClubEvent
  
   public static final String DISCUSS_AS_HTML_COMMON_NAME = "discussashtml";
  
-  public static final int DISCUSS_AS_HTML_COLUMN_INDEX = 27;
+  public static final int DISCUSS_AS_HTML_COLUMN_INDEX = 28;
  
   public static final int DISCUSS_AS_HTML_COLUMN_WIDTH = 50;
  
@@ -514,7 +530,7 @@ public class ClubEvent
  
   public static final String ACTIONS_COMMON_NAME = "actions";
  
-  public static final int ACTIONS_COLUMN_INDEX = 28;
+  public static final int ACTIONS_COLUMN_INDEX = 29;
  
   public static final int ACTIONS_COLUMN_WIDTH = 40;
  
@@ -530,7 +546,7 @@ public class ClubEvent
  
   public static final String ACTIONS_AS_HTML_COMMON_NAME = "actionsashtml";
  
-  public static final int ACTIONS_AS_HTML_COLUMN_INDEX = 29;
+  public static final int ACTIONS_AS_HTML_COLUMN_INDEX = 30;
  
   public static final int ACTIONS_AS_HTML_COLUMN_WIDTH = 50;
  
@@ -546,7 +562,7 @@ public class ClubEvent
  
   public static final String WHY_COMMON_NAME = "why";
  
-  public static final int WHY_COLUMN_INDEX = 30;
+  public static final int WHY_COLUMN_INDEX = 31;
  
   public static final int WHY_COLUMN_WIDTH = 40;
  
@@ -562,7 +578,7 @@ public class ClubEvent
  
   public static final String TEASER_COMMON_NAME = "teaser";
  
-  public static final int TEASER_COLUMN_INDEX = 31;
+  public static final int TEASER_COLUMN_INDEX = 32;
  
   public static final int TEASER_COLUMN_WIDTH = 40;
  
@@ -578,7 +594,7 @@ public class ClubEvent
  
   public static final String BLURB_COMMON_NAME = "blurb";
  
-  public static final int BLURB_COLUMN_INDEX = 32;
+  public static final int BLURB_COLUMN_INDEX = 33;
  
   public static final int BLURB_COLUMN_WIDTH = 40;
  
@@ -594,7 +610,7 @@ public class ClubEvent
  
   public static final String BLURB_AS_HTML_COMMON_NAME = "blurbashtml";
  
-  public static final int BLURB_AS_HTML_COLUMN_INDEX = 33;
+  public static final int BLURB_AS_HTML_COLUMN_INDEX = 34;
  
   public static final int BLURB_AS_HTML_COLUMN_WIDTH = 50;
  
@@ -610,7 +626,7 @@ public class ClubEvent
  
   public static final String COST_COMMON_NAME = "cost";
  
-  public static final int COST_COLUMN_INDEX = 34;
+  public static final int COST_COLUMN_INDEX = 35;
  
   public static final int COST_COLUMN_WIDTH = 15;
  
@@ -626,7 +642,7 @@ public class ClubEvent
  
   public static final String PURCHASE_COMMON_NAME = "purchase";
  
-  public static final int PURCHASE_COLUMN_INDEX = 35;
+  public static final int PURCHASE_COLUMN_INDEX = 36;
  
   public static final int PURCHASE_COLUMN_WIDTH = 40;
  
@@ -642,7 +658,7 @@ public class ClubEvent
  
   public static final String TICKETS_COMMON_NAME = "tickets";
  
-  public static final int TICKETS_COLUMN_INDEX = 36;
+  public static final int TICKETS_COLUMN_INDEX = 37;
  
   public static final int TICKETS_COLUMN_WIDTH = 30;
  
@@ -658,7 +674,7 @@ public class ClubEvent
  
   public static final String QUANTITY_COMMON_NAME = "quantity";
  
-  public static final int QUANTITY_COLUMN_INDEX = 37;
+  public static final int QUANTITY_COLUMN_INDEX = 38;
  
   public static final int QUANTITY_COLUMN_WIDTH = 8;
  
@@ -674,7 +690,7 @@ public class ClubEvent
  
   public static final String PLANNED_INCOME_COMMON_NAME = "plannedincome";
  
-  public static final int PLANNED_INCOME_COLUMN_INDEX = 38;
+  public static final int PLANNED_INCOME_COLUMN_INDEX = 39;
  
   public static final int PLANNED_INCOME_COLUMN_WIDTH = 40;
  
@@ -690,7 +706,7 @@ public class ClubEvent
  
   public static final String ACTUAL_INCOME_COMMON_NAME = "actualincome";
  
-  public static final int ACTUAL_INCOME_COLUMN_INDEX = 39;
+  public static final int ACTUAL_INCOME_COLUMN_INDEX = 40;
  
   public static final int ACTUAL_INCOME_COLUMN_WIDTH = 40;
  
@@ -706,7 +722,7 @@ public class ClubEvent
  
   public static final String PLANNED_EXPENSE_COMMON_NAME = "plannedexpense";
  
-  public static final int PLANNED_EXPENSE_COLUMN_INDEX = 40;
+  public static final int PLANNED_EXPENSE_COLUMN_INDEX = 41;
  
   public static final int PLANNED_EXPENSE_COLUMN_WIDTH = 40;
  
@@ -722,7 +738,7 @@ public class ClubEvent
  
   public static final String ACTUAL_EXPENSE_COMMON_NAME = "actualexpense";
  
-  public static final int ACTUAL_EXPENSE_COLUMN_INDEX = 41;
+  public static final int ACTUAL_EXPENSE_COLUMN_INDEX = 42;
  
   public static final int ACTUAL_EXPENSE_COLUMN_WIDTH = 40;
  
@@ -738,7 +754,7 @@ public class ClubEvent
  
   public static final String PLANNED_ATTENDANCE_COMMON_NAME = "plannedattendance";
  
-  public static final int PLANNED_ATTENDANCE_COLUMN_INDEX = 42;
+  public static final int PLANNED_ATTENDANCE_COLUMN_INDEX = 43;
  
   public static final int PLANNED_ATTENDANCE_COLUMN_WIDTH = 8;
  
@@ -754,7 +770,7 @@ public class ClubEvent
  
   public static final String ACTUAL_ATTENDANCE_COMMON_NAME = "actualattendance";
  
-  public static final int ACTUAL_ATTENDANCE_COLUMN_INDEX = 43;
+  public static final int ACTUAL_ATTENDANCE_COLUMN_INDEX = 44;
  
   public static final int ACTUAL_ATTENDANCE_COLUMN_WIDTH = 8;
  
@@ -770,7 +786,7 @@ public class ClubEvent
  
   public static final String OVER_UNDER_COMMON_NAME = "overunder";
  
-  public static final int OVER_UNDER_COLUMN_INDEX = 44;
+  public static final int OVER_UNDER_COLUMN_INDEX = 45;
  
   public static final int OVER_UNDER_COLUMN_WIDTH = 8;
  
@@ -786,169 +802,9 @@ public class ClubEvent
  
   public static final String FINANCE_PROJECTION_COMMON_NAME = "financeprojection";
  
-  public static final int FINANCE_PROJECTION_COLUMN_INDEX = 45;
+  public static final int FINANCE_PROJECTION_COLUMN_INDEX = 46;
  
   public static final int FINANCE_PROJECTION_COLUMN_WIDTH = 8;
- 
-
-  /**
-   A brief summary of how the event went. Can include lessons learned from the event.
-   */
-  private String recap = null;
- 
-  public static final String RECAP_FIELD_NAME = "Recap";
- 
-  public static final String RECAP_COLUMN_NAME = "Recap";
- 
-  public static final String RECAP_COMMON_NAME = "recap";
- 
-  public static final int RECAP_COLUMN_INDEX = 46;
- 
-  public static final int RECAP_COLUMN_WIDTH = 40;
- 
-
-  /**
-   The event recap, formatted as HTML.
-   */
-  private String recapAsHtml = null;
- 
-  public static final String RECAP_AS_HTML_FIELD_NAME = "Recap as HTML";
- 
-  public static final String RECAP_AS_HTML_COLUMN_NAME = "Recap as HTML";
- 
-  public static final String RECAP_AS_HTML_COMMON_NAME = "recapashtml";
- 
-  public static final int RECAP_AS_HTML_COLUMN_INDEX = 47;
- 
-  public static final int RECAP_AS_HTML_COLUMN_WIDTH = 50;
- 
-
-  /**
-   After the event has been added to the club web site, the ID assigned to the page by the Content Management System should be entered here. This will be identified in the URL for the event as the articleid, as in articleid=17, meaning that an ID of 17 should be entered here.
-   */
-  private String id = null;
- 
-  public static final String ID_FIELD_NAME = "ID";
- 
-  public static final String ID_COLUMN_NAME = "ID";
- 
-  public static final String ID_COMMON_NAME = "id";
- 
-  public static final int ID_COLUMN_INDEX = 48;
- 
-  public static final int ID_COLUMN_WIDTH = 30;
- 
-
-  /**
-   A URL pointing to a Web page with more information about the event.
-   */
-  private String link = null;
- 
-  public static final String LINK_FIELD_NAME = "Link";
- 
-  public static final String LINK_COLUMN_NAME = "Link";
- 
-  public static final String LINK_COMMON_NAME = "link";
- 
-  public static final int LINK_COLUMN_INDEX = 49;
- 
-  public static final int LINK_COLUMN_WIDTH = 30;
- 
-
-  /**
-   A URL pointing to a Web page with more information about the venue for the event.
-   */
-  private String venue = null;
- 
-  public static final String VENUE_FIELD_NAME = "Venue";
- 
-  public static final String VENUE_COLUMN_NAME = "Venue";
- 
-  public static final String VENUE_COMMON_NAME = "venue";
- 
-  public static final int VENUE_COLUMN_INDEX = 50;
- 
-  public static final int VENUE_COLUMN_WIDTH = 30;
- 
-
-  /**
-   A URL pointing to an image that can be used to help advertise the event.
-   */
-  private String image = null;
- 
-  public static final String IMAGE_FIELD_NAME = "Image";
- 
-  public static final String IMAGE_COLUMN_NAME = "Image";
- 
-  public static final String IMAGE_COMMON_NAME = "image";
- 
-  public static final int IMAGE_COLUMN_INDEX = 51;
- 
-  public static final int IMAGE_COLUMN_WIDTH = 30;
- 
-
-  /**
-   A URL pointing to an image suitable for use in our newsletter.
-   */
-  private String newsImage = null;
- 
-  public static final String NEWS_IMAGE_FIELD_NAME = "News Image";
- 
-  public static final String NEWS_IMAGE_COLUMN_NAME = "News Image";
- 
-  public static final String NEWS_IMAGE_COMMON_NAME = "newsimage";
- 
-  public static final int NEWS_IMAGE_COLUMN_INDEX = 52;
- 
-  public static final int NEWS_IMAGE_COLUMN_WIDTH = 30;
- 
-
-  /**
-   Brief, human-readable date.
-   */
-  private String shortDate = null;
- 
-  public static final String SHORT_DATE_FIELD_NAME = "Short Date";
- 
-  public static final String SHORT_DATE_COLUMN_NAME = "Short Date";
- 
-  public static final String SHORT_DATE_COMMON_NAME = "shortdate";
- 
-  public static final int SHORT_DATE_COLUMN_INDEX = 53;
- 
-  public static final int SHORT_DATE_COLUMN_WIDTH = 12;
- 
-
-  /**
-   One or more blocks of text with information about the event. This field can contain multiple paragraphs, separated by blank lines. Each block of text should be preceded by a line similar to the following example: -- AAUM on Feb 21 via email. Note that each such header line contains the following elements: Two hyphens and a space; identification of the source of the note; the date on which the information was communicated; the means by which the information was communicated.
-   */
-  private String notes = null;
- 
-  public static final String NOTES_FIELD_NAME = "Notes";
- 
-  public static final String NOTES_COLUMN_NAME = "Notes";
- 
-  public static final String NOTES_COMMON_NAME = "notes";
- 
-  public static final int NOTES_COLUMN_INDEX = 54;
- 
-  public static final int NOTES_COLUMN_WIDTH = 40;
- 
-
-  /**
-   The Notes block, reformatted as HTML.
-   */
-  private String notesAsHtml = null;
- 
-  public static final String NOTES_AS_HTML_FIELD_NAME = "Notes as HTML";
- 
-  public static final String NOTES_AS_HTML_COLUMN_NAME = "Notes as HTML";
- 
-  public static final String NOTES_AS_HTML_COMMON_NAME = "notesashtml";
- 
-  public static final int NOTES_AS_HTML_COLUMN_INDEX = 55;
- 
-  public static final int NOTES_AS_HTML_COLUMN_WIDTH = 50;
  
 
   /**
@@ -962,7 +818,7 @@ public class ClubEvent
  
   public static final String PRIOR_YR_PLN_INC_COMMON_NAME = "prioryrplninc";
  
-  public static final int PRIOR_YR_PLN_INC_COLUMN_INDEX = 56;
+  public static final int PRIOR_YR_PLN_INC_COLUMN_INDEX = 47;
  
   public static final int PRIOR_YR_PLN_INC_COLUMN_WIDTH = 40;
  
@@ -978,7 +834,7 @@ public class ClubEvent
  
   public static final String PRIOR_YR_ACT_INC_COMMON_NAME = "prioryractinc";
  
-  public static final int PRIOR_YR_ACT_INC_COLUMN_INDEX = 57;
+  public static final int PRIOR_YR_ACT_INC_COLUMN_INDEX = 48;
  
   public static final int PRIOR_YR_ACT_INC_COLUMN_WIDTH = 40;
  
@@ -994,7 +850,7 @@ public class ClubEvent
  
   public static final String PRIOR_YR_PLN_EXP_COMMON_NAME = "prioryrplnexp";
  
-  public static final int PRIOR_YR_PLN_EXP_COLUMN_INDEX = 58;
+  public static final int PRIOR_YR_PLN_EXP_COLUMN_INDEX = 49;
  
   public static final int PRIOR_YR_PLN_EXP_COLUMN_WIDTH = 40;
  
@@ -1010,25 +866,169 @@ public class ClubEvent
  
   public static final String PRIOR_YR_ACT_EXP_COMMON_NAME = "prioryractexp";
  
-  public static final int PRIOR_YR_ACT_EXP_COLUMN_INDEX = 59;
+  public static final int PRIOR_YR_ACT_EXP_COLUMN_INDEX = 50;
  
   public static final int PRIOR_YR_ACT_EXP_COLUMN_WIDTH = 40;
  
 
   /**
-   The state, or status, of the event.
+   A brief summary of how the event went. Can include lessons learned from the event.
    */
-  private String state = null;
+  private String recap = null;
  
-  public static final String STATE_FIELD_NAME = "State";
+  public static final String RECAP_FIELD_NAME = "Recap";
  
-  public static final String STATE_COLUMN_NAME = "State";
+  public static final String RECAP_COLUMN_NAME = "Recap";
  
-  public static final String STATE_COMMON_NAME = "state";
+  public static final String RECAP_COMMON_NAME = "recap";
  
-  public static final int STATE_COLUMN_INDEX = 60;
+  public static final int RECAP_COLUMN_INDEX = 51;
  
-  public static final int STATE_COLUMN_WIDTH = 20;
+  public static final int RECAP_COLUMN_WIDTH = 40;
+ 
+
+  /**
+   The event recap, formatted as HTML.
+   */
+  private String recapAsHtml = null;
+ 
+  public static final String RECAP_AS_HTML_FIELD_NAME = "Recap as HTML";
+ 
+  public static final String RECAP_AS_HTML_COLUMN_NAME = "Recap as HTML";
+ 
+  public static final String RECAP_AS_HTML_COMMON_NAME = "recapashtml";
+ 
+  public static final int RECAP_AS_HTML_COLUMN_INDEX = 52;
+ 
+  public static final int RECAP_AS_HTML_COLUMN_WIDTH = 50;
+ 
+
+  /**
+   After the event has been added to the club web site, the ID assigned to the page by the Content Management System should be entered here. This will be identified in the URL for the event as the articleid, as in articleid=17, meaning that an ID of 17 should be entered here.
+   */
+  private String id = null;
+ 
+  public static final String ID_FIELD_NAME = "ID";
+ 
+  public static final String ID_COLUMN_NAME = "ID";
+ 
+  public static final String ID_COMMON_NAME = "id";
+ 
+  public static final int ID_COLUMN_INDEX = 53;
+ 
+  public static final int ID_COLUMN_WIDTH = 30;
+ 
+
+  /**
+   A URL pointing to a Web page with more information about the event.
+   */
+  private String link = null;
+ 
+  public static final String LINK_FIELD_NAME = "Link";
+ 
+  public static final String LINK_COLUMN_NAME = "Link";
+ 
+  public static final String LINK_COMMON_NAME = "link";
+ 
+  public static final int LINK_COLUMN_INDEX = 54;
+ 
+  public static final int LINK_COLUMN_WIDTH = 30;
+ 
+
+  /**
+   A URL pointing to a Web page with more information about the venue for the event.
+   */
+  private String venue = null;
+ 
+  public static final String VENUE_FIELD_NAME = "Venue";
+ 
+  public static final String VENUE_COLUMN_NAME = "Venue";
+ 
+  public static final String VENUE_COMMON_NAME = "venue";
+ 
+  public static final int VENUE_COLUMN_INDEX = 55;
+ 
+  public static final int VENUE_COLUMN_WIDTH = 30;
+ 
+
+  /**
+   A URL pointing to an image that can be used to help advertise the event.
+   */
+  private String image = null;
+ 
+  public static final String IMAGE_FIELD_NAME = "Image";
+ 
+  public static final String IMAGE_COLUMN_NAME = "Image";
+ 
+  public static final String IMAGE_COMMON_NAME = "image";
+ 
+  public static final int IMAGE_COLUMN_INDEX = 56;
+ 
+  public static final int IMAGE_COLUMN_WIDTH = 30;
+ 
+
+  /**
+   A URL pointing to an image suitable for use in our newsletter.
+   */
+  private String newsImage = null;
+ 
+  public static final String NEWS_IMAGE_FIELD_NAME = "News Image";
+ 
+  public static final String NEWS_IMAGE_COLUMN_NAME = "News Image";
+ 
+  public static final String NEWS_IMAGE_COMMON_NAME = "newsimage";
+ 
+  public static final int NEWS_IMAGE_COLUMN_INDEX = 57;
+ 
+  public static final int NEWS_IMAGE_COLUMN_WIDTH = 30;
+ 
+
+  /**
+   Brief, human-readable date.
+   */
+  private String shortDate = null;
+ 
+  public static final String SHORT_DATE_FIELD_NAME = "Short Date";
+ 
+  public static final String SHORT_DATE_COLUMN_NAME = "Short Date";
+ 
+  public static final String SHORT_DATE_COMMON_NAME = "shortdate";
+ 
+  public static final int SHORT_DATE_COLUMN_INDEX = 58;
+ 
+  public static final int SHORT_DATE_COLUMN_WIDTH = 12;
+ 
+
+  /**
+   One or more blocks of text with information about the event. This field can contain multiple paragraphs, separated by blank lines. Each block of text should be preceded by a line similar to the following example: -- AAUM on Feb 21 via email. Note that each such header line contains the following elements: Two hyphens and a space; identification of the source of the note; the date on which the information was communicated; the means by which the information was communicated.
+   */
+  private String notes = null;
+ 
+  public static final String NOTES_FIELD_NAME = "Notes";
+ 
+  public static final String NOTES_COLUMN_NAME = "Notes";
+ 
+  public static final String NOTES_COMMON_NAME = "notes";
+ 
+  public static final int NOTES_COLUMN_INDEX = 59;
+ 
+  public static final int NOTES_COLUMN_WIDTH = 40;
+ 
+
+  /**
+   The Notes block, reformatted as HTML.
+   */
+  private String notesAsHtml = null;
+ 
+  public static final String NOTES_AS_HTML_FIELD_NAME = "Notes as HTML";
+ 
+  public static final String NOTES_AS_HTML_COLUMN_NAME = "Notes as HTML";
+ 
+  public static final String NOTES_AS_HTML_COMMON_NAME = "notesashtml";
+ 
+  public static final int NOTES_AS_HTML_COLUMN_INDEX = 60;
+ 
+  public static final int NOTES_AS_HTML_COLUMN_WIDTH = 50;
  
 
   public static final int COLUMN_COUNT = 61;
@@ -1273,6 +1273,8 @@ public class ClubEvent
 		newClubEvent.setItemType(itemTypeStr);
 		String categoryStr = new String(getCategoryAsString());
 		newClubEvent.setCategory(categoryStr);
+		String stateStr = new String(getStateAsString());
+		newClubEvent.setState(stateStr);
 		String flagsStr = new String(getFlagsAsString());
 		newClubEvent.setFlags(flagsStr);
 		String whenStr = new String(getWhenAsString());
@@ -1313,6 +1315,14 @@ public class ClubEvent
 		newClubEvent.setPlannedAttendance(plannedAttendanceStr);
 		String actualAttendanceStr = new String(getActualAttendanceAsString());
 		newClubEvent.setActualAttendance(actualAttendanceStr);
+		String priorYrPlnIncStr = new String(getPriorYrPlnIncAsString());
+		newClubEvent.setPriorYrPlnInc(priorYrPlnIncStr);
+		String priorYrActIncStr = new String(getPriorYrActIncAsString());
+		newClubEvent.setPriorYrActInc(priorYrActIncStr);
+		String priorYrPlnExpStr = new String(getPriorYrPlnExpAsString());
+		newClubEvent.setPriorYrPlnExp(priorYrPlnExpStr);
+		String priorYrActExpStr = new String(getPriorYrActExpAsString());
+		newClubEvent.setPriorYrActExp(priorYrActExpStr);
 		String recapStr = new String(getRecapAsString());
 		newClubEvent.setRecap(recapStr);
 		String idStr = new String(getIdAsString());
@@ -1327,16 +1337,6 @@ public class ClubEvent
 		newClubEvent.setNewsImage(newsImageStr);
 		String notesStr = new String(getNotesAsString());
 		newClubEvent.setNotes(notesStr);
-		String priorYrPlnIncStr = new String(getPriorYrPlnIncAsString());
-		newClubEvent.setPriorYrPlnInc(priorYrPlnIncStr);
-		String priorYrActIncStr = new String(getPriorYrActIncAsString());
-		newClubEvent.setPriorYrActInc(priorYrActIncStr);
-		String priorYrPlnExpStr = new String(getPriorYrPlnExpAsString());
-		newClubEvent.setPriorYrPlnExp(priorYrPlnExpStr);
-		String priorYrActExpStr = new String(getPriorYrActExpAsString());
-		newClubEvent.setPriorYrActExp(priorYrActExpStr);
-		String stateStr = new String(getStateAsString());
-		newClubEvent.setState(stateStr);
 		return newClubEvent;
   }
 
@@ -1589,6 +1589,17 @@ public class ClubEvent
         // No value available -- leave current value as-is
       } else {
         setSeq ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getState();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setState ((ItemStatus)obj2);
       }
     }
     obj2 = clubEvent2.getFlags();
@@ -2053,6 +2064,50 @@ public class ClubEvent
         setFinanceProjection ((String)obj2);
       }
     }
+    obj2 = clubEvent2.getPriorYrPlnInc();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setPriorYrPlnInc ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getPriorYrActInc();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setPriorYrActInc ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getPriorYrPlnExp();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setPriorYrPlnExp ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getPriorYrActExp();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setPriorYrActExp ((String)obj2);
+      }
+    }
     obj2 = clubEvent2.getRecap();
     if (obj2 == null) {
       // No value available -- leave current value as-is
@@ -2163,61 +2218,6 @@ public class ClubEvent
         setNotesAsHtml ((String)obj2);
       }
     }
-    obj2 = clubEvent2.getPriorYrPlnInc();
-    if (obj2 == null) {
-      // No value available -- leave current value as-is
-    } else {
-      str2 = obj2.toString();
-      if (str2.equals ("")) {
-        // No value available -- leave current value as-is
-      } else {
-        setPriorYrPlnInc ((String)obj2);
-      }
-    }
-    obj2 = clubEvent2.getPriorYrActInc();
-    if (obj2 == null) {
-      // No value available -- leave current value as-is
-    } else {
-      str2 = obj2.toString();
-      if (str2.equals ("")) {
-        // No value available -- leave current value as-is
-      } else {
-        setPriorYrActInc ((String)obj2);
-      }
-    }
-    obj2 = clubEvent2.getPriorYrPlnExp();
-    if (obj2 == null) {
-      // No value available -- leave current value as-is
-    } else {
-      str2 = obj2.toString();
-      if (str2.equals ("")) {
-        // No value available -- leave current value as-is
-      } else {
-        setPriorYrPlnExp ((String)obj2);
-      }
-    }
-    obj2 = clubEvent2.getPriorYrActExp();
-    if (obj2 == null) {
-      // No value available -- leave current value as-is
-    } else {
-      str2 = obj2.toString();
-      if (str2.equals ("")) {
-        // No value available -- leave current value as-is
-      } else {
-        setPriorYrActExp ((String)obj2);
-      }
-    }
-    obj2 = clubEvent2.getState();
-    if (obj2 == null) {
-      // No value available -- leave current value as-is
-    } else {
-      str2 = obj2.toString();
-      if (str2.equals ("")) {
-        // No value available -- leave current value as-is
-      } else {
-        setState ((String)obj2);
-      }
-    }
   }
 
   /*
@@ -2248,6 +2248,9 @@ public class ClubEvent
           break;
       case SEQ_COLUMN_INDEX:
           setSeq (columnValue);
+          break;
+      case STATE_COLUMN_INDEX:
+          setState (columnValue);
           break;
       case FLAGS_COLUMN_INDEX:
           setFlags (columnValue);
@@ -2375,6 +2378,18 @@ public class ClubEvent
       case FINANCE_PROJECTION_COLUMN_INDEX:
           setFinanceProjection (columnValue);
           break;
+      case PRIOR_YR_PLN_INC_COLUMN_INDEX:
+          setPriorYrPlnInc (columnValue);
+          break;
+      case PRIOR_YR_ACT_INC_COLUMN_INDEX:
+          setPriorYrActInc (columnValue);
+          break;
+      case PRIOR_YR_PLN_EXP_COLUMN_INDEX:
+          setPriorYrPlnExp (columnValue);
+          break;
+      case PRIOR_YR_ACT_EXP_COLUMN_INDEX:
+          setPriorYrActExp (columnValue);
+          break;
       case RECAP_COLUMN_INDEX:
           setRecap (columnValue);
           break;
@@ -2405,21 +2420,6 @@ public class ClubEvent
       case NOTES_AS_HTML_COLUMN_INDEX:
           setNotesAsHtml (columnValue);
           break;
-      case PRIOR_YR_PLN_INC_COLUMN_INDEX:
-          setPriorYrPlnInc (columnValue);
-          break;
-      case PRIOR_YR_ACT_INC_COLUMN_INDEX:
-          setPriorYrActInc (columnValue);
-          break;
-      case PRIOR_YR_PLN_EXP_COLUMN_INDEX:
-          setPriorYrPlnExp (columnValue);
-          break;
-      case PRIOR_YR_ACT_EXP_COLUMN_INDEX:
-          setPriorYrActExp (columnValue);
-          break;
-      case STATE_COLUMN_INDEX:
-          setState (columnValue);
-          break;
     }
   }
 
@@ -2443,6 +2443,8 @@ public class ClubEvent
           return category;
       case SEQ_COLUMN_INDEX:
           return seq;
+      case STATE_COLUMN_INDEX:
+          return state;
       case FLAGS_COLUMN_INDEX:
           return flags;
       case WHEN_COLUMN_INDEX:
@@ -2527,6 +2529,14 @@ public class ClubEvent
           return overUnder;
       case FINANCE_PROJECTION_COLUMN_INDEX:
           return financeProjection;
+      case PRIOR_YR_PLN_INC_COLUMN_INDEX:
+          return priorYrPlnInc;
+      case PRIOR_YR_ACT_INC_COLUMN_INDEX:
+          return priorYrActInc;
+      case PRIOR_YR_PLN_EXP_COLUMN_INDEX:
+          return priorYrPlnExp;
+      case PRIOR_YR_ACT_EXP_COLUMN_INDEX:
+          return priorYrActExp;
       case RECAP_COLUMN_INDEX:
           return recap;
       case RECAP_AS_HTML_COLUMN_INDEX:
@@ -2547,16 +2557,6 @@ public class ClubEvent
           return notes;
       case NOTES_AS_HTML_COLUMN_INDEX:
           return notesAsHtml;
-      case PRIOR_YR_PLN_INC_COLUMN_INDEX:
-          return priorYrPlnInc;
-      case PRIOR_YR_ACT_INC_COLUMN_INDEX:
-          return priorYrActInc;
-      case PRIOR_YR_PLN_EXP_COLUMN_INDEX:
-          return priorYrPlnExp;
-      case PRIOR_YR_ACT_EXP_COLUMN_INDEX:
-          return priorYrActExp;
-      case STATE_COLUMN_INDEX:
-          return state;
       default: return null;
     }
   }
@@ -2581,6 +2581,8 @@ public class ClubEvent
           return CATEGORY_COLUMN_NAME;
       case SEQ_COLUMN_INDEX:
           return SEQ_COLUMN_NAME;
+      case STATE_COLUMN_INDEX:
+          return STATE_COLUMN_NAME;
       case FLAGS_COLUMN_INDEX:
           return FLAGS_COLUMN_NAME;
       case WHEN_COLUMN_INDEX:
@@ -2665,6 +2667,14 @@ public class ClubEvent
           return OVER_UNDER_COLUMN_NAME;
       case FINANCE_PROJECTION_COLUMN_INDEX:
           return FINANCE_PROJECTION_COLUMN_NAME;
+      case PRIOR_YR_PLN_INC_COLUMN_INDEX:
+          return PRIOR_YR_PLN_INC_COLUMN_NAME;
+      case PRIOR_YR_ACT_INC_COLUMN_INDEX:
+          return PRIOR_YR_ACT_INC_COLUMN_NAME;
+      case PRIOR_YR_PLN_EXP_COLUMN_INDEX:
+          return PRIOR_YR_PLN_EXP_COLUMN_NAME;
+      case PRIOR_YR_ACT_EXP_COLUMN_INDEX:
+          return PRIOR_YR_ACT_EXP_COLUMN_NAME;
       case RECAP_COLUMN_INDEX:
           return RECAP_COLUMN_NAME;
       case RECAP_AS_HTML_COLUMN_INDEX:
@@ -2685,16 +2695,6 @@ public class ClubEvent
           return NOTES_COLUMN_NAME;
       case NOTES_AS_HTML_COLUMN_INDEX:
           return NOTES_AS_HTML_COLUMN_NAME;
-      case PRIOR_YR_PLN_INC_COLUMN_INDEX:
-          return PRIOR_YR_PLN_INC_COLUMN_NAME;
-      case PRIOR_YR_ACT_INC_COLUMN_INDEX:
-          return PRIOR_YR_ACT_INC_COLUMN_NAME;
-      case PRIOR_YR_PLN_EXP_COLUMN_INDEX:
-          return PRIOR_YR_PLN_EXP_COLUMN_NAME;
-      case PRIOR_YR_ACT_EXP_COLUMN_INDEX:
-          return PRIOR_YR_ACT_EXP_COLUMN_NAME;
-      case STATE_COLUMN_INDEX:
-          return STATE_COLUMN_NAME;
       default: return null;
     }
   }
@@ -2720,6 +2720,8 @@ public class ClubEvent
           return CATEGORY_COMMON_NAME;
       case SEQ_COLUMN_INDEX:
           return SEQ_COMMON_NAME;
+      case STATE_COLUMN_INDEX:
+          return STATE_COMMON_NAME;
       case FLAGS_COLUMN_INDEX:
           return FLAGS_COMMON_NAME;
       case WHEN_COLUMN_INDEX:
@@ -2804,6 +2806,14 @@ public class ClubEvent
           return OVER_UNDER_COMMON_NAME;
       case FINANCE_PROJECTION_COLUMN_INDEX:
           return FINANCE_PROJECTION_COMMON_NAME;
+      case PRIOR_YR_PLN_INC_COLUMN_INDEX:
+          return PRIOR_YR_PLN_INC_COMMON_NAME;
+      case PRIOR_YR_ACT_INC_COLUMN_INDEX:
+          return PRIOR_YR_ACT_INC_COMMON_NAME;
+      case PRIOR_YR_PLN_EXP_COLUMN_INDEX:
+          return PRIOR_YR_PLN_EXP_COMMON_NAME;
+      case PRIOR_YR_ACT_EXP_COLUMN_INDEX:
+          return PRIOR_YR_ACT_EXP_COMMON_NAME;
       case RECAP_COLUMN_INDEX:
           return RECAP_COMMON_NAME;
       case RECAP_AS_HTML_COLUMN_INDEX:
@@ -2824,16 +2834,6 @@ public class ClubEvent
           return NOTES_COMMON_NAME;
       case NOTES_AS_HTML_COLUMN_INDEX:
           return NOTES_AS_HTML_COMMON_NAME;
-      case PRIOR_YR_PLN_INC_COLUMN_INDEX:
-          return PRIOR_YR_PLN_INC_COMMON_NAME;
-      case PRIOR_YR_ACT_INC_COLUMN_INDEX:
-          return PRIOR_YR_ACT_INC_COMMON_NAME;
-      case PRIOR_YR_PLN_EXP_COLUMN_INDEX:
-          return PRIOR_YR_PLN_EXP_COMMON_NAME;
-      case PRIOR_YR_ACT_EXP_COLUMN_INDEX:
-          return PRIOR_YR_ACT_EXP_COMMON_NAME;
-      case STATE_COLUMN_INDEX:
-          return STATE_COMMON_NAME;
       default: return null;
     }
   }
@@ -2858,6 +2858,8 @@ public class ClubEvent
           return CATEGORY_COLUMN_WIDTH;
       case SEQ_COLUMN_INDEX:
           return SEQ_COLUMN_WIDTH;
+      case STATE_COLUMN_INDEX:
+          return STATE_COLUMN_WIDTH;
       case FLAGS_COLUMN_INDEX:
           return FLAGS_COLUMN_WIDTH;
       case WHEN_COLUMN_INDEX:
@@ -2942,6 +2944,14 @@ public class ClubEvent
           return OVER_UNDER_COLUMN_WIDTH;
       case FINANCE_PROJECTION_COLUMN_INDEX:
           return FINANCE_PROJECTION_COLUMN_WIDTH;
+      case PRIOR_YR_PLN_INC_COLUMN_INDEX:
+          return PRIOR_YR_PLN_INC_COLUMN_WIDTH;
+      case PRIOR_YR_ACT_INC_COLUMN_INDEX:
+          return PRIOR_YR_ACT_INC_COLUMN_WIDTH;
+      case PRIOR_YR_PLN_EXP_COLUMN_INDEX:
+          return PRIOR_YR_PLN_EXP_COLUMN_WIDTH;
+      case PRIOR_YR_ACT_EXP_COLUMN_INDEX:
+          return PRIOR_YR_ACT_EXP_COLUMN_WIDTH;
       case RECAP_COLUMN_INDEX:
           return RECAP_COLUMN_WIDTH;
       case RECAP_AS_HTML_COLUMN_INDEX:
@@ -2962,16 +2972,6 @@ public class ClubEvent
           return NOTES_COLUMN_WIDTH;
       case NOTES_AS_HTML_COLUMN_INDEX:
           return NOTES_AS_HTML_COLUMN_WIDTH;
-      case PRIOR_YR_PLN_INC_COLUMN_INDEX:
-          return PRIOR_YR_PLN_INC_COLUMN_WIDTH;
-      case PRIOR_YR_ACT_INC_COLUMN_INDEX:
-          return PRIOR_YR_ACT_INC_COLUMN_WIDTH;
-      case PRIOR_YR_PLN_EXP_COLUMN_INDEX:
-          return PRIOR_YR_PLN_EXP_COLUMN_WIDTH;
-      case PRIOR_YR_ACT_EXP_COLUMN_INDEX:
-          return PRIOR_YR_ACT_EXP_COLUMN_WIDTH;
-      case STATE_COLUMN_INDEX:
-          return STATE_COLUMN_WIDTH;
       default: return 20;
     }
   }
@@ -2996,6 +2996,8 @@ public class ClubEvent
           return String.class;
       case SEQ_COLUMN_INDEX:
           return String.class;
+      case STATE_COLUMN_INDEX:
+          return ItemStatus.class;
       case FLAGS_COLUMN_INDEX:
           return Tags.class;
       case WHEN_COLUMN_INDEX:
@@ -3080,6 +3082,14 @@ public class ClubEvent
           return String.class;
       case FINANCE_PROJECTION_COLUMN_INDEX:
           return String.class;
+      case PRIOR_YR_PLN_INC_COLUMN_INDEX:
+          return String.class;
+      case PRIOR_YR_ACT_INC_COLUMN_INDEX:
+          return String.class;
+      case PRIOR_YR_PLN_EXP_COLUMN_INDEX:
+          return String.class;
+      case PRIOR_YR_ACT_EXP_COLUMN_INDEX:
+          return String.class;
       case RECAP_COLUMN_INDEX:
           return String.class;
       case RECAP_AS_HTML_COLUMN_INDEX:
@@ -3099,16 +3109,6 @@ public class ClubEvent
       case NOTES_COLUMN_INDEX:
           return String.class;
       case NOTES_AS_HTML_COLUMN_INDEX:
-          return String.class;
-      case PRIOR_YR_PLN_INC_COLUMN_INDEX:
-          return String.class;
-      case PRIOR_YR_ACT_INC_COLUMN_INDEX:
-          return String.class;
-      case PRIOR_YR_PLN_EXP_COLUMN_INDEX:
-          return String.class;
-      case PRIOR_YR_ACT_EXP_COLUMN_INDEX:
-          return String.class;
-      case STATE_COLUMN_INDEX:
           return String.class;
       default: return null;
     }
@@ -3354,6 +3354,57 @@ public class ClubEvent
    */
   public String getSeq () {
     return seq;
+  }
+ 
+  /**
+     Sets the state for this club event.
+ 
+     @param  state The state for this club event.
+   */
+  public void setState (ItemStatus state) {
+    this.state = state;
+    setModified (true);
+  }
+
+  /**
+     Sets the state for this club event.
+ 
+     @param  state The state for this club event.
+   */
+  public void setState (String state) {
+    this.state.set(state);
+    setModified (true);
+  }
+
+  /**
+    Returns the state for this club event as a string.
+ 
+    @return The state for this club event as a string.
+   */
+  public String getStateAsString () {
+    if (hasState()) {
+      return getState().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the state for this club event is null.
+ 
+    @return True if the state for this club event is not null.
+   */
+  public boolean hasState () {
+    return (state != null);
+  }
+
+  /**
+    Returns the state for this club event.
+ 
+    @return The state for this club event.
+   */
+  public ItemStatus getState () {
+    return state;
   }
  
   /**
@@ -5625,6 +5676,250 @@ public class ClubEvent
   }
  
   /**
+     Sets the prior yr pln inc for this club event.
+ 
+     @param  priorYrPlnInc The prior yr pln inc for this club event.
+   */
+  public void setPriorYrPlnInc (String priorYrPlnInc) {
+    this.priorYrPlnInc = priorYrPlnInc;
+    setModified (true);
+  }
+
+  /**
+    Returns the prior yr pln inc for this club event as a string.
+ 
+    @return The prior yr pln inc for this club event as a string.
+   */
+  public String getPriorYrPlnIncAsString () {
+    if (hasPriorYrPlnInc()) {
+      return getPriorYrPlnInc().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the prior yr pln inc for this club event is null.
+ 
+    @return True if the prior yr pln inc for this club event is not null.
+   */
+  public boolean hasPriorYrPlnInc () {
+    return (priorYrPlnInc != null);
+  }
+
+  /**
+    Determines if the prior yr pln inc for this club event
+    is null or is empty.
+ 
+    @return True if the prior yr pln inc for this club event
+    is not null and not empty.
+   */
+  public boolean hasPriorYrPlnIncWithData () {
+    return (priorYrPlnInc != null && priorYrPlnInc.length() > 0);
+  }
+
+  /**
+    Returns the prior yr pln inc for this club event.
+ 
+    @return The prior yr pln inc for this club event.
+   */
+  public String getPriorYrPlnInc () {
+    return priorYrPlnInc;
+  }
+  /**
+    Returns the prior yr pln inc as a BigDecimal object.
+ 
+    @return The prior yr pln inc for this club event as a BigDecimal.
+   */
+  public BigDecimal getPriorYrPlnIncAsBigDecimal () {
+    CalcParser parser = new CalcParser(priorYrPlnInc);
+    return parser.getResult();
+  }
+ 
+  /**
+     Sets the prior yr act inc for this club event.
+ 
+     @param  priorYrActInc The prior yr act inc for this club event.
+   */
+  public void setPriorYrActInc (String priorYrActInc) {
+    this.priorYrActInc = priorYrActInc;
+    setModified (true);
+  }
+
+  /**
+    Returns the prior yr act inc for this club event as a string.
+ 
+    @return The prior yr act inc for this club event as a string.
+   */
+  public String getPriorYrActIncAsString () {
+    if (hasPriorYrActInc()) {
+      return getPriorYrActInc().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the prior yr act inc for this club event is null.
+ 
+    @return True if the prior yr act inc for this club event is not null.
+   */
+  public boolean hasPriorYrActInc () {
+    return (priorYrActInc != null);
+  }
+
+  /**
+    Determines if the prior yr act inc for this club event
+    is null or is empty.
+ 
+    @return True if the prior yr act inc for this club event
+    is not null and not empty.
+   */
+  public boolean hasPriorYrActIncWithData () {
+    return (priorYrActInc != null && priorYrActInc.length() > 0);
+  }
+
+  /**
+    Returns the prior yr act inc for this club event.
+ 
+    @return The prior yr act inc for this club event.
+   */
+  public String getPriorYrActInc () {
+    return priorYrActInc;
+  }
+  /**
+    Returns the prior yr act inc as a BigDecimal object.
+ 
+    @return The prior yr act inc for this club event as a BigDecimal.
+   */
+  public BigDecimal getPriorYrActIncAsBigDecimal () {
+    CalcParser parser = new CalcParser(priorYrActInc);
+    return parser.getResult();
+  }
+ 
+  /**
+     Sets the prior yr pln exp for this club event.
+ 
+     @param  priorYrPlnExp The prior yr pln exp for this club event.
+   */
+  public void setPriorYrPlnExp (String priorYrPlnExp) {
+    this.priorYrPlnExp = priorYrPlnExp;
+    setModified (true);
+  }
+
+  /**
+    Returns the prior yr pln exp for this club event as a string.
+ 
+    @return The prior yr pln exp for this club event as a string.
+   */
+  public String getPriorYrPlnExpAsString () {
+    if (hasPriorYrPlnExp()) {
+      return getPriorYrPlnExp().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the prior yr pln exp for this club event is null.
+ 
+    @return True if the prior yr pln exp for this club event is not null.
+   */
+  public boolean hasPriorYrPlnExp () {
+    return (priorYrPlnExp != null);
+  }
+
+  /**
+    Determines if the prior yr pln exp for this club event
+    is null or is empty.
+ 
+    @return True if the prior yr pln exp for this club event
+    is not null and not empty.
+   */
+  public boolean hasPriorYrPlnExpWithData () {
+    return (priorYrPlnExp != null && priorYrPlnExp.length() > 0);
+  }
+
+  /**
+    Returns the prior yr pln exp for this club event.
+ 
+    @return The prior yr pln exp for this club event.
+   */
+  public String getPriorYrPlnExp () {
+    return priorYrPlnExp;
+  }
+  /**
+    Returns the prior yr pln exp as a BigDecimal object.
+ 
+    @return The prior yr pln exp for this club event as a BigDecimal.
+   */
+  public BigDecimal getPriorYrPlnExpAsBigDecimal () {
+    CalcParser parser = new CalcParser(priorYrPlnExp);
+    return parser.getResult();
+  }
+ 
+  /**
+     Sets the prior yr act exp for this club event.
+ 
+     @param  priorYrActExp The prior yr act exp for this club event.
+   */
+  public void setPriorYrActExp (String priorYrActExp) {
+    this.priorYrActExp = priorYrActExp;
+    setModified (true);
+  }
+
+  /**
+    Returns the prior yr act exp for this club event as a string.
+ 
+    @return The prior yr act exp for this club event as a string.
+   */
+  public String getPriorYrActExpAsString () {
+    if (hasPriorYrActExp()) {
+      return getPriorYrActExp().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the prior yr act exp for this club event is null.
+ 
+    @return True if the prior yr act exp for this club event is not null.
+   */
+  public boolean hasPriorYrActExp () {
+    return (priorYrActExp != null);
+  }
+
+  /**
+    Determines if the prior yr act exp for this club event
+    is null or is empty.
+ 
+    @return True if the prior yr act exp for this club event
+    is not null and not empty.
+   */
+  public boolean hasPriorYrActExpWithData () {
+    return (priorYrActExp != null && priorYrActExp.length() > 0);
+  }
+
+  /**
+    Returns the prior yr act exp for this club event.
+ 
+    @return The prior yr act exp for this club event.
+   */
+  public String getPriorYrActExp () {
+    return priorYrActExp;
+  }
+  /**
+    Returns the prior yr act exp as a BigDecimal object.
+ 
+    @return The prior yr act exp for this club event as a BigDecimal.
+   */
+  public BigDecimal getPriorYrActExpAsBigDecimal () {
+    CalcParser parser = new CalcParser(priorYrActExp);
+    return parser.getResult();
+  }
+ 
+  /**
      Sets the recap for this club event.
  
      @param  recap The recap for this club event.
@@ -6142,302 +6437,6 @@ public class ClubEvent
    */
   public String getNotesAsHtml () {
     return notesAsHtml;
-  }
- 
-  /**
-     Sets the prior yr pln inc for this club event.
- 
-     @param  priorYrPlnInc The prior yr pln inc for this club event.
-   */
-  public void setPriorYrPlnInc (String priorYrPlnInc) {
-    this.priorYrPlnInc = priorYrPlnInc;
-    setModified (true);
-  }
-
-  /**
-    Returns the prior yr pln inc for this club event as a string.
- 
-    @return The prior yr pln inc for this club event as a string.
-   */
-  public String getPriorYrPlnIncAsString () {
-    if (hasPriorYrPlnInc()) {
-      return getPriorYrPlnInc().toString();
-    } else {
-      return "";
-    }
-  }
-
-  /**
-    Determines if the prior yr pln inc for this club event is null.
- 
-    @return True if the prior yr pln inc for this club event is not null.
-   */
-  public boolean hasPriorYrPlnInc () {
-    return (priorYrPlnInc != null);
-  }
-
-  /**
-    Determines if the prior yr pln inc for this club event
-    is null or is empty.
- 
-    @return True if the prior yr pln inc for this club event
-    is not null and not empty.
-   */
-  public boolean hasPriorYrPlnIncWithData () {
-    return (priorYrPlnInc != null && priorYrPlnInc.length() > 0);
-  }
-
-  /**
-    Returns the prior yr pln inc for this club event.
- 
-    @return The prior yr pln inc for this club event.
-   */
-  public String getPriorYrPlnInc () {
-    return priorYrPlnInc;
-  }
-  /**
-    Returns the prior yr pln inc as a BigDecimal object.
- 
-    @return The prior yr pln inc for this club event as a BigDecimal.
-   */
-  public BigDecimal getPriorYrPlnIncAsBigDecimal () {
-    CalcParser parser = new CalcParser(priorYrPlnInc);
-    return parser.getResult();
-  }
- 
-  /**
-     Sets the prior yr act inc for this club event.
- 
-     @param  priorYrActInc The prior yr act inc for this club event.
-   */
-  public void setPriorYrActInc (String priorYrActInc) {
-    this.priorYrActInc = priorYrActInc;
-    setModified (true);
-  }
-
-  /**
-    Returns the prior yr act inc for this club event as a string.
- 
-    @return The prior yr act inc for this club event as a string.
-   */
-  public String getPriorYrActIncAsString () {
-    if (hasPriorYrActInc()) {
-      return getPriorYrActInc().toString();
-    } else {
-      return "";
-    }
-  }
-
-  /**
-    Determines if the prior yr act inc for this club event is null.
- 
-    @return True if the prior yr act inc for this club event is not null.
-   */
-  public boolean hasPriorYrActInc () {
-    return (priorYrActInc != null);
-  }
-
-  /**
-    Determines if the prior yr act inc for this club event
-    is null or is empty.
- 
-    @return True if the prior yr act inc for this club event
-    is not null and not empty.
-   */
-  public boolean hasPriorYrActIncWithData () {
-    return (priorYrActInc != null && priorYrActInc.length() > 0);
-  }
-
-  /**
-    Returns the prior yr act inc for this club event.
- 
-    @return The prior yr act inc for this club event.
-   */
-  public String getPriorYrActInc () {
-    return priorYrActInc;
-  }
-  /**
-    Returns the prior yr act inc as a BigDecimal object.
- 
-    @return The prior yr act inc for this club event as a BigDecimal.
-   */
-  public BigDecimal getPriorYrActIncAsBigDecimal () {
-    CalcParser parser = new CalcParser(priorYrActInc);
-    return parser.getResult();
-  }
- 
-  /**
-     Sets the prior yr pln exp for this club event.
- 
-     @param  priorYrPlnExp The prior yr pln exp for this club event.
-   */
-  public void setPriorYrPlnExp (String priorYrPlnExp) {
-    this.priorYrPlnExp = priorYrPlnExp;
-    setModified (true);
-  }
-
-  /**
-    Returns the prior yr pln exp for this club event as a string.
- 
-    @return The prior yr pln exp for this club event as a string.
-   */
-  public String getPriorYrPlnExpAsString () {
-    if (hasPriorYrPlnExp()) {
-      return getPriorYrPlnExp().toString();
-    } else {
-      return "";
-    }
-  }
-
-  /**
-    Determines if the prior yr pln exp for this club event is null.
- 
-    @return True if the prior yr pln exp for this club event is not null.
-   */
-  public boolean hasPriorYrPlnExp () {
-    return (priorYrPlnExp != null);
-  }
-
-  /**
-    Determines if the prior yr pln exp for this club event
-    is null or is empty.
- 
-    @return True if the prior yr pln exp for this club event
-    is not null and not empty.
-   */
-  public boolean hasPriorYrPlnExpWithData () {
-    return (priorYrPlnExp != null && priorYrPlnExp.length() > 0);
-  }
-
-  /**
-    Returns the prior yr pln exp for this club event.
- 
-    @return The prior yr pln exp for this club event.
-   */
-  public String getPriorYrPlnExp () {
-    return priorYrPlnExp;
-  }
-  /**
-    Returns the prior yr pln exp as a BigDecimal object.
- 
-    @return The prior yr pln exp for this club event as a BigDecimal.
-   */
-  public BigDecimal getPriorYrPlnExpAsBigDecimal () {
-    CalcParser parser = new CalcParser(priorYrPlnExp);
-    return parser.getResult();
-  }
- 
-  /**
-     Sets the prior yr act exp for this club event.
- 
-     @param  priorYrActExp The prior yr act exp for this club event.
-   */
-  public void setPriorYrActExp (String priorYrActExp) {
-    this.priorYrActExp = priorYrActExp;
-    setModified (true);
-  }
-
-  /**
-    Returns the prior yr act exp for this club event as a string.
- 
-    @return The prior yr act exp for this club event as a string.
-   */
-  public String getPriorYrActExpAsString () {
-    if (hasPriorYrActExp()) {
-      return getPriorYrActExp().toString();
-    } else {
-      return "";
-    }
-  }
-
-  /**
-    Determines if the prior yr act exp for this club event is null.
- 
-    @return True if the prior yr act exp for this club event is not null.
-   */
-  public boolean hasPriorYrActExp () {
-    return (priorYrActExp != null);
-  }
-
-  /**
-    Determines if the prior yr act exp for this club event
-    is null or is empty.
- 
-    @return True if the prior yr act exp for this club event
-    is not null and not empty.
-   */
-  public boolean hasPriorYrActExpWithData () {
-    return (priorYrActExp != null && priorYrActExp.length() > 0);
-  }
-
-  /**
-    Returns the prior yr act exp for this club event.
- 
-    @return The prior yr act exp for this club event.
-   */
-  public String getPriorYrActExp () {
-    return priorYrActExp;
-  }
-  /**
-    Returns the prior yr act exp as a BigDecimal object.
- 
-    @return The prior yr act exp for this club event as a BigDecimal.
-   */
-  public BigDecimal getPriorYrActExpAsBigDecimal () {
-    CalcParser parser = new CalcParser(priorYrActExp);
-    return parser.getResult();
-  }
- 
-  /**
-     Sets the state for this club event.
- 
-     @param  state The state for this club event.
-   */
-  public void setState (String state) {
-    this.state = state;
-    setModified (true);
-  }
-
-  /**
-    Returns the state for this club event as a string.
- 
-    @return The state for this club event as a string.
-   */
-  public String getStateAsString () {
-    if (hasState()) {
-      return getState().toString();
-    } else {
-      return "";
-    }
-  }
-
-  /**
-    Determines if the state for this club event is null.
- 
-    @return True if the state for this club event is not null.
-   */
-  public boolean hasState () {
-    return (state != null);
-  }
-
-  /**
-    Determines if the state for this club event
-    is null or is empty.
- 
-    @return True if the state for this club event
-    is not null and not empty.
-   */
-  public boolean hasStateWithData () {
-    return (state != null && state.length() > 0);
-  }
-
-  /**
-    Returns the state for this club event.
- 
-    @return The state for this club event.
-   */
-  public String getState () {
-    return state;
   }
 
   /**

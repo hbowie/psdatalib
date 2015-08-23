@@ -62,7 +62,7 @@ public class Note
   private DataField           authorField = null;
   private boolean             authorAdded = false;
   
-  private ActionStatus        statusValue = null;
+  private ItemStatus        statusValue = null;
   private DataField           statusField = null;
   private boolean             statusAdded = false;
   
@@ -195,7 +195,7 @@ public class Note
     typeAdded = false;
     
     // Build the Status field
-    statusValue = new ActionStatus();
+    statusValue = new ItemStatus();
     statusField = new DataField(NoteParms.STATUS_DEF, statusValue);
     statusAdded = false;
     
@@ -479,7 +479,7 @@ public class Note
     }
   }
   
-  public void setStatus(ActionStatus status) {
+  public void setStatus(ItemStatus status) {
     statusValue.set(status.toString());
     if (! statusAdded) {
       storeField (recDef, statusField);
@@ -499,7 +499,7 @@ public class Note
     return (statusAdded && statusValue != null && statusValue.hasData());
   }
   
-  public ActionStatus getStatus() {
+  public ItemStatus getStatus() {
     return statusValue;
   }
   

@@ -27,6 +27,7 @@ public class ContactInfo
     implements
         DataValue{
   
+  public static final String NULL = "null";
   private String value = null;
   private int    i     = 0;
   
@@ -68,8 +69,10 @@ public class ContactInfo
   }
   
   public ContactInfo (String value) {
-    this.value = value;
-    parse();
+    if (! value.equalsIgnoreCase(NULL)) {
+      this.value = value;
+      parse();
+    }
   }
   
   /**
@@ -78,15 +81,17 @@ public class ContactInfo
    @param value The value as a string. 
   */
   public void set(String value) {
-    this.value = value;
-    name = "";
-    address = "";
-    city = "";
-    state = "";
-    zipCode = "";
-    phone = "";
-    email = "";
-    parse();
+    if (! value.equalsIgnoreCase(NULL)) {
+      this.value = value;
+      name = "";
+      address = "";
+      city = "";
+      state = "";
+      zipCode = "";
+      phone = "";
+      email = "";
+      parse();
+    }
   }
   
   /**

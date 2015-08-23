@@ -35,7 +35,8 @@ package com.powersurgepub.psdatalib.clubplanner;
              DataSource {
    
    public static final String STATUS = "Status";
-   public static final String FLAGS   = "Flags";
+   public static final String FLAGS  = "Flags";
+   public static final String NULL   = "null";
   
   /** 
      The number of levels of directories and sub-directories to be read. 
@@ -521,10 +522,11 @@ package com.powersurgepub.psdatalib.clubplanner;
    */
   private void setLastEventFieldValue() {
     if (fieldNumber >= 0
-        && eventFieldValue.length() > 0) {
+        && eventFieldValue.length() > 0
+        && (! eventFieldValue.toString().trim().equalsIgnoreCase(NULL))) {
       clubEvent.setColumnValue(fieldNumber, eventFieldValue.toString().trim());
-      eventFieldValue = new StringBuilder();
     }
+    eventFieldValue = new StringBuilder();
   }
   
   /**

@@ -332,11 +332,11 @@ public class ClubEventCalc {
   }
   
   public void calcState(ClubEvent clubEvent) {
-    String state = clubEvent.getState();
-    if (state == null || state.length() == 0) {
+    ItemStatus state = clubEvent.getState();
+    if (state == null || (! state.hasData())) {
       String flags = clubEvent.getFlagsAsString();
       if (flags.contains("archive")) {
-        clubEvent.setState("6 - Completed");
+        clubEvent.setState("9 - Closed");
       }
       else
       if (flags.contains("news")) {
@@ -348,7 +348,7 @@ public class ClubEventCalc {
       }
       else
       if (flags.contains("discards")) {
-        clubEvent.setState("5 - Canceled");
+        clubEvent.setState("8 - Canceled");
       }
       else
       if (flags.contains("ideas")) {
@@ -360,7 +360,7 @@ public class ClubEventCalc {
       }
       else
       if (flags.contains("rotate")) {
-        clubEvent.setState("9 - Rotating");
+        clubEvent.setState("7 - Pending Recurs");
       }
     }
   }
