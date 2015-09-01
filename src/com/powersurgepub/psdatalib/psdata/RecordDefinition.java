@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2014 Herb Bowie
+ * Copyright 1999 - 2015 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public class RecordDefinition {
      The no-arg constructor will instantiate a new DataDictionary.
    */
   public RecordDefinition () {
-
+    
     this (new DataDictionary ());
   }
   

@@ -62,7 +62,7 @@ public class Note
   private DataField           authorField = null;
   private boolean             authorAdded = false;
   
-  private ItemStatus        statusValue = null;
+  private ItemStatus          statusValue = null;
   private DataField           statusField = null;
   private boolean             statusAdded = false;
   

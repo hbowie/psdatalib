@@ -54,8 +54,9 @@ public class DataFieldDefinition {
   public static final int     AUTHOR_TYPE         = 7;
   public static final int     DATE_TYPE           = 8;
   public static final int     RATING_TYPE         = 9;
+  public static final int     STATUS_TYPE         = 10;
   
-  public static final int     MAX_TYPE            = 9;
+  public static final int     MAX_TYPE            = 10;
   
   /** 
      If two fields of this type are to be combined, is it OK to do 

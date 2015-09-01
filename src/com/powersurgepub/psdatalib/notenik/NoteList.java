@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 - 2014 Herb Bowie
+ * Copyright 2009 - 2015 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -134,6 +134,23 @@ public class NoteList
       notes.remove(oldIndex);
     }
     return newPosition;
+  }
+  
+  /**
+   Removes the passed note, if it exists in the collection.
+
+   @param noteToRemove The note to be removed.
+   
+   @return True if note found and removed; false otherwise.
+   */
+  public boolean remove (Note noteToRemove) {
+    int oldIndex = find (noteToRemove);
+    if (findMatch) {
+      tagsModel.remove (noteToRemove);
+      tagsList.remove (noteToRemove);
+      notes.remove(oldIndex);
+    }
+    return findMatch;
   }
 
   public int find (Note findNote) {

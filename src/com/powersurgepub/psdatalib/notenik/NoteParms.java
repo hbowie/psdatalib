@@ -32,7 +32,27 @@ package com.powersurgepub.psdatalib.notenik;
  */
 public class NoteParms {
   
+  /** The type of notes found in this collection. */
+  private    int              noteType = NOTES_ONLY_TYPE;
+  public static final int       NOTES_ONLY_TYPE     = 1;
+  public static final int       NOTES_PLUS_TYPE     = 2;
+  public static final int       NOTES_GENERAL_TYPE  = 3;
+  public static final int       DEFINED_TYPE        = 4;
+  public static final int       MARKDOWN_TYPE       = 5;
+  public static final int       TAG_TYPE            = 6;
+  public static final int       QUOTE_TYPE          = 7;
+  public static final int       NOTES_EXPANDED_TYPE = 8;
+  
+  /** The record definition used for the notes in this collection. */
+  private    RecordDefinition recDef = null;
+  
+  private    String           preferredFileExt    = "txt";
+  
+  private    boolean          metadataAsMarkdown = true;
+
+  
   public static final String FILENAME = "notenik.parms";
+  public static final String TEMPLATE_FILE_NAME = "template.txt";
   
   public static final String  TITLE_FIELD_NAME  = "Title";
   public static final String  TITLE_COMMON_NAME = "title";
@@ -75,6 +95,7 @@ public class NoteParms {
   public static final String  CATEGORY          = "Category";
   public static final String  CATEGORIES        = "Categories";
   public static final String  URL               = "URL";
+  public static final String  STATE             = "State";
   public static final String  PRIORITY          = "Priority";
   
   public static final String  AUTHOR_INFO       = "Author Info";
@@ -132,24 +153,6 @@ public class NoteParms {
       = new SimpleDateFormat (COMPLETE_FORMAT_STRING);
   public final static DateFormat STANDARD_FORMAT
       = new SimpleDateFormat (STANDARD_FORMAT_STRING);
-  
-  /** The type of data set to generate: planner or minutes. */
-  private    int              noteType = NOTES_ONLY_TYPE;
-  public static final int     NOTES_ONLY_TYPE     = 1;
-  public static final int     NOTES_PLUS_TYPE     = 2;
-  public static final int     NOTES_GENERAL_TYPE  = 3;
-  public static final int     DEFINED_TYPE        = 4;
-  public static final int     MARKDOWN_TYPE       = 5;
-  public static final int     TAG_TYPE            = 6;
-  public static final int     QUOTE_TYPE          = 7;
-  public static final int     NOTES_EXPANDED_TYPE = 8;
-  
-  private    String           preferredFileExt    = "txt";
-  
-  
-  private    boolean          metadataAsMarkdown = true;
-  
-  private    RecordDefinition recDef = new RecordDefinition();
 
   static {
     TITLE_DEF.setType  (DataFieldDefinition.TITLE_TYPE);
@@ -158,7 +161,7 @@ public class NoteParms {
     BODY_DEF.setType   (DataFieldDefinition.STRING_BUILDER_TYPE);
     AUTHOR_DEF.setType (DataFieldDefinition.STRING_TYPE);
     DATE_DEF.setType   (DataFieldDefinition.STRING_TYPE);
-    STATUS_DEF.setType (DataFieldDefinition.STRING_TYPE);
+    STATUS_DEF.setType (DataFieldDefinition.STATUS_TYPE);
     RATING_DEF.setType (DataFieldDefinition.RATING_TYPE);
     TEASER_DEF.setType (DataFieldDefinition.STRING_BUILDER_TYPE);
     TYPE_DEF.setType   (DataFieldDefinition.STRING_TYPE);
@@ -224,10 +227,22 @@ public class NoteParms {
     this.recDef = recDef;
   }
   
+  /**
+   Return the current record definition; if one doesn't yet exist, then 
+   build one based on the current note type. 
+  
+   @return The record definition. 
+  */
   public RecordDefinition getRecDef() {
     return getRecordDefinition();
   }
   
+  /**
+   Return the current record definition; if one doesn't yet exist, then 
+   build one based on the current note type. 
+  
+   @return The record definition. 
+  */
   public RecordDefinition getRecordDefinition() {
     if (recDef == null) {
       buildRecordDefinition();
@@ -235,11 +250,24 @@ public class NoteParms {
     return recDef;
   }
   
+  /**
+   Populate a record definition that already exists. 
+  
+   @param recDef The existing record definition. 
+  
+   @return The populated record definition, based on the note type. 
+  */
   public RecordDefinition buildRecordDefinition(RecordDefinition recDef) {
     this.recDef = recDef;
     return buildRecordDefinition();
   }
   
+  /**
+   Build the record definition from scratch, based on the note type, after
+   clearing out any columns already defined. 
+  
+   @return The new record definition. 
+  */
   public RecordDefinition buildRecordDefinition() {
 
     if (recDef == null) {
@@ -461,7 +489,8 @@ public class NoteParms {
   }
   
   public static boolean isStatus(CommonName commonName) {
-    return (commonName.getCommonForm().equals(STATUS_COMMON_NAME));
+    return (commonName.getCommonForm().equals(STATUS_COMMON_NAME)
+        || commonName.getCommonForm().equalsIgnoreCase(STATE));
   }
   
   public static boolean isRating(CommonName commonName) {
@@ -567,6 +596,29 @@ public class NoteParms {
         
         widgetWithLabel.setLabel(linkLabel);
         widgetWithLabel.setWidget(linkText);
+        break;
+        
+      // Link  
+      case DataFieldDefinition.STATUS_TYPE:
+        ComboBoxWidget statusText = new ComboBoxWidget();
+        label.setLabelFor(statusText);
+        
+        ItemStatusConfig.getShared().populateComboBox(statusText);
+        
+        setDefaultLabelConstraints(gb);
+        gb.add(label);
+        
+        gb.setAllInsets(8);
+        gb.setIpady(0);
+        gb.setLeftRightInsets(10);
+        gb.setAnchor(GridBagConstraints.WEST);
+        gb.setFill(GridBagConstraints.HORIZONTAL);
+        gb.setColumnWeight(1.0);
+        gb.setRowWeight(0.0);
+        gb.add(statusText);
+        
+        widgetWithLabel.setLabel(label);
+        widgetWithLabel.setWidget(statusText);
         break;
         
       // Complex text field  

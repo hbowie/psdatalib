@@ -16,7 +16,7 @@
 
 package com.powersurgepub.psdatalib.psdata.values;
 
-import com.powersurgepub.psutils.*;
+  import com.powersurgepub.psutils.*;
   import javax.swing.*;
 
 /**
@@ -125,7 +125,7 @@ public class ItemStatusConfig {
     return populateComboBoxModel(cbm);
   }
   
-  public ComboBoxModel populateComboBoxModel(DefaultComboBoxModel cbm) {
+  public ComboBoxModel populateComboBoxModel(MutableComboBoxModel cbm) {
     for (int i = statusLow; i <= statusHigh; i++) {
       if (statusValid(i)) {
         ItemStatus status = new ItemStatus(this, i);
@@ -133,6 +133,16 @@ public class ItemStatusConfig {
       }
     }
     return cbm;
+  }
+  
+  public void populateComboBox(JComboBox box) {
+    box.removeAllItems();
+    for (int i = statusLow; i <= statusHigh; i++) {
+      if (statusValid(i)) {
+        ItemStatus status = new ItemStatus(this, i);
+        box.addItem(status.toString());
+      }
+    }
   }
   
   /**
@@ -185,6 +195,23 @@ public class ItemStatusConfig {
       str.append(String.valueOf(values[i].isAvailable()));
       str.append(GlobalConstants.LINE_FEED);
     }
+    return str.toString();
+  }
+  
+  public String getClosedString() {
+    int closed = statusHigh;
+    while (closed > 0 && (! values[closed].isAvailable())) {
+      closed--;
+    }
+    StringBuilder str = new StringBuilder();
+    String chars = String.valueOf(closed).trim();
+    if (chars.length() > 0) {
+      str.append (chars.charAt(0));
+    } else {
+      str.append('0');
+    }
+    str.append(" - ");
+    str.append(values[closed].toString());
     return str.toString();
   }
 

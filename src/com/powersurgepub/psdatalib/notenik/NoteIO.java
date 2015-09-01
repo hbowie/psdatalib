@@ -144,7 +144,8 @@ public class NoteIO
     initialize();
   }
   
-  public NoteIO (RecordDefinition recDef, File folder) {
+  public NoteIO (File folder, int inType, RecordDefinition recDef) {
+    noteParms.setNoteType(inType);
     noteParms.setRecDef(recDef);
     setHomeFolder(folder);
     initialize();
@@ -246,7 +247,7 @@ public class NoteIO
     noteParms.newRecordDefinition(inDict);
     noteParms.buildRecordDefinition ();
     openForInputCommon();
-  }
+  } 
       
   /**
      Opens the reader for input.
@@ -264,7 +265,7 @@ public class NoteIO
   public void openForInput () 
       throws IOException {
     
-    noteParms.buildRecordDefinition();
+    // noteParms.buildRecordDefinition();
     openForInputCommon();
   }
   
@@ -277,6 +278,16 @@ public class NoteIO
     return noteParms;
   }
   
+  /**
+   Build record definition. 
+  */
+  public void buildRecordDefinition() {
+    noteParms.buildRecordDefinition();
+  }
+  
+  /**
+   Not yet used anywhere.
+   */
   public NoteParms readNoteParms() {
     File noteParmsFile = new File (homeFolder, NoteParms.FILENAME);
     if (noteParmsFile.exists() && noteParmsFile.canRead()) {
@@ -475,6 +486,10 @@ public class NoteIO
     }
     else
     if (candidate.getName().contains(PARMS_TITLE)) {
+      return false;
+    }
+    else
+    if (candidate.getName().equalsIgnoreCase(NoteParms.TEMPLATE_FILE_NAME)) {
       return false;
     }
     else
@@ -833,6 +848,15 @@ public class NoteIO
     completePath.append(localPath);
     completePath.append(FILE_EXT);
     return new File (completePath.toString());
+  }
+  
+  /**
+   Return the number of fields defined in the record definition. 
+  
+   @return The number of fields/columns in the record definition. 
+  */
+  public int getNumberOfFields() {
+    return noteParms.getRecDef().getNumberOfFields();
   }
   
   /**
