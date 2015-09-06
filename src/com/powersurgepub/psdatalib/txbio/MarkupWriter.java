@@ -320,7 +320,6 @@ public class MarkupWriter
   private boolean store (TextNode node) {
     
     boolean ok = true;
-    // System.out.println("MarkupWriter.store TextNode type = " + node.getType());
     
     extractTagInfo (node.getType());
     // Open the node
@@ -389,14 +388,10 @@ public class MarkupWriter
     else
     if (preformatted) {
       if (ok) {
-        // System.out.println("  writeText...");
-        // System.out.println(node.getText());
         writeText(node.getText());
       }
     } else {
       if (ok) {
-        // System.out.println("  writeTextForMarkup...");
-        // System.out.println(node.getText());
         writeTextForMarkup (node.getText());
       }
     }
@@ -2134,7 +2129,7 @@ public class MarkupWriter
     switch (markupFormat) {
       case MARKDOWN_FORMAT:
         writer.newLine();
-        writer.ensureBlankLine();
+        // writer.ensureBlankLine();
         break;
       case TEXTILE_SYNTAX_1_FORMAT:
       case TEXTILE_SYNTAX_2_FORMAT:
