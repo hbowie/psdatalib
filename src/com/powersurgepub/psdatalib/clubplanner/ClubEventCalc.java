@@ -435,36 +435,55 @@ public class ClubEventCalc {
   
   public void calcFinanceProjection (ClubEvent clubEvent) {
 
+    BigDecimal actualIncome = BigDecimal.ZERO;
+    BigDecimal plannedIncome = BigDecimal.ZERO;
+    BigDecimal actualExpense = BigDecimal.ZERO;
+    BigDecimal plannedExpense = BigDecimal.ZERO;
+    BigDecimal income = BigDecimal.ZERO;
+    BigDecimal expense = BigDecimal.ZERO;
     BigDecimal financeProjection = BigDecimal.ZERO;
-
     boolean anyFinances = false;
+    
     if (clubEvent.getActualIncome() != null
         && clubEvent.getActualIncome().length() > 0) {
-      financeProjection = clubEvent.getActualIncomeAsBigDecimal();
+      actualIncome = clubEvent.getActualIncomeAsBigDecimal();
       anyFinances = true;
     }
-    else
+    
     if (clubEvent.getPlannedIncome() != null
         && clubEvent.getPlannedIncome().length() > 0) {
-      financeProjection = clubEvent.getPlannedIncomeAsBigDecimal();
+      plannedIncome = clubEvent.getPlannedIncomeAsBigDecimal();
       anyFinances = true;
+    }
+    
+    if (clubEvent.getState().isDone()
+        || actualIncome.compareTo(plannedIncome) > 0) {
+      income = actualIncome;
+    } else {
+      income = plannedIncome;
     }
 
     if (clubEvent.getActualExpense() != null
         && clubEvent.getActualExpense().length() > 0) {
-      financeProjection = financeProjection.subtract
-          (clubEvent.getActualExpenseAsBigDecimal());
+      actualExpense = clubEvent.getActualExpenseAsBigDecimal();
       anyFinances = true;
     }
-    else
+    
     if (clubEvent.getPlannedExpense() != null
         && clubEvent.getPlannedExpense().length() > 0) {
-      financeProjection = financeProjection.subtract
-          (clubEvent.getPlannedExpenseAsBigDecimal());
+      plannedExpense = clubEvent.getPlannedExpenseAsBigDecimal();
       anyFinances = true;
+    }
+    
+    if (clubEvent.getState().isDone()
+        || actualExpense.compareTo(plannedExpense) > 0) {
+      expense = actualExpense;
+    } else {
+      expense = plannedExpense;
     }
 
     if (anyFinances) {
+      financeProjection = income.subtract(expense);
       clubEvent.setFinanceProjection
           (currencyFormat.format(financeProjection.doubleValue()));
     } else {
