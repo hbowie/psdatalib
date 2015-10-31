@@ -16,8 +16,8 @@
 
 package com.powersurgepub.psdatalib.textmerge.input;
 
-import com.powersurgepub.psdatalib.tabdelim.TabDelimFile;
-  import com.powersurgepub.psdatalib.psdata.DataSource;
+  import com.powersurgepub.psdatalib.psdata.*;
+  import com.powersurgepub.psdatalib.tabdelim.*;
   import java.io.*;
 
 /**

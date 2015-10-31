@@ -806,8 +806,8 @@ public class ClubEventCalc {
       else
       if (c == ',') {
         processHeaderWord();
-        processHeaderElement();
-        headerPosition++;
+        // processHeaderElement();
+        // headerPosition++;
       } else {
         headerWord.append(c);
       }

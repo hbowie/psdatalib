@@ -303,7 +303,10 @@ public class EventAction
       if (columnValue != null) {
         columnValueStr = columnValue.toString();
       }
-      int dataRecFieldNumber = dataRec.addField(recDef, columnValueStr);
+      DataField nextField = new DataField(recDef, i, columnValueStr);
+      nextField.setDataRaw(columnValueStr);
+      int dataRecFieldNumber = dataRec.addField(nextField);
+      // int dataRecFieldNumber = dataRec.addField(recDef, columnValueStr);
     }
     return dataRec;
   }

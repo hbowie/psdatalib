@@ -69,7 +69,7 @@ package com.powersurgepub.psdatalib.psdata;
                    details. 
  */
 public class DataField {
-
+  
   /** Number of elements in each of the operand arrays. */
   public static final int      NUMBER_OF_LOGICAL_OPERANDS = 12;
   
