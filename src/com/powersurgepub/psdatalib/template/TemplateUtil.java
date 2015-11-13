@@ -1219,6 +1219,7 @@ public class TemplateUtil {
           boolean makeFileNameReadable = false;
           boolean noBreaks = false;
           boolean noPunctuation = false;
+          boolean emailPunctuation = false;
           String formatString;
           
           boolean demarcation = false;
@@ -1271,6 +1272,10 @@ public class TemplateUtil {
                 leadingCount = (leadingCount * 10)
                   + Character.getNumericValue (workChar);
               } else
+              if (workChar == '\'') {
+                emailPunctuation = true;
+              }
+              else
               if (Character.toLowerCase(workChar) == 'f') {
                 makeFileName = true;
               } else
@@ -1489,6 +1494,10 @@ public class TemplateUtil {
             replaceData = fn.getBase();
           }
           
+          if (emailPunctuation) {
+            replaceData = emailQuotes(replaceData);
+          }
+          
           // now perform the variable replacement
           if (replaceData != null) {
             str.delete(startDelim, endDelim + nlEndVariable.length());
@@ -1513,6 +1522,39 @@ public class TemplateUtil {
     
     lineWithBreak.setLine(str);
     return lineWithBreak;
+  }
+  
+  public String emailQuotes (String html) {
+    StringBuilder str = new StringBuilder(html);
+    int i = 0;
+    while (i >= 0 && i < str.length()) {
+      int j = str.indexOf("&", i);
+      i = j;
+      if (j >= 0) {
+        i = j + 1;
+        int k = str.indexOf(";", j + 2);
+        if (k >= 0) {
+          String entity = str.substring(j, k + 1);
+          if (entity.length() > 2 && entity.length() <= 8) {
+            i = k + 1;
+            String repl = "";
+            if (entity.equals("&lsquo;")
+                || entity.equals("&rsquo;")
+                || entity.equals("&#8217;")
+                || entity.equals("&#x2019;")
+                || entity.equals("&#39;")) {
+              repl = "'";
+            }
+            if (repl.length() > 0) {
+              str.delete(j, k + 1);
+              str.insert(j, repl);
+              i = j + repl.length();
+            }
+          } // end if we found an entity of a suitable length
+        } // end if we found an ending semi-colon
+      } // end if we found a starting ampersand
+    }
+    return str.toString();
   }
 }
 
