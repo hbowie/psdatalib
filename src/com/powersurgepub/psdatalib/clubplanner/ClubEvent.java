@@ -600,6 +600,22 @@ public class ClubEvent
  
 
   /**
+   The teaser, formatted as HTML.
+   */
+  private String teaserAsHtml = null;
+ 
+  public static final String TEASER_AS_HTML_FIELD_NAME = "Teaser as HTML";
+ 
+  public static final String TEASER_AS_HTML_COLUMN_NAME = "Teaser as HTML";
+ 
+  public static final String TEASER_AS_HTML_COMMON_NAME = "teaserashtml";
+ 
+  public static final int TEASER_AS_HTML_COLUMN_INDEX = 34;
+ 
+  public static final int TEASER_AS_HTML_COLUMN_WIDTH = 50;
+ 
+
+  /**
    The blurb, formatted as HTML.
    */
   private String blurbAsHtml = null;
@@ -610,7 +626,7 @@ public class ClubEvent
  
   public static final String BLURB_AS_HTML_COMMON_NAME = "blurbashtml";
  
-  public static final int BLURB_AS_HTML_COLUMN_INDEX = 34;
+  public static final int BLURB_AS_HTML_COLUMN_INDEX = 35;
  
   public static final int BLURB_AS_HTML_COLUMN_WIDTH = 50;
  
@@ -626,7 +642,7 @@ public class ClubEvent
  
   public static final String COST_COMMON_NAME = "cost";
  
-  public static final int COST_COLUMN_INDEX = 35;
+  public static final int COST_COLUMN_INDEX = 36;
  
   public static final int COST_COLUMN_WIDTH = 15;
  
@@ -642,7 +658,7 @@ public class ClubEvent
  
   public static final String PURCHASE_COMMON_NAME = "purchase";
  
-  public static final int PURCHASE_COLUMN_INDEX = 36;
+  public static final int PURCHASE_COLUMN_INDEX = 37;
  
   public static final int PURCHASE_COLUMN_WIDTH = 40;
  
@@ -658,7 +674,7 @@ public class ClubEvent
  
   public static final String TICKETS_COMMON_NAME = "tickets";
  
-  public static final int TICKETS_COLUMN_INDEX = 37;
+  public static final int TICKETS_COLUMN_INDEX = 38;
  
   public static final int TICKETS_COLUMN_WIDTH = 30;
  
@@ -674,7 +690,7 @@ public class ClubEvent
  
   public static final String QUANTITY_COMMON_NAME = "quantity";
  
-  public static final int QUANTITY_COLUMN_INDEX = 38;
+  public static final int QUANTITY_COLUMN_INDEX = 39;
  
   public static final int QUANTITY_COLUMN_WIDTH = 8;
  
@@ -690,7 +706,7 @@ public class ClubEvent
  
   public static final String PLANNED_INCOME_COMMON_NAME = "plannedincome";
  
-  public static final int PLANNED_INCOME_COLUMN_INDEX = 39;
+  public static final int PLANNED_INCOME_COLUMN_INDEX = 40;
  
   public static final int PLANNED_INCOME_COLUMN_WIDTH = 40;
  
@@ -706,7 +722,7 @@ public class ClubEvent
  
   public static final String ACTUAL_INCOME_COMMON_NAME = "actualincome";
  
-  public static final int ACTUAL_INCOME_COLUMN_INDEX = 40;
+  public static final int ACTUAL_INCOME_COLUMN_INDEX = 41;
  
   public static final int ACTUAL_INCOME_COLUMN_WIDTH = 40;
  
@@ -722,7 +738,7 @@ public class ClubEvent
  
   public static final String PLANNED_EXPENSE_COMMON_NAME = "plannedexpense";
  
-  public static final int PLANNED_EXPENSE_COLUMN_INDEX = 41;
+  public static final int PLANNED_EXPENSE_COLUMN_INDEX = 42;
  
   public static final int PLANNED_EXPENSE_COLUMN_WIDTH = 40;
  
@@ -738,7 +754,7 @@ public class ClubEvent
  
   public static final String ACTUAL_EXPENSE_COMMON_NAME = "actualexpense";
  
-  public static final int ACTUAL_EXPENSE_COLUMN_INDEX = 42;
+  public static final int ACTUAL_EXPENSE_COLUMN_INDEX = 43;
  
   public static final int ACTUAL_EXPENSE_COLUMN_WIDTH = 40;
  
@@ -754,7 +770,7 @@ public class ClubEvent
  
   public static final String PLANNED_ATTENDANCE_COMMON_NAME = "plannedattendance";
  
-  public static final int PLANNED_ATTENDANCE_COLUMN_INDEX = 43;
+  public static final int PLANNED_ATTENDANCE_COLUMN_INDEX = 44;
  
   public static final int PLANNED_ATTENDANCE_COLUMN_WIDTH = 8;
  
@@ -770,7 +786,7 @@ public class ClubEvent
  
   public static final String ACTUAL_ATTENDANCE_COMMON_NAME = "actualattendance";
  
-  public static final int ACTUAL_ATTENDANCE_COLUMN_INDEX = 44;
+  public static final int ACTUAL_ATTENDANCE_COLUMN_INDEX = 45;
  
   public static final int ACTUAL_ATTENDANCE_COLUMN_WIDTH = 8;
  
@@ -786,7 +802,7 @@ public class ClubEvent
  
   public static final String OVER_UNDER_COMMON_NAME = "overunder";
  
-  public static final int OVER_UNDER_COLUMN_INDEX = 45;
+  public static final int OVER_UNDER_COLUMN_INDEX = 46;
  
   public static final int OVER_UNDER_COLUMN_WIDTH = 8;
  
@@ -802,7 +818,7 @@ public class ClubEvent
  
   public static final String FINANCE_PROJECTION_COMMON_NAME = "financeprojection";
  
-  public static final int FINANCE_PROJECTION_COLUMN_INDEX = 46;
+  public static final int FINANCE_PROJECTION_COLUMN_INDEX = 47;
  
   public static final int FINANCE_PROJECTION_COLUMN_WIDTH = 8;
  
@@ -818,7 +834,7 @@ public class ClubEvent
  
   public static final String PRIOR_YR_PLN_INC_COMMON_NAME = "prioryrplninc";
  
-  public static final int PRIOR_YR_PLN_INC_COLUMN_INDEX = 47;
+  public static final int PRIOR_YR_PLN_INC_COLUMN_INDEX = 48;
  
   public static final int PRIOR_YR_PLN_INC_COLUMN_WIDTH = 40;
  
@@ -834,7 +850,7 @@ public class ClubEvent
  
   public static final String PRIOR_YR_ACT_INC_COMMON_NAME = "prioryractinc";
  
-  public static final int PRIOR_YR_ACT_INC_COLUMN_INDEX = 48;
+  public static final int PRIOR_YR_ACT_INC_COLUMN_INDEX = 49;
  
   public static final int PRIOR_YR_ACT_INC_COLUMN_WIDTH = 40;
  
@@ -850,7 +866,7 @@ public class ClubEvent
  
   public static final String PRIOR_YR_PLN_EXP_COMMON_NAME = "prioryrplnexp";
  
-  public static final int PRIOR_YR_PLN_EXP_COLUMN_INDEX = 49;
+  public static final int PRIOR_YR_PLN_EXP_COLUMN_INDEX = 50;
  
   public static final int PRIOR_YR_PLN_EXP_COLUMN_WIDTH = 40;
  
@@ -866,7 +882,7 @@ public class ClubEvent
  
   public static final String PRIOR_YR_ACT_EXP_COMMON_NAME = "prioryractexp";
  
-  public static final int PRIOR_YR_ACT_EXP_COLUMN_INDEX = 50;
+  public static final int PRIOR_YR_ACT_EXP_COLUMN_INDEX = 51;
  
   public static final int PRIOR_YR_ACT_EXP_COLUMN_WIDTH = 40;
  
@@ -882,7 +898,7 @@ public class ClubEvent
  
   public static final String RECAP_COMMON_NAME = "recap";
  
-  public static final int RECAP_COLUMN_INDEX = 51;
+  public static final int RECAP_COLUMN_INDEX = 52;
  
   public static final int RECAP_COLUMN_WIDTH = 40;
  
@@ -898,7 +914,7 @@ public class ClubEvent
  
   public static final String RECAP_AS_HTML_COMMON_NAME = "recapashtml";
  
-  public static final int RECAP_AS_HTML_COLUMN_INDEX = 52;
+  public static final int RECAP_AS_HTML_COLUMN_INDEX = 53;
  
   public static final int RECAP_AS_HTML_COLUMN_WIDTH = 50;
  
@@ -914,7 +930,7 @@ public class ClubEvent
  
   public static final String ID_COMMON_NAME = "id";
  
-  public static final int ID_COLUMN_INDEX = 53;
+  public static final int ID_COLUMN_INDEX = 54;
  
   public static final int ID_COLUMN_WIDTH = 30;
  
@@ -930,7 +946,7 @@ public class ClubEvent
  
   public static final String LINK_COMMON_NAME = "link";
  
-  public static final int LINK_COLUMN_INDEX = 54;
+  public static final int LINK_COLUMN_INDEX = 55;
  
   public static final int LINK_COLUMN_WIDTH = 30;
  
@@ -946,7 +962,7 @@ public class ClubEvent
  
   public static final String VENUE_COMMON_NAME = "venue";
  
-  public static final int VENUE_COLUMN_INDEX = 55;
+  public static final int VENUE_COLUMN_INDEX = 56;
  
   public static final int VENUE_COLUMN_WIDTH = 30;
  
@@ -962,7 +978,7 @@ public class ClubEvent
  
   public static final String IMAGE_COMMON_NAME = "image";
  
-  public static final int IMAGE_COLUMN_INDEX = 56;
+  public static final int IMAGE_COLUMN_INDEX = 57;
  
   public static final int IMAGE_COLUMN_WIDTH = 30;
  
@@ -978,9 +994,57 @@ public class ClubEvent
  
   public static final String NEWS_IMAGE_COMMON_NAME = "newsimage";
  
-  public static final int NEWS_IMAGE_COLUMN_INDEX = 57;
+  public static final int NEWS_IMAGE_COLUMN_INDEX = 58;
  
   public static final int NEWS_IMAGE_COLUMN_WIDTH = 30;
+ 
+
+  /**
+   Brief request to the reader to take some sort of action
+   */
+  private String callToAction = null;
+ 
+  public static final String CALL_TO_ACTION_FIELD_NAME = "Call to Action";
+ 
+  public static final String CALL_TO_ACTION_COLUMN_NAME = "Call to Action";
+ 
+  public static final String CALL_TO_ACTION_COMMON_NAME = "calltoaction";
+ 
+  public static final int CALL_TO_ACTION_COLUMN_INDEX = 59;
+ 
+  public static final int CALL_TO_ACTION_COLUMN_WIDTH = 40;
+ 
+
+  /**
+   The actionable link
+   */
+  private String ctaLink = null;
+ 
+  public static final String CTA_LINK_FIELD_NAME = "CTA Link";
+ 
+  public static final String CTA_LINK_COLUMN_NAME = "CTA Link";
+ 
+  public static final String CTA_LINK_COMMON_NAME = "ctalink";
+ 
+  public static final int CTA_LINK_COLUMN_INDEX = 60;
+ 
+  public static final int CTA_LINK_COLUMN_WIDTH = 30;
+ 
+
+  /**
+   The type of layout to use for this item in our newsletter
+   */
+  private String layout = null;
+ 
+  public static final String LAYOUT_FIELD_NAME = "Layout";
+ 
+  public static final String LAYOUT_COLUMN_NAME = "Layout";
+ 
+  public static final String LAYOUT_COMMON_NAME = "layout";
+ 
+  public static final int LAYOUT_COLUMN_INDEX = 61;
+ 
+  public static final int LAYOUT_COLUMN_WIDTH = 20;
  
 
   /**
@@ -994,7 +1058,7 @@ public class ClubEvent
  
   public static final String SHORT_DATE_COMMON_NAME = "shortdate";
  
-  public static final int SHORT_DATE_COLUMN_INDEX = 58;
+  public static final int SHORT_DATE_COLUMN_INDEX = 62;
  
   public static final int SHORT_DATE_COLUMN_WIDTH = 12;
  
@@ -1010,7 +1074,7 @@ public class ClubEvent
  
   public static final String NOTES_COMMON_NAME = "notes";
  
-  public static final int NOTES_COLUMN_INDEX = 59;
+  public static final int NOTES_COLUMN_INDEX = 63;
  
   public static final int NOTES_COLUMN_WIDTH = 40;
  
@@ -1026,12 +1090,12 @@ public class ClubEvent
  
   public static final String NOTES_AS_HTML_COMMON_NAME = "notesashtml";
  
-  public static final int NOTES_AS_HTML_COLUMN_INDEX = 60;
+  public static final int NOTES_AS_HTML_COLUMN_INDEX = 64;
  
   public static final int NOTES_AS_HTML_COLUMN_WIDTH = 50;
  
 
-  public static final int COLUMN_COUNT = 61;
+  public static final int COLUMN_COUNT = 65;
 
 
   /*
@@ -1338,6 +1402,12 @@ public class ClubEvent
 		newClubEvent.setImage(imageStr);
 		String newsImageStr = new String(getNewsImageAsString());
 		newClubEvent.setNewsImage(newsImageStr);
+		String callToActionStr = new String(getCallToActionAsString());
+		newClubEvent.setCallToAction(callToActionStr);
+		String ctaLinkStr = new String(getCtaLinkAsString());
+		newClubEvent.setCtaLink(ctaLinkStr);
+		String layoutStr = new String(getLayoutAsString());
+		newClubEvent.setLayout(layoutStr);
 		String notesStr = new String(getNotesAsString());
 		newClubEvent.setNotes(notesStr);
 		return newClubEvent;
@@ -1924,6 +1994,17 @@ public class ClubEvent
         setBlurb ((String)obj2);
       }
     }
+    obj2 = clubEvent2.getTeaserAsHtml();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setTeaserAsHtml ((String)obj2);
+      }
+    }
     obj2 = clubEvent2.getBlurbAsHtml();
     if (obj2 == null) {
       // No value available -- leave current value as-is
@@ -2188,6 +2269,39 @@ public class ClubEvent
         setNewsImage ((String)obj2);
       }
     }
+    obj2 = clubEvent2.getCallToAction();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setCallToAction ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getCtaLink();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setCtaLink ((String)obj2);
+      }
+    }
+    obj2 = clubEvent2.getLayout();
+    if (obj2 == null) {
+      // No value available -- leave current value as-is
+    } else {
+      str2 = obj2.toString();
+      if (str2.equals ("")) {
+        // No value available -- leave current value as-is
+      } else {
+        setLayout ((String)obj2);
+      }
+    }
     obj2 = clubEvent2.getShortDate();
     if (obj2 == null) {
       // No value available -- leave current value as-is
@@ -2342,6 +2456,9 @@ public class ClubEvent
       case BLURB_COLUMN_INDEX:
           setBlurb (columnValue);
           break;
+      case TEASER_AS_HTML_COLUMN_INDEX:
+          setTeaserAsHtml (columnValue);
+          break;
       case BLURB_AS_HTML_COLUMN_INDEX:
           setBlurbAsHtml (columnValue);
           break;
@@ -2413,6 +2530,15 @@ public class ClubEvent
           break;
       case NEWS_IMAGE_COLUMN_INDEX:
           setNewsImage (columnValue);
+          break;
+      case CALL_TO_ACTION_COLUMN_INDEX:
+          setCallToAction (columnValue);
+          break;
+      case CTA_LINK_COLUMN_INDEX:
+          setCtaLink (columnValue);
+          break;
+      case LAYOUT_COLUMN_INDEX:
+          setLayout (columnValue);
           break;
       case SHORT_DATE_COLUMN_INDEX:
           setShortDate (columnValue);
@@ -2506,6 +2632,8 @@ public class ClubEvent
           return teaser;
       case BLURB_COLUMN_INDEX:
           return blurb;
+      case TEASER_AS_HTML_COLUMN_INDEX:
+          return teaserAsHtml;
       case BLURB_AS_HTML_COLUMN_INDEX:
           return blurbAsHtml;
       case COST_COLUMN_INDEX:
@@ -2554,6 +2682,12 @@ public class ClubEvent
           return image;
       case NEWS_IMAGE_COLUMN_INDEX:
           return newsImage;
+      case CALL_TO_ACTION_COLUMN_INDEX:
+          return callToAction;
+      case CTA_LINK_COLUMN_INDEX:
+          return ctaLink;
+      case LAYOUT_COLUMN_INDEX:
+          return layout;
       case SHORT_DATE_COLUMN_INDEX:
           return shortDate;
       case NOTES_COLUMN_INDEX:
@@ -2644,6 +2778,8 @@ public class ClubEvent
           return TEASER_COLUMN_NAME;
       case BLURB_COLUMN_INDEX:
           return BLURB_COLUMN_NAME;
+      case TEASER_AS_HTML_COLUMN_INDEX:
+          return TEASER_AS_HTML_COLUMN_NAME;
       case BLURB_AS_HTML_COLUMN_INDEX:
           return BLURB_AS_HTML_COLUMN_NAME;
       case COST_COLUMN_INDEX:
@@ -2692,6 +2828,12 @@ public class ClubEvent
           return IMAGE_COLUMN_NAME;
       case NEWS_IMAGE_COLUMN_INDEX:
           return NEWS_IMAGE_COLUMN_NAME;
+      case CALL_TO_ACTION_COLUMN_INDEX:
+          return CALL_TO_ACTION_COLUMN_NAME;
+      case CTA_LINK_COLUMN_INDEX:
+          return CTA_LINK_COLUMN_NAME;
+      case LAYOUT_COLUMN_INDEX:
+          return LAYOUT_COLUMN_NAME;
       case SHORT_DATE_COLUMN_INDEX:
           return SHORT_DATE_COLUMN_NAME;
       case NOTES_COLUMN_INDEX:
@@ -2783,6 +2925,8 @@ public class ClubEvent
           return TEASER_COMMON_NAME;
       case BLURB_COLUMN_INDEX:
           return BLURB_COMMON_NAME;
+      case TEASER_AS_HTML_COLUMN_INDEX:
+          return TEASER_AS_HTML_COMMON_NAME;
       case BLURB_AS_HTML_COLUMN_INDEX:
           return BLURB_AS_HTML_COMMON_NAME;
       case COST_COLUMN_INDEX:
@@ -2831,6 +2975,12 @@ public class ClubEvent
           return IMAGE_COMMON_NAME;
       case NEWS_IMAGE_COLUMN_INDEX:
           return NEWS_IMAGE_COMMON_NAME;
+      case CALL_TO_ACTION_COLUMN_INDEX:
+          return CALL_TO_ACTION_COMMON_NAME;
+      case CTA_LINK_COLUMN_INDEX:
+          return CTA_LINK_COMMON_NAME;
+      case LAYOUT_COLUMN_INDEX:
+          return LAYOUT_COMMON_NAME;
       case SHORT_DATE_COLUMN_INDEX:
           return SHORT_DATE_COMMON_NAME;
       case NOTES_COLUMN_INDEX:
@@ -2921,6 +3071,8 @@ public class ClubEvent
           return TEASER_COLUMN_WIDTH;
       case BLURB_COLUMN_INDEX:
           return BLURB_COLUMN_WIDTH;
+      case TEASER_AS_HTML_COLUMN_INDEX:
+          return TEASER_AS_HTML_COLUMN_WIDTH;
       case BLURB_AS_HTML_COLUMN_INDEX:
           return BLURB_AS_HTML_COLUMN_WIDTH;
       case COST_COLUMN_INDEX:
@@ -2969,6 +3121,12 @@ public class ClubEvent
           return IMAGE_COLUMN_WIDTH;
       case NEWS_IMAGE_COLUMN_INDEX:
           return NEWS_IMAGE_COLUMN_WIDTH;
+      case CALL_TO_ACTION_COLUMN_INDEX:
+          return CALL_TO_ACTION_COLUMN_WIDTH;
+      case CTA_LINK_COLUMN_INDEX:
+          return CTA_LINK_COLUMN_WIDTH;
+      case LAYOUT_COLUMN_INDEX:
+          return LAYOUT_COLUMN_WIDTH;
       case SHORT_DATE_COLUMN_INDEX:
           return SHORT_DATE_COLUMN_WIDTH;
       case NOTES_COLUMN_INDEX:
@@ -3059,6 +3217,8 @@ public class ClubEvent
           return String.class;
       case BLURB_COLUMN_INDEX:
           return String.class;
+      case TEASER_AS_HTML_COLUMN_INDEX:
+          return String.class;
       case BLURB_AS_HTML_COLUMN_INDEX:
           return String.class;
       case COST_COLUMN_INDEX:
@@ -3107,6 +3267,12 @@ public class ClubEvent
           return String.class;
       case NEWS_IMAGE_COLUMN_INDEX:
           return String.class;
+      case CALL_TO_ACTION_COLUMN_INDEX:
+          return String.class;
+      case CTA_LINK_COLUMN_INDEX:
+          return String.class;
+      case LAYOUT_COLUMN_INDEX:
+          return String.class;
       case SHORT_DATE_COLUMN_INDEX:
           return String.class;
       case NOTES_COLUMN_INDEX:
@@ -3132,6 +3298,8 @@ public class ClubEvent
       case DISCUSS_COLUMN_INDEX:
           return true;
       case ACTIONS_COLUMN_INDEX:
+          return true;
+      case TEASER_COLUMN_INDEX:
           return true;
       case BLURB_COLUMN_INDEX:
           return true;
@@ -4949,6 +5117,58 @@ public class ClubEvent
   }
  
   /**
+     Sets the teaser as html for this club event.
+ 
+     @param  teaserAsHtml The teaser as html for this club event.
+   */
+  public void setTeaserAsHtml (String teaserAsHtml) {
+    this.teaserAsHtml = teaserAsHtml;
+    setModified (true);
+  }
+
+  /**
+    Returns the teaser as html for this club event as a string.
+ 
+    @return The teaser as html for this club event as a string.
+   */
+  public String getTeaserAsHtmlAsString () {
+    if (hasTeaserAsHtml()) {
+      return getTeaserAsHtml().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the teaser as html for this club event is null.
+ 
+    @return True if the teaser as html for this club event is not null.
+   */
+  public boolean hasTeaserAsHtml () {
+    return (teaserAsHtml != null);
+  }
+
+  /**
+    Determines if the teaser as html for this club event
+    is null or is empty.
+ 
+    @return True if the teaser as html for this club event
+    is not null and not empty.
+   */
+  public boolean hasTeaserAsHtmlWithData () {
+    return (teaserAsHtml != null && teaserAsHtml.length() > 0);
+  }
+
+  /**
+    Returns the teaser as html for this club event.
+ 
+    @return The teaser as html for this club event.
+   */
+  public String getTeaserAsHtml () {
+    return teaserAsHtml;
+  }
+ 
+  /**
      Sets the blurb as html for this club event.
  
      @param  blurbAsHtml The blurb as html for this club event.
@@ -6284,6 +6504,162 @@ public class ClubEvent
    */
   public String getNewsImage () {
     return newsImage;
+  }
+ 
+  /**
+     Sets the call to action for this club event.
+ 
+     @param  callToAction The call to action for this club event.
+   */
+  public void setCallToAction (String callToAction) {
+    this.callToAction = callToAction;
+    setModified (true);
+  }
+
+  /**
+    Returns the call to action for this club event as a string.
+ 
+    @return The call to action for this club event as a string.
+   */
+  public String getCallToActionAsString () {
+    if (hasCallToAction()) {
+      return getCallToAction().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the call to action for this club event is null.
+ 
+    @return True if the call to action for this club event is not null.
+   */
+  public boolean hasCallToAction () {
+    return (callToAction != null);
+  }
+
+  /**
+    Determines if the call to action for this club event
+    is null or is empty.
+ 
+    @return True if the call to action for this club event
+    is not null and not empty.
+   */
+  public boolean hasCallToActionWithData () {
+    return (callToAction != null && callToAction.length() > 0);
+  }
+
+  /**
+    Returns the call to action for this club event.
+ 
+    @return The call to action for this club event.
+   */
+  public String getCallToAction () {
+    return callToAction;
+  }
+ 
+  /**
+     Sets the cta link for this club event.
+ 
+     @param  ctaLink The cta link for this club event.
+   */
+  public void setCtaLink (String ctaLink) {
+    this.ctaLink = ctaLink;
+    setModified (true);
+  }
+
+  /**
+    Returns the cta link for this club event as a string.
+ 
+    @return The cta link for this club event as a string.
+   */
+  public String getCtaLinkAsString () {
+    if (hasCtaLink()) {
+      return getCtaLink().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the cta link for this club event is null.
+ 
+    @return True if the cta link for this club event is not null.
+   */
+  public boolean hasCtaLink () {
+    return (ctaLink != null);
+  }
+
+  /**
+    Determines if the cta link for this club event
+    is null or is empty.
+ 
+    @return True if the cta link for this club event
+    is not null and not empty.
+   */
+  public boolean hasCtaLinkWithData () {
+    return (ctaLink != null && ctaLink.length() > 0);
+  }
+
+  /**
+    Returns the cta link for this club event.
+ 
+    @return The cta link for this club event.
+   */
+  public String getCtaLink () {
+    return ctaLink;
+  }
+ 
+  /**
+     Sets the layout for this club event.
+ 
+     @param  layout The layout for this club event.
+   */
+  public void setLayout (String layout) {
+    this.layout = layout;
+    setModified (true);
+  }
+
+  /**
+    Returns the layout for this club event as a string.
+ 
+    @return The layout for this club event as a string.
+   */
+  public String getLayoutAsString () {
+    if (hasLayout()) {
+      return getLayout().toString();
+    } else {
+      return "";
+    }
+  }
+
+  /**
+    Determines if the layout for this club event is null.
+ 
+    @return True if the layout for this club event is not null.
+   */
+  public boolean hasLayout () {
+    return (layout != null);
+  }
+
+  /**
+    Determines if the layout for this club event
+    is null or is empty.
+ 
+    @return True if the layout for this club event
+    is not null and not empty.
+   */
+  public boolean hasLayoutWithData () {
+    return (layout != null && layout.length() > 0);
+  }
+
+  /**
+    Returns the layout for this club event.
+ 
+    @return The layout for this club event.
+   */
+  public String getLayout () {
+    return layout;
   }
  
   /**

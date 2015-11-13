@@ -273,6 +273,7 @@ public class ClubEventCalc {
     calcWho (clubEvent);
     calcWhere (clubEvent);
     calcDiscussAsHtml (clubEvent);
+    calcTeaserAsHtml (clubEvent);
     calcBlurbAsHtml (clubEvent);
     calcRecapAsHtml (clubEvent);
     calcActionsAsHtml (clubEvent);
@@ -407,6 +408,14 @@ public class ClubEventCalc {
         && clubEvent.getActions().length() > 0) {
       clubEvent.setActionsAsHtml
           (pegDown.markdownToHtml(clubEvent.getActions()));
+    }
+  }
+  
+  public void calcTeaserAsHtml (ClubEvent clubEvent) {
+
+    if (clubEvent.getTeaser() != null
+        && clubEvent.getTeaser().length() > 0) {
+      clubEvent.setTeaserAsHtml(pegDown.markdownToHtml(clubEvent.getTeaser()));
     }
   }
   
