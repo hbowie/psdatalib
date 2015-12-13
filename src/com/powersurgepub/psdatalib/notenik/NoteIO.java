@@ -572,6 +572,29 @@ public class NoteIO
     return note;
   }
   
+  /**
+   Read one note the passed line reader and return it as a note object. 
+  
+   @param lineReader A reader for a note.  
+   @return A Note object. 
+  */
+  public Note getNote(TextLineReader lineReader) {
+    
+    Note note = null;
+    NoteBuilder builder = new NoteBuilder (noteParms);
+    note = new Note(noteParms.getRecDef());
+    builder = new NoteBuilder(noteParms);
+    lineReader.open();
+    String line = lineReader.readLine();
+    // For each line in the file
+    while (line != null && lineReader.isOK() && (! lineReader.isAtEnd())) {
+      NoteLine noteLine = new NoteLine(noteParms, builder, note, line);
+      line = lineReader.readLine();
+    }
+    lineReader.close();
+    return note;
+  }
+  
   public void  save (NoteList noteList) 
       throws IOException {
     
@@ -614,9 +637,9 @@ public class NoteIO
     closeOutput();
   }
   
-  public boolean save (Note note, TextLineWriter inWriter) {
+  public boolean save (Note note, TextLineWriter outWriter) {
     boolean ok = true;
-    writer = inWriter;
+    writer = outWriter;
     ok = writer.openForOutput();
     if (ok) {
       ok = saveOneItem(note);
