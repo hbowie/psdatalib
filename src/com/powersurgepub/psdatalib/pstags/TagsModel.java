@@ -290,7 +290,16 @@ public class TagsModel {
     }
   }
 
-
+  /**
+   Get the first node in the tree. 
+  
+   @return the first node in the tree. 
+  */
+  public TagsNode firstNode () {
+    currentNode = this.getNextNode(root);
+    setNextPrior();
+    return currentNode;
+  }
   
   public Taggable lastItem () {
     currentNode = getNextItem (root, -1);
