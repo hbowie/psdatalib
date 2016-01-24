@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 - 2014 Herb Bowie
+ * Copyright 2013 - 2016 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -222,7 +222,6 @@ public class NoteLine {
               && Character.isWhitespace(line.charAt(field2Last))) {
             field2Last--;
           }
-          
           DataFieldDefinition fieldDef = noteParms.checkForFieldName(getMetaKey());
           if (fieldDef != null) {
             leadingSymbol.setTypeToMetadata();
@@ -274,7 +273,7 @@ public class NoteLine {
             else
             if (metaKey.equals(NoteParms.TEASER_COMMON_NAME)) {
               note.setTeaser(getMetaData());
-              builder.setLastStringBuilder(null);
+              builder.setLastStringBuilder(note.getTeaserAsDataValue());
             }
             else
             if (metaKey.equals(NoteParms.BODY_COMMON_NAME)) {

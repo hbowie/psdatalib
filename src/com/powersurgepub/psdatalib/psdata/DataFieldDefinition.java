@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2015 Herb Bowie
+ * Copyright 1999 - 2016 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -147,6 +147,10 @@ public class DataFieldDefinition {
     else
     if (commonName.equals("tags")) {
       setType (TAGS_TYPE);
+    }
+    else
+    if (commonName.equals("teaser")) {
+      setType (STRING_BUILDER_TYPE);
     }
     else
     if (commonName.equals("body")) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Herb Bowie
+ * Copyright 2012 - 2016 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -144,6 +144,14 @@ public class NoteIO
     initialize();
   }
   
+  /**
+   Construct a new Note I/O module with a home folder, a collection type,
+   and a pre-defined record definition. 
+  
+   @param folder The home folder to use for the collection.
+   @param inType The type of collection. 
+   @param recDef The record definition to be used for the collection. 
+  */
   public NoteIO (File folder, int inType, RecordDefinition recDef) {
     noteParms.setNoteType(inType);
     noteParms.setRecDef(recDef);
@@ -528,10 +536,7 @@ public class NoteIO
     
     Note note = null;
     
-    if (noteFile.exists()
-        && noteFile.canRead()
-        && noteFile.isFile()) {
-      
+    if (FileUtils.isGoodInputFile(noteFile)) {
       FileName noteFileName = new FileName(noteFile);
       String fileNameIn = "";
       if (syncPrefix != null
