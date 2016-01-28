@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 - 2015 Herb Bowie
+ * Copyright 2014 - 2016 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,6 +110,8 @@ public class NoteParms {
   public static final String  WORK_RIGHTS_HOLDER = "Work Rights Holder";
   public static final String  PUBLISHER         = "Publisher";
   public static final String  PUBLISHER_CITY    = "Publisher City";
+  
+  public static final int     UNKNOWN_FIELD_SEQ = 50;
   
   
   public static final DataFieldDefinition TITLE_DEF 
@@ -359,16 +361,20 @@ public class NoteParms {
       return 3;
     }
     else
-    if (isTags(commonName)) {
+    if (isType(commonName)) {
       return 4;
     }
     else
-    if (isLink(commonName)) {
+    if (isTags(commonName)) {
       return 5;
+    }
+    else
+    if (isLink(commonName)) {
+      return 6;
     } 
     else
     if (isRating(commonName)) {
-      return 6;
+      return 7;
     }
     else
     if (isTeaser(commonName)) {
@@ -379,7 +385,7 @@ public class NoteParms {
       return 99;
     }
     else {
-      return 50;
+      return UNKNOWN_FIELD_SEQ;
     }
   }
   

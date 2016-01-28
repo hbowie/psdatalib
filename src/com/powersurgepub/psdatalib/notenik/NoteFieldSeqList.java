@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2015 Herb Bowie
+ * Copyright 2015 - 2016 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,12 +75,16 @@ public class NoteFieldSeqList {
       fields.add(seq);
     } else {
       int i = 0;
-      int result = 0;
+      int result = 1;
       while (i < fields.size() && result > 0) {
         NoteFieldSeq seq2 = fields.get(i);
         result = seq.compareTo(seq2);
         if (result == 0) {
-          // Do nothing -- this shouldn't happen
+          if (seq.getNormalSeq() == NoteParms.UNKNOWN_FIELD_SEQ) {
+            fields.add(i, seq);
+          } else {
+            // Do nothing -- this shouldn't happen
+          }
         }
         else
         if (result > 0) {
