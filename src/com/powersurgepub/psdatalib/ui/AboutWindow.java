@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2016 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public class AboutWindow
         WindowToManage
   {
   
-  public  static final String COPYRIGHT_YEAR_THRU = "2015";
+  public  static final String COPYRIGHT_YEAR_THRU = "2016";
   
   private String    copyRightYears = "";
   private String    fontBegin = "<font face=\"Arial\" size=\"4\">";
