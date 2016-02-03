@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2014 Herb Bowie
+ * Copyright 2012 - 2016 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.powersurgepub.psdatalib.psdata;
 
-import com.powersurgepub.psdatalib.psdata.values.StringDate;
+  import com.powersurgepub.psdatalib.psdata.values.*;
   import com.powersurgepub.psutils.*;
   import java.math.*;
   import java.util.*;
@@ -55,6 +55,8 @@ public class CalcParser {
   private final static int CHECK_NUMBER = 2;
   private final static int FROM_TO = 3;
   private final static int FOR = 4;
+  
+  private boolean dateFound = false;
   
   private StringDate strDate = new StringDate();
   private String     defaultDate = "";
@@ -142,6 +144,7 @@ public class CalcParser {
   private void buildTransaction() {
     transaction = new CalcTransaction();
     transaction.setDate(defaultDate);
+    dateFound = false;
     if (word.length() > 0) {
       tranOperand = word.charAt(0);
     }
@@ -288,7 +291,9 @@ public class CalcParser {
       processPhrase();
     }
     else
-    if (word.length() == 2 && word.toString().equalsIgnoreCase("on")) {
+    if (word.length() == 2 
+        && word.toString().equalsIgnoreCase("on")
+        && (! dateFound)) {
       processPhrase();
       phraseType = DATE;
     }
@@ -341,6 +346,7 @@ public class CalcParser {
         case DATE:
           strDate.parse(phrase);
           transaction.setDate(strDate.getYMD());
+          dateFound = true;
           break;
         case CHECK_NUMBER:
           transaction.setCheckNumber(phrase.toString());
