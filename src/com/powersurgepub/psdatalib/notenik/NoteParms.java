@@ -288,6 +288,7 @@ public class NoteParms {
       recDef.addColumn (AUTHOR_DEF);
       recDef.addColumn(DATE_DEF);
       recDef.addColumn(STATUS_DEF);
+      recDef.addColumn(TYPE_DEF);
       recDef.addColumn(TAGS_DEF);
       recDef.addColumn(LINK_DEF);
       recDef.addColumn(RATING_DEF);
