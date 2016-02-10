@@ -61,6 +61,7 @@ public class TextSelector
     addFocusListener(new java.awt.event.FocusAdapter() {
       public void focusGained (java.awt.event.FocusEvent evt) {
         if ((! evt.isTemporary())
+            && (listModel != null)
             && (listModel.size() > 0)
             && popup == null) {
           JTextField field = (JTextField)evt.getComponent();
@@ -96,8 +97,9 @@ public class TextSelector
     
     addKeyListener(new java.awt.event.KeyAdapter() {
       public void keyTyped(java.awt.event.KeyEvent evt) {
-          if ((listModel.size() > 0)
-            && popup == null) {
+          if ((listModel != null)
+              && (listModel.size() > 0)
+              && popup == null) {
           displayList();
         }
         char c = evt.getKeyChar();
