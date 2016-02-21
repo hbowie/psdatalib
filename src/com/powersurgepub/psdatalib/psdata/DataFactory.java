@@ -88,6 +88,12 @@ public class DataFactory {
         value = rating;
         break;
         
+      // Seeq
+      case DataFieldDefinition.SEQ_TYPE:
+        DataValueSeq seq = new DataValueSeq();
+        value = seq;
+        break;
+        
       // Simple string
       case DataFieldDefinition.LABEL_TYPE: 
       case DataFieldDefinition.DEFAULT_TYPE:
@@ -145,6 +151,7 @@ public class DataFactory {
       case DataFieldDefinition.DEFAULT_TYPE:
       case DataFieldDefinition.STRING_TYPE:
       case DataFieldDefinition.TITLE_TYPE:  
+      case DataFieldDefinition.SEQ_TYPE:
       default:
         OneLiner oneLiner = new OneLiner();
         widget = oneLiner;

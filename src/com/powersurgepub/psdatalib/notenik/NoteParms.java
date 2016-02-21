@@ -74,6 +74,8 @@ public class NoteParms {
   public static final String  TEASER_COMMON_NAME = "teaser";
   public static final String  TYPE_FIELD_NAME   = "Type";
   public static final String  TYPE_COMMON_NAME  = "type";
+  public static final String  SEQ_FIELD_NAME    = "Seq";
+  public static final String  SEQ_COMMON_NAME   = "seq";
   
   public static final String  COMPLETE_PATH     = "Complete Path";
   public static final String  BASE_PATH         = "Base Path";
@@ -110,6 +112,7 @@ public class NoteParms {
   public static final String  WORK_RIGHTS_HOLDER = "Work Rights Holder";
   public static final String  PUBLISHER         = "Publisher";
   public static final String  PUBLISHER_CITY    = "Publisher City";
+  public static final String  SEQUENCE          = "Sequence";
   
   public static final int     UNKNOWN_FIELD_SEQ = 50;
   
@@ -134,6 +137,8 @@ public class NoteParms {
       = new DataFieldDefinition(TEASER_FIELD_NAME);
   public static final DataFieldDefinition TYPE_DEF
       = new DataFieldDefinition(TYPE_FIELD_NAME);
+  public static final DataFieldDefinition SEQ_DEF
+      = new DataFieldDefinition (SEQ_FIELD_NAME);
   
   public static final boolean SLASH_TO_SEPARATE = false;
   
@@ -167,6 +172,7 @@ public class NoteParms {
     RATING_DEF.setType (DataFieldDefinition.RATING_TYPE);
     TEASER_DEF.setType (DataFieldDefinition.STRING_BUILDER_TYPE);
     TYPE_DEF.setType   (DataFieldDefinition.STRING_TYPE);
+    SEQ_DEF.setType    (DataFieldDefinition.SEQ_TYPE);
   }
   
   public NoteParms () {
@@ -289,6 +295,7 @@ public class NoteParms {
       recDef.addColumn(DATE_DEF);
       recDef.addColumn(STATUS_DEF);
       recDef.addColumn(TYPE_DEF);
+      recDef.addColumn(SEQ_DEF);
       recDef.addColumn(TAGS_DEF);
       recDef.addColumn(LINK_DEF);
       recDef.addColumn(RATING_DEF);
@@ -366,16 +373,20 @@ public class NoteParms {
       return 4;
     }
     else
-    if (isTags(commonName)) {
+    if (isSeq(commonName)) {
       return 5;
     }
     else
-    if (isLink(commonName)) {
+    if (isTags(commonName)) {
       return 6;
+    }
+    else
+    if (isLink(commonName)) {
+      return 7;
     } 
     else
     if (isRating(commonName)) {
-      return 7;
+      return 8;
     }
     else
     if (isTeaser(commonName)) {
@@ -445,6 +456,9 @@ public class NoteParms {
     if (isType(commonName)) {
       return TYPE_DEF;
     }
+    if (isSeq(commonName)) {
+      return SEQ_DEF;
+    }
     
     if (notesExpanded()) {
       return null;
@@ -471,6 +485,14 @@ public class NoteParms {
   
   public static boolean isType(CommonName commonName) {
     return (commonName.getCommonForm().equals(TYPE_COMMON_NAME));
+  }
+  
+  public static boolean isSeq(CommonName commonName) {
+    return (commonName.getCommonForm().equals(SEQ_COMMON_NAME)
+        || commonName.getCommonForm().equalsIgnoreCase(SEQUENCE)
+        || commonName.getCommonForm().equalsIgnoreCase("rev")
+        || commonName.getCommonForm().equalsIgnoreCase("revision")
+        || commonName.getCommonForm().equalsIgnoreCase("version"));
   }
   
   public static boolean isAuthor(CommonName commonName) {

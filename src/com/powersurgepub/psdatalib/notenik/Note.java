@@ -58,6 +58,10 @@ public class Note
   private DataField           typeField   = null;
   private boolean             typeAdded   = false;
   
+  private DataValueSeq        seqValue   = null;
+  private DataField           seqField   = null;
+  private boolean             seqAdded   = false;
+  
   private Author              authorValue = null;
   private DataField           authorField = null;
   private boolean             authorAdded = false;
@@ -140,6 +144,10 @@ public class Note
         setType(fromValue.toString());
       }
       else
+      if (NoteParms.isSeq(fromCommon)) {
+        setSeq(fromValue.toString());
+      }
+      else
       if (NoteParms.isAuthor(fromCommon)) {
         setAuthor(fromValue.toString());
       }
@@ -193,6 +201,11 @@ public class Note
     typeValue = new DataValueString();
     typeField = new DataField(NoteParms.TYPE_DEF, typeValue);
     typeAdded = false;
+    
+    // Build the Seq field
+    seqValue = new DataValueSeq();
+    seqField = new DataField(NoteParms.SEQ_DEF, seqValue);
+    seqAdded = false;
     
     // Build the Status field
     statusValue = new ItemStatus();
@@ -353,6 +366,10 @@ public class Note
       setType(data);
     }
     else
+    if (commonName.equalsIgnoreCase(NoteParms.SEQ_COMMON_NAME)) {
+      setSeq(data);
+    }
+    else
     if (commonName.equals((NoteParms.STATUS_COMMON_NAME))) {
       setStatus(data);
     }
@@ -469,6 +486,26 @@ public class Note
   
   public String getTypeAsString() {
     return typeValue.toString();
+  }
+  
+  public void setSeq(String seq) {
+    seqValue.set(seq);
+    if (! seqAdded) {
+      storeField (recDef, seqField);
+      seqAdded = true;
+    }
+  }
+  
+  public boolean hasSeq() {
+    return (seqAdded && seqValue != null && seqValue.hasData());
+  }
+  
+  public String getSeq() {
+    return seqValue.toString();
+  }
+  
+  public String getSeqAsString() {
+    return seqValue.toString();
   }
   
   public void setStatus(String status) {
