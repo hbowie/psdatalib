@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2016 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -215,6 +215,7 @@ public class MarkupWriter
     TextIOType type1 = new TextIOType (LABELS [MARKDOWN_FORMAT],
         this, false, true, EXTENSIONS [MARKDOWN_FORMAT]);
     type1.addExtension ("markdown");
+    type1.addExtension ("md");
     types.add (type1);
     
     TextIOType type2 = new TextIOType (LABELS [TEXTILE_SYNTAX_1_FORMAT],
