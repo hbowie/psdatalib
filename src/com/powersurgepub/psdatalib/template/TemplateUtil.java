@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2015 Herb Bowie
+ * Copyright 1999 - 2016 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -236,8 +236,9 @@ public class TemplateUtil {
   public TemplateUtil (Logger log) {
     io = new TextIO ();
     int pegDownOptions = 0;
-    pegDownOptions = pegDownOptions + Extensions.SMARTS;
-    pegDownOptions = pegDownOptions + Extensions.QUOTES;
+    // pegDownOptions = pegDownOptions + Extensions.SMARTS;
+    // pegDownOptions = pegDownOptions + Extensions.QUOTES;
+    pegDownOptions = pegDownOptions + Extensions.SMARTYPANTS;
     pegDownOptions = pegDownOptions = Extensions.DEFINITIONS;
     pegDown = new PegDownProcessor(pegDownOptions);
     this.log = log;
