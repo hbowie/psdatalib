@@ -497,7 +497,9 @@ public class TextMergeTemplate {
     }
     templateFileReady = true;
     templateFileName = templateFile.getName();
-    openTemplateName.setText (templateFileName);
+    if (openTemplateName != null) {
+      openTemplateName.setText (templateFileName);
+    }
     templateFileOK = template.openTemplate (templateFile);
     if (templateFileOK) {
       scriptRecorder.recordScriptAction (
@@ -540,7 +542,9 @@ public class TextMergeTemplate {
     template = new Template (Logger.getShared());
     templateCreated = true;
     outputFileName = "";
-    generateOutputName.setText (outputFileName);
+    if (generateOutputName != null) {
+      generateOutputName.setText (outputFileName);
+    }
   }
   
   /**
@@ -711,8 +715,10 @@ public class TextMergeTemplate {
         }
         if (outputFileName != null) {
           FileName outputFN = new FileName (outputFileName);
-          generateOutputName.setText (outputFN.getFileName());
-          generateOutputName.setToolTipText (outputFileName);
+          if (generateOutputName != null) {
+            generateOutputName.setText (outputFN.getFileName());
+            generateOutputName.setToolTipText (outputFileName);
+          }
         }
         scriptRecorder.recordScriptAction (
           ScriptConstants.TEMPLATE_MODULE, 
@@ -750,6 +756,10 @@ public class TextMergeTemplate {
         source.setTemplatesFolder(templateLibraryFileSpec);
       }
     }
+  }
+  
+  public String getOutputFileName() {
+    return outputFileName;
   }
   
   public void savePrefs() {
