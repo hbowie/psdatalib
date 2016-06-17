@@ -35,36 +35,36 @@ public class DataRecList
     implements
         PSList, DataSource, TaggableList {
   
-  private     FileSpec            fileSpec = null;
+  protected     FileSpec            fileSpec = null;
   
-  private     DataDictionary      dataDict = null;
-  private     RecordDefinition    recDef = null;
+  protected     DataDictionary      dataDict = null;
+  protected     RecordDefinition    recDef = null;
     
-  private     DataSet             completeDataSet;
-	private     DataSet             filteredDataSet;  
+  protected     DataSet             completeDataSet = null;
+	protected     DataSet             filteredDataSet = null;  
   
-  private     Comparator          comparator = new PSDefaultComparator();
-  private     PSItemFilter        itemFilter = null;
+  protected     Comparator          comparator = new PSDefaultComparator();
+  protected     PSItemFilter        itemFilter = null;
   
-  private     int                 findIndex = -1;
-  private     boolean             findMatch = false;
+  protected     int                 findIndex = -1;
+  protected     boolean             findMatch = false;
   
-  private     int                 recordNumber = -1;
+  protected     int                 recordNumber = -1;
   
   /** Log used to record events. */
-  private     Logger              log = Logger.getShared();
+  protected     Logger              log = Logger.getShared();
   
   /** Data to be logged. */
-  private     LogData             logData = new LogData();
+  protected     LogData             logData = new LogData();
   
   /** Should all data be logged (or only data preceding significant events(? */
-  private     boolean             dataLogging = false;
+  protected     boolean             dataLogging = false;
   
   /** Identifier used to identify this reader in the log. */
-  private     String              fileId;
+  protected     String              fileId;
   
   /** Debug instance. */
-  private		  Debug							  debug = new Debug (false);
+  protected		  Debug							  debug = new Debug (false);
   
   /**
    Constructor with no arguments.
@@ -444,6 +444,10 @@ public class DataRecList
       return null;
     }
   } // end method get (int)
+  
+  public boolean isEmpty() {
+    return (completeDataSet == null || totalSize() == 0);
+  }
   
   /**
    Return the size of the total list, without any filtering.

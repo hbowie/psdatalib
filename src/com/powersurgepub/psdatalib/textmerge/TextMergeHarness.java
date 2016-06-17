@@ -34,6 +34,11 @@ public class TextMergeHarness
       TextMergeController,
       WindowToManage{
   
+  public  static final int                TEXT_MERGE_WINDOW_DEFAULT_X = 60;
+  public  static final int                TEXT_MERGE_WINDOW_DEFAULT_Y = 60;
+  public  static final int                TEXT_MERGE_WINDOW_DEFAULT_WIDTH = 640;
+  public  static final int                TEXT_MERGE_WINDOW_DEFAULT_HEIGHT = 480;
+  
   private static      TextMergeHarness    sharedHarness = null;  
   
   private             PSList              pslist = null;
@@ -131,10 +136,12 @@ public class TextMergeHarness
     if (textMergeScript == null) {
       textMergeScript   = new TextMergeScript(pslist);
 
-      if (controller == null) {
-        textMergeInput  = new TextMergeInput (pslist, this, textMergeScript);
-      } else {
-        textMergeInput  = new TextMergeInput (pslist, controller, textMergeScript);
+      if (pslist instanceof DataRecList) {
+        if (controller == null) {
+          textMergeInput  = new TextMergeInput (pslist, this, textMergeScript);
+        } else {
+          textMergeInput  = new TextMergeInput (pslist, controller, textMergeScript);
+        }
       }
       textMergeFilter   = new TextMergeFilter(pslist, textMergeScript);
       textMergeSort     = new TextMergeSort  (pslist, textMergeScript);

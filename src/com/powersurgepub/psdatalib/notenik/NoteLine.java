@@ -226,61 +226,67 @@ public class NoteLine {
           if (fieldDef != null) {
             leadingSymbol.setTypeToMetadata();
             addNoteLineLeadingSymbol();
-            metaKey = fieldDef.getCommonName().getCommonForm();
+            CommonName metaKeyCommon = fieldDef.getCommonName();
+            metaKey = metaKeyCommon.getCommonForm();
             builder.setLastStringBuilder(null);
             
-            if (metaKey.equals(NoteParms.TITLE_COMMON_NAME)) {
+            if (NoteParms.isTitle(metaKeyCommon)) {
               note.setTitle(getMetaData());
               builder.setLastStringBuilder(null);
             }
             else
-            if (metaKey.equals(NoteParms.AUTHOR_COMMON_NAME)
-                || metaKey.equalsIgnoreCase(NoteParms.BY)
-                || metaKey.equalsIgnoreCase(NoteParms.CREATOR)) {
+            if (NoteParms.isAuthor(metaKeyCommon)) {
               note.setAuthor(getMetaData());
               builder.setLastStringBuilder(null);
             }
             else
-            if (metaKey.equals(NoteParms.DATE_COMMON_NAME)) {
+            if (NoteParms.isDate(metaKeyCommon)) {
               note.setDate(getMetaData());
               builder.setLastStringBuilder(null);
             }
             else
-            if (metaKey.equals(NoteParms.LINK_COMMON_NAME)) {
+            if (NoteParms.isLink(metaKeyCommon)) {
               note.setLink(getMetaData());
               builder.setLastStringBuilder(null);
             }
             else
-            if (metaKey.equals(NoteParms.TAGS_COMMON_NAME)) {
+            if (NoteParms.isTags(metaKeyCommon)) {
               note.setTags(getMetaData());
               builder.setLastStringBuilder(null);
             }
             else
-            if (metaKey.equals(NoteParms.RATING_COMMON_NAME)) {
+            if (NoteParms.isRating(metaKeyCommon)) {
               note.setRating(getMetaData());
               builder.setLastStringBuilder(null);
             }
             else
-            if (metaKey.equals(NoteParms.TYPE_COMMON_NAME)) {
+            if (NoteParms.isType(metaKeyCommon)) {
               note.setType(getMetaData());
               builder.setLastStringBuilder(null);
             }
             else
-            if (metaKey.equals(NoteParms.STATUS_COMMON_NAME)) {
+            if (NoteParms.isStatus(metaKeyCommon)) {
               note.setStatus(getMetaData());
               builder.setLastStringBuilder(null);
             }
+            else 
+            if (NoteParms.isSeq(metaKeyCommon)) {
+              note.setSeq(getMetaData());
+              builder.setLastStringBuilder(null);
+            } 
             else
-            if (metaKey.equals(NoteParms.TEASER_COMMON_NAME)) {
+            if (NoteParms.isTeaser(metaKeyCommon)) {
               note.setTeaser(getMetaData());
               builder.setLastStringBuilder(note.getTeaserAsDataValue());
             }
             else
-            if (metaKey.equals(NoteParms.BODY_COMMON_NAME)) {
+            if (NoteParms.isBody(metaKeyCommon)) {
               note.setBody(getMetaData());
               builder.setLastStringBuilder(note.getBodyAsDataValue());
               builder.setBodyStarted(true);
-            } else {
+            } 
+            else
+            {
               fieldDef.setType(DataFieldDefinition.STRING_BUILDER_TYPE);
               DataValueStringBuilder dataValue = new DataValueStringBuilder(getMetaData());
               DataField dataField = new DataField (fieldDef, dataValue);

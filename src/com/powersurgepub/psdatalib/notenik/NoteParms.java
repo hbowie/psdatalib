@@ -27,6 +27,8 @@ package com.powersurgepub.psdatalib.notenik;
 
 /**
  A set of parameters to specify how a particular Note Collection is configured. 
+ This object supplied a note collection type, a record definition, and a
+ preferred file extension. 
 
  @author Herb Bowie
  */
@@ -46,13 +48,13 @@ public class NoteParms {
   /** The record definition used for the notes in this collection. */
   private    RecordDefinition recDef = null;
   
-  private    String           preferredFileExt    = "txt";
+  public static final String  DEFAULT_FILE_EXT = "txt";
+  private    String           preferredFileExt    = DEFAULT_FILE_EXT;
   
   private    boolean          metadataAsMarkdown = true;
 
   
-  public static final String FILENAME = "notenik.parms";
-  public static final String TEMPLATE_FILE_NAME = "template.txt";
+  public static final String  FILENAME = "notenik.parms";
   
   public static final String  TITLE_FIELD_NAME  = "Title";
   public static final String  TITLE_COMMON_NAME = "title";
@@ -116,7 +118,6 @@ public class NoteParms {
   
   public static final int     UNKNOWN_FIELD_SEQ = 50;
   
-  
   public static final DataFieldDefinition TITLE_DEF 
       = new DataFieldDefinition(TITLE_FIELD_NAME);
   public static final DataFieldDefinition LINK_DEF 
@@ -140,7 +141,7 @@ public class NoteParms {
   public static final DataFieldDefinition SEQ_DEF
       = new DataFieldDefinition (SEQ_FIELD_NAME);
   
-  public static final boolean SLASH_TO_SEPARATE = false;
+  public static final boolean  SLASH_TO_SEPARATE = false;
   
   public final static String   YMD_FORMAT_STRING = "yyyy-MM-dd";
   public final static String   MDY_FORMAT_STRING = "MM-dd-yyyy";
@@ -695,7 +696,8 @@ public class NoteParms {
       // Single-line Text Field  
       case DataFieldDefinition.DEFAULT_TYPE:
       case DataFieldDefinition.STRING_TYPE:
-      case DataFieldDefinition.TITLE_TYPE:  
+      case DataFieldDefinition.TITLE_TYPE:
+      case DataFieldDefinition.SEQ_TYPE:
       default:
         OneLiner oneLiner = new OneLiner();
         label.setLabelFor(oneLiner);

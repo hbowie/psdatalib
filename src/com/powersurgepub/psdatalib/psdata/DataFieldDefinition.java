@@ -157,6 +157,10 @@ public class DataFieldDefinition {
     if (commonName.equals("body")) {
       setType (STRING_BUILDER_TYPE);
     }
+    else
+    if (commonName.equals("seq") || commonName.equals("sequence")) {
+      setType (SEQ_TYPE);
+    }
   }
   
   public void setType(int type) {
@@ -176,13 +180,15 @@ public class DataFieldDefinition {
       case STRING_TYPE:
         return new DataValueString();
       case TITLE_TYPE:
-        return new DataValueString();
+        return new Title();
       case STRING_BUILDER_TYPE:
         return new DataValueStringBuilder();
       case TAGS_TYPE:
         return new Tags();
       case LINK_TYPE:
         return new Link();
+      case SEQ_TYPE:
+        return new DataValueSeq();
       default:
         return new DataValueString();
     }

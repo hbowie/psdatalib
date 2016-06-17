@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 - 2015 Herb Bowie
+ * Copyright 2014 - 2016 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public class Note
   
   private String        fileName = "";
   
-  private String        diskLocation = "";
+  private FileName      diskLocation = null;
   
   private Date          lastModDate;
   private String        lastModDateStr;
@@ -51,7 +51,7 @@ public class Note
   
   private TagsNode      tagsNode = null;
   
-  private DataValueString     titleValue = null;
+  private Title               titleValue = null;
   private DataField           titleField = null;
   
   private DataValueString     typeValue   = null;
@@ -187,7 +187,7 @@ public class Note
   private void initNoteFields() {
     
     // Build the Title field
-    titleValue = new DataValueString();
+    titleValue = new Title();
     titleField = new DataField(NoteParms.TITLE_DEF, titleValue);
     storeField (recDef, titleField);
     // addField(titleField);
@@ -307,7 +307,7 @@ public class Note
   }
   
   public String getKey() {
-    return getFileName();
+    return titleValue.getLowerHyphens();
   }
   
   public void merge (Note note2) {
@@ -766,7 +766,7 @@ public class Note
                        is stored.
   */
   public void setDiskLocation (String diskLocation) {
-    this.diskLocation = diskLocation;
+    this.diskLocation = new FileName(diskLocation);
   }
  
   /**
@@ -776,9 +776,9 @@ public class Note
   */
   public void setDiskLocation (File diskLocationFile) {
     try {
-      this.diskLocation = diskLocationFile.getCanonicalPath();
+      this.diskLocation = new FileName(diskLocationFile.getCanonicalPath());
     } catch (java.io.IOException e) {
-      this.diskLocation = diskLocationFile.getAbsolutePath();
+      this.diskLocation = new FileName(diskLocationFile.getAbsolutePath());
     }
   }
   
@@ -867,7 +867,7 @@ public class Note
       setTitle(diskLocation.substring(slash + 1, period));
     }
     
-    File diskLocationFile = new File(diskLocation);
+    File diskLocationFile = diskLocation.getFile();
     if (diskLocationFile != null && diskLocationFile.exists()) {
       lastModDate = new Date (diskLocationFile.lastModified());
       lastModDateStr = dateFormat.format(lastModDate);
@@ -925,7 +925,29 @@ public class Note
    @return The disk location at which this item is stored.
   */
   public String getDiskLocation () {
-    return diskLocation;
+    if (diskLocation == null) {
+      return "";
+    } else {
+      return diskLocation.toString();
+    }
+  }
+  
+  /**
+   Return the file extension of the disk location, if one has been identified. 
+  
+   @return The file extension of the disk location, if one has been identified.
+           If a file extension is not available, then return null.
+  */
+  public String getDiskFileExt() {
+    String ext = "";
+    if (diskLocation != null) {
+      ext = diskLocation.getExt();
+    }
+    if (ext != null && ext.length() > 0) {
+      return ext;
+    } else {
+      return null;
+    }
   }
   
   public void setLastModDateStandard (String date) {

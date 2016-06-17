@@ -18,7 +18,6 @@ package com.powersurgepub.psdatalib.pslist;
 
   import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psfiles.*;
-  import java.io.*;
   import java.util.*;
 
 /**

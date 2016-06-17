@@ -52,6 +52,12 @@ public class DataFactory {
     
     switch (dataFieldType) {
       
+      // Title
+      case DataFieldDefinition.TITLE_TYPE:
+        Title title = new Title();
+        value = title;
+        break;
+        
       // Tags
       case DataFieldDefinition.TAGS_TYPE:
         Tags tags = new Tags();
@@ -97,8 +103,7 @@ public class DataFactory {
       // Simple string
       case DataFieldDefinition.LABEL_TYPE: 
       case DataFieldDefinition.DEFAULT_TYPE:
-      case DataFieldDefinition.STRING_TYPE:
-      case DataFieldDefinition.TITLE_TYPE:  
+      case DataFieldDefinition.STRING_TYPE: 
       default:
         DataValueString str = new DataValueString();
         value = str;

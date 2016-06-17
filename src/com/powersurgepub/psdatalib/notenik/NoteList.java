@@ -17,6 +17,7 @@
 package com.powersurgepub.psdatalib.notenik;
 
   import com.powersurgepub.psdatalib.psdata.*;
+  import com.powersurgepub.psdatalib.pslist.*;
   import com.powersurgepub.psdatalib.pstags.*;
   import java.io.*;
   import java.util.*;
@@ -27,7 +28,9 @@ package com.powersurgepub.psdatalib.notenik;
  */
 public class NoteList
     extends AbstractTableModel
-    implements TaggableList {
+    implements 
+      // PSList, 
+      TaggableList {
 
   private String          title = "Note List";
   private RecordDefinition recDef = null;

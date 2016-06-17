@@ -17,7 +17,6 @@
 package com.powersurgepub.psdatalib.notenik;
 
   import com.powersurgepub.psdatalib.psdata.*;
-  import com.powersurgepub.psdatalib.pstags.*;
   import com.powersurgepub.pstextio.*;
   import com.powersurgepub.psutils.*;
   import java.io.*;
@@ -34,7 +33,8 @@ public class NoteIO
   {
   
   public static final String              PARMS_TITLE         = "Collection Parms";
-  public static final String              FILE_EXT            = ".txt";
+  
+  private static final TemplateFilter     templateFilter      = new TemplateFilter();
   
   private             NoteParms           noteParms 
       = new NoteParms(NoteParms.NOTES_ONLY_TYPE);
@@ -164,6 +164,12 @@ public class NoteIO
     initialize();
   }
   
+  public NoteIO (File folder, NoteParms parms) {
+    setHomeFolder(folder);
+    noteParms = parms;
+    initialize();
+  }
+  
   /**
      Performs standard initialization for all the constructors.
      By default, fileId is set to "directory".
@@ -213,6 +219,86 @@ public class NoteIO
   
   public boolean treatMetadataAsMarkdown() {
     return noteParms.treatMetadataAsMarkdown();
+  }
+  
+  /**
+   Check for the presence of a template file. 
+  
+   @return A set of note parameters for the collection, if a template was 
+           found; otherwise null.
+  */
+  public NoteParms checkForTemplate() {
+    boolean templateFound = false;
+    boolean ok = true;
+    NoteParms templateParms = null;
+    if (homeFolder == null) {
+      ok = false;
+    }
+    if (ok) {
+      if ((! homeFolder.exists())
+          || (! homeFolder.isDirectory())
+          || (! homeFolder.canRead())) {
+        ok = false;
+      }
+    }
+    String[] templates = null;
+    if (ok) {
+      templates = homeFolder.list(templateFilter);
+      if (templates == null || templates.length < 1) {
+        ok = false;
+      }
+    }
+    File templateFile = null;
+    FileName templateFileName = null;
+    String fileExt = "";
+    
+    if (ok) {
+      templateFile = new File(homeFolder, templates[0]);
+      templateFileName = new FileName(templateFile);
+      String ext = templateFileName.getExt();
+      if (ext.length() > 0) {
+        fileExt = ext;
+      }
+      
+      if (FileUtils.isGoodInputFile(templateFile)) {
+        logNormal("Template file " + templateFile.toString() 
+            + " found with following fields:");
+      } else {
+        ok = false;
+      }
+    }
+    
+    if (ok) {
+      NoteIO templateIO = null;
+      // Let the template fields define the record definition
+      templateIO = new NoteIO(homeFolder, NoteParms.NOTES_GENERAL_TYPE);
+      templateIO.buildRecordDefinition(); 
+      try {
+        Note templateNote = templateIO.getNote(templateFile, "");
+        if (templateNote != null
+            && templateIO.getRecDef().getNumberOfFields() > 0) {
+          templateFound = true;
+        }
+      } catch (IOException e) {
+        Logger.getShared().recordEvent(LogEvent.MEDIUM, 
+            "I/O Error while attempting to read template file", false);
+      }
+
+      if (templateFound) {
+        RecordDefinition recDef = templateIO.getRecDef();
+        for (int i = 0; i < recDef.getNumberOfFields(); i++) {
+          DataFieldDefinition fieldDef = recDef.getDef(i);
+          logNormal("  " + String.valueOf(i + 1) + ". " + fieldDef.getProperName());
+        }
+        templateParms = new NoteParms(NoteParms.DEFINED_TYPE);
+        templateParms.setRecDef(templateIO.getRecDef());
+        templateParms.setPreferredFileExt(fileExt);
+      }
+    }
+    if (! templateFound) {
+      logNormal("Template file not found");
+    }
+    return templateParms;
   }
   
   /* =======================================================================
@@ -409,6 +495,7 @@ public class NoteIO
       if (noteFileToRead.isDirectory()) {
         if (nextDirEntry.equalsIgnoreCase("templates")
             || nextDirEntry.equalsIgnoreCase("publish")
+            || nextDirEntry.equalsIgnoreCase("reports")
             || currDirDepth >= maxDepth) {
           // skip
         } else {
@@ -459,6 +546,8 @@ public class NoteIO
            otherwise false. 
   */
   public static boolean isInterestedIn(File candidate) {
+    File parent = candidate.getParentFile();
+    String name = candidate.getName();
     if (candidate.isHidden()) {
       return false;
     }
@@ -497,7 +586,7 @@ public class NoteIO
       return false;
     }
     else
-    if (candidate.getName().equalsIgnoreCase(NoteParms.TEMPLATE_FILE_NAME)) {
+    if (templateFilter.accept(parent, name)) {
       return false;
     }
     else
@@ -673,7 +762,7 @@ public class NoteIO
   
   public File getSyncFile (String syncFolderStr, String syncPrefix, String title) {
     File syncFolder = new File(syncFolderStr);
-    return new File(syncFolder, syncPrefix + title + FILE_EXT);
+    return new File(syncFolder, syncPrefix + title + noteParms.getPreferredFileExt());
   }
  
   /**
@@ -835,7 +924,7 @@ public class NoteIO
   }
   
   public File getFile (Note note) {
-    return new File (homeFolder, note.getFileName() + FILE_EXT);
+    return getFile(homeFolder, note);
   }
   
   public File getFile(String localPath) {
@@ -853,7 +942,7 @@ public class NoteIO
    @return The File pointing to the intended disk location for the given note.
    */
   public File getFile (File folder, Note note) {
-    return new File (folder, note.getFileName() + FILE_EXT);
+    return new File (folder, note.getFileName() + "." + getFileExt(note));
   }
  
   /**
@@ -874,8 +963,26 @@ public class NoteIO
     }
     completePath.append('/');
     completePath.append(localPath);
-    completePath.append(FILE_EXT);
+    completePath.append('.');
+    completePath.append(noteParms.getPreferredFileExt());
     return new File (completePath.toString());
+  }
+  
+  /**
+   Return the file extension to be used to store this particular note. 
+  
+    @param note The note to be stored. 
+    @return The file extension to be used. 
+  */
+  public String getFileExt(Note note) {
+    String ext = note.getDiskFileExt();
+    if (ext == null || ext.length() == 0) {
+      ext = noteParms.getPreferredFileExt();
+    }
+    if (ext == null || ext.length() == 0) {
+      ext = NoteParms.DEFAULT_FILE_EXT;
+    }
+    return ext;
   }
   
   /**
@@ -926,6 +1033,10 @@ public class NoteIO
   public Logger getLog () {
     return log;
   } 
+  
+  public void logNormal (String msg) {
+    Logger.getShared().recordEvent (LogEvent.NORMAL, msg, false);
+  }
   
   /**
      Sets the option to log all data off or on. 
