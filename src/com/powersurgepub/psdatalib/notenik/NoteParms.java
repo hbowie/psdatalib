@@ -412,6 +412,10 @@ public class NoteParms {
   */
   public DataFieldDefinition checkForFieldName(String fieldName) {
     
+    if (fieldName.length() > 48) {
+      return null;
+    }
+    
     CommonName commonName = new CommonName (fieldName);
     
     // If this is a url, then don't confuse it with a field name.
