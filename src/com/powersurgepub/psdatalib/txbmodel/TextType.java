@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2016 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ public class TextType {
   public static final String DIV            = "div";
   public static final String EMPHASIS       = "em";
   public static final String FOLDED         = "folded";
+  public static final String FOOTER         = "footer";
   public static final String HEADING_PREFIX = "h";
   public static final String HEAD           = "head";
   public static final String HREF           = "href";
