@@ -35,11 +35,13 @@ public class TextMergeInputNotenik
     modifiers.add("notenik");
     modifiers.add("notenik+");
     modifiers.add("notenik-general");
+    modifiers.add("notenik-index");
     
     labels.add("No Notenik");
     labels.add("Notenik Notes");
     labels.add("Notenik Notes Plus");
     labels.add("Notenik General");
+    labels.add("Notenik Index");
   }
   
   /**
@@ -63,7 +65,11 @@ public class TextMergeInputNotenik
   */
   public DataSource getDataSource(File chosenFile) {
     DataSource dataSource;
-    dataSource = new NoteIO (chosenFile, inputType);
+    if (inputType == NoteParms.NOTES_INDEX_TYPE) {
+      dataSource = new NoteIndexIO(chosenFile, inputType);
+    } else {
+      dataSource = new NoteIO (chosenFile, inputType);
+    }
     return dataSource;
   }
 

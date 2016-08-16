@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2014 Herb Bowie
+ * Copyright 1999 - 2016 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 package com.powersurgepub.psdatalib.psdata.values;
 
 /**
- A data value that can be converted from and to a string. 
+ A data value that can be converted from and to a string, and can optionally
+ generate one or more fields derived from this data value. 
 
  @author Herb Bowie
  */
@@ -53,5 +54,35 @@ public interface DataValue {
      @param  value2 Another data value to be compared to this one.
    */
   public int compareTo(DataValue value2);
+  
+  /**
+   Identify how many other fields can be derived from this one. 
+  
+   @return The possible number of derived fields. 
+  */
+  public int getNumberOfDerivedFields();
+  
+  /**
+   Return a suffix that will uniquely identify this derivation. The suffix 
+   need not, and should not, begin with a hyphen or any other punctuation. 
+  
+   @param d An index value indicating which of the possible derived fields
+            is desired. 
+  
+   @return The suffix identifying the requested derived field, or null if 
+           the index is out of range of the possible fields. 
+  */
+  public String getDerivedSuffix(int d);
+  
+  /**
+   Return the derived field, in String form. 
+  
+   @param d An index value indicating which of the possible derived fields
+            is desired. 
+  
+   @return The derived field requested, or null if the index is out of range
+           of the possible fields. 
+  */
+  public String getDerivedValue(int d);
   
 }

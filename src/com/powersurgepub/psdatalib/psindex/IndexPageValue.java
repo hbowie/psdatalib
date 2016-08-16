@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2016 Herb Bowie
+ * Copyright 2016 - 2016 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,22 @@
  * limitations under the License.
  */
 
-package com.powersurgepub.psdatalib.psdata.values;
+package com.powersurgepub.psdatalib.psindex;
+
+  import com.powersurgepub.psdatalib.psdata.values.*;
 
 /**
- A data value interpreted as a sequence number. 
+ This is a reference from one index term to one page on which it is mentioned;
 
  @author Herb Bowie
  */
-public class DataValueSeq
-
+public class IndexPageValue 
     implements
         DataValue {
   
-  public static final String[] DERIVED_SUFFIX = {
-    
-  };
+  private StringBuilder value = new StringBuilder();
   
-  private String          value = null;
-  
-  // Pad the value on the left for compare purposes
-  private StringBuilder   seq   = new StringBuilder();
-  
-  public DataValueSeq() {
+  public IndexPageValue() {
     
   }
   
@@ -45,54 +39,28 @@ public class DataValueSeq
    @param value The value as a string. 
   */
   public void set(String value) {
-    this.value = value;
-    seq = new StringBuilder (value);
-    int i = 0;
-    boolean numeric = true;
-    boolean periodFound = false;
-    int leftCount = 0;
-    char c = ' ';
-    while (i < seq.length()) {
-      c = seq.charAt(i);
-      if (c == '$' || c == ',' || Character.isWhitespace(c)) {
-        // ignore non-significant characters
-        seq.deleteCharAt(i);
-      }
-      else
-      if (c == '.') {
-        periodFound = true;
-        i++;
-      }
-      else
-      if (Character.isDigit(c)) {
-        if (! periodFound) {
-          leftCount++;
-        }
-        i++;
-      }
-      else {
-        numeric = false;
-        if (! periodFound) {
-          leftCount++;
-        }
-        i++;
-      } // end logic based on char type
-    } // end of seq string
-    char pad = ' ';
-    if (numeric) {
-      pad = '0';
-    }
-    while (leftCount < 8) {
-      seq.insert(0, pad);
-      leftCount++;
-    }
-  } // end of set method
+    this.value = new StringBuilder();
+    append(value);
+  }
   
-  public int length() {
-    if (hasData()) {
-      return value.length();
-    } else {
-      return 0;
+  public void append(String v) {
+
+    value.append(v);
+    
+    // Remove any trailing spaces
+    int i = value.length() - 1;
+    while (i >= 0 && (Character.isWhitespace(value.charAt(i)))) {
+      value.deleteCharAt(i);
+      i--;
+    }
+    
+    // Make sure value ends with a semi-colon and a space
+    if (i >= 0) {
+      if (value.charAt(i) == ';') {
+        value.append(' ');
+      } else {
+        value.append("; ");
+      }
     }
   }
   
@@ -114,17 +82,8 @@ public class DataValueSeq
     if (value == null) {
       return "";
     } else {
-      return value;
+      return value.toString();
     }
-  }
-  
-  /**
-   Returns a padded string, for the purposes of comparison. 
-  
-   @return Padded on the left. 
-  */
-  public String toPaddedString() {
-    return seq.toString();
   }
   
   /**
@@ -136,13 +95,7 @@ public class DataValueSeq
      @param  value2 Another data value to be compared to this one.
    */
   public int compareTo(DataValue value2) {
-    
-    if (value2 instanceof DataValueSeq) {
-      DataValueSeq seq2 = (DataValueSeq)value2;
-      return toPaddedString().compareTo(seq2.toPaddedString());
-    } else {
-      return toString().compareTo(value2.toString());
-    }
+    return toString().compareTo(value2.toString());
   }
   
   /**
@@ -151,7 +104,7 @@ public class DataValueSeq
    @return The possible number of derived fields. 
   */
   public int getNumberOfDerivedFields() {
-    return DERIVED_SUFFIX.length;
+    return 0;
   }
   
   /**
@@ -165,11 +118,7 @@ public class DataValueSeq
            the index is out of range of the possible fields. 
   */
   public String getDerivedSuffix(int d) {
-    if (d < 0 || d >= getNumberOfDerivedFields()) {
-      return null;
-    } else {
-      return DERIVED_SUFFIX [d];
-    }
+    return "";
   }
   
   /**
@@ -182,11 +131,23 @@ public class DataValueSeq
            of the possible fields. 
   */
   public String getDerivedValue(int d) {
-    switch (d) {
-      case 0:
-      default:
-        return null;
+    return toString();
+  }
+  
+  public int length() {
+    return value.length();
+  }
+  
+  public char charAt(int i) {
+    if (i < 0 || i >= value.length()) {
+      return ' ';
+    } else {
+      return value.charAt(i);
     }
+  }
+  
+  public String substring(int s, int e) {
+    return value.substring(s, e);
   }
 
 }

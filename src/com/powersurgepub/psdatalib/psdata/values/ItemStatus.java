@@ -37,6 +37,10 @@ public class ItemStatus
   public final static String  DISPLAY_NAME  = "Status";
   public final static String  BRIEF_NAME    = "Status";
   public final static int     COLUMN_WIDTH  = 80;
+  
+  public static final String[] DERIVED_SUFFIX = {
+    
+  };
 
   private ItemStatusConfig config;
   
@@ -403,4 +407,49 @@ public class ItemStatus
   public boolean hasData() {
     return (config.statusValid(status));
   }
+  
+  /**
+   Identify how many other fields can be derived from this one. 
+  
+   @return The possible number of derived fields. 
+  */
+  public int getNumberOfDerivedFields() {
+    return DERIVED_SUFFIX.length;
+  }
+  
+  /**
+   Return a suffix that will uniquely identify this derivation. The suffix 
+   need not, and should not, begin with a hyphen or any other punctuation. 
+  
+   @param d An index value indicating which of the possible derived fields
+            is desired. 
+  
+   @return The suffix identifying the requested derived field, or null if 
+           the index is out of range of the possible fields. 
+  */
+  public String getDerivedSuffix(int d) {
+    if (d < 0 || d >= getNumberOfDerivedFields()) {
+      return null;
+    } else {
+      return DERIVED_SUFFIX [d];
+    }
+  }
+  
+  /**
+   Return the derived field, in String form. 
+  
+   @param d An index value indicating which of the possible derived fields
+            is desired. 
+  
+   @return The derived field requested, or null if the index is out of range
+           of the possible fields. 
+  */
+  public String getDerivedValue(int d) {
+    switch (d) {
+      case 0:
+      default:
+        return null;
+    }
+  }
+  
 }

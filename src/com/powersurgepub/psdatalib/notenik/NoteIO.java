@@ -17,6 +17,7 @@
 package com.powersurgepub.psdatalib.notenik;
 
   import com.powersurgepub.psdatalib.psdata.*;
+  import com.powersurgepub.psdatalib.psindex.*;
   import com.powersurgepub.pstextio.*;
   import com.powersurgepub.psutils.*;
   import java.io.*;
@@ -180,7 +181,7 @@ public class NoteIO
     pegDownOptions = pegDownOptions + Extensions.SMARTYPANTS;
     pegDownOptions = pegDownOptions + Extensions.TABLES;
     pegDown = new PegDownProcessor(pegDownOptions);
-    
+        
     fileId = "NoteIO";
     logData = new LogData ("", fileId, 0);
     logEvent = new LogEvent (0, "");
@@ -570,7 +571,11 @@ public class NoteIO
       return false;
     }
     else
-    if (candidate.getParent().endsWith("templates")) {
+    if (candidate.getParent().toLowerCase().endsWith("templates")) {
+      return false;
+    }
+    else
+    if (candidate.getParent().toLowerCase().endsWith("reports")) {
       return false;
     }
     else

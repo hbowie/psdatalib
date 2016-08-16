@@ -2767,6 +2767,12 @@ public class MarkupWriter
     }
   }
   
+  /**
+   Write out a string with a hyperlink to something else. 
+  
+   @param text The text to be displayed. 
+   @param link The destination for the link. 
+  */
   public void writeLink (String text, String link) {
     startLink (link);
     write (text);
@@ -2871,7 +2877,9 @@ public class MarkupWriter
       case HTML_FORMAT:
       case HTML_FRAGMENT_FORMAT:
       case XML_FORMAT:
-        endXMLforKnownTags (TextType.ANCHOR);
+        if (link.length() > 0) {
+          endXMLforKnownTags (TextType.ANCHOR);
+        }
         break;
       case NETSCAPE_BOOKMARKS_FORMAT:
         if (link.length() > 0) {

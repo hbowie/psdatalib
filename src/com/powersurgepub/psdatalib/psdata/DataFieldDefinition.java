@@ -17,6 +17,7 @@
 package com.powersurgepub.psdatalib.psdata;
 
   import com.powersurgepub.psdatalib.psdata.values.*;
+  import com.powersurgepub.psdatalib.psindex.*;
   import com.powersurgepub.psdatalib.pstags.*;
   import com.powersurgepub.psutils.*;
   
@@ -56,8 +57,9 @@ public class DataFieldDefinition {
   public static final int     RATING_TYPE         = 9;
   public static final int     STATUS_TYPE         = 10;
   public static final int     SEQ_TYPE            = 11;
+  public static final int     INDEX_TYPE          = 12;
   
-  public static final int     MAX_TYPE            = 11;
+  public static final int     MAX_TYPE            = 12;
   
   /** 
      If two fields of this type are to be combined, is it OK to do 
@@ -161,6 +163,10 @@ public class DataFieldDefinition {
     if (commonName.equals("seq") || commonName.equals("sequence")) {
       setType (SEQ_TYPE);
     }
+    else
+    if (commonName.equals("index")) {
+      setType (INDEX_TYPE);
+    }
   }
   
   public void setType(int type) {
@@ -189,6 +195,8 @@ public class DataFieldDefinition {
         return new Link();
       case SEQ_TYPE:
         return new DataValueSeq();
+      case INDEX_TYPE:
+        return new IndexPageValue();
       default:
         return new DataValueString();
     }

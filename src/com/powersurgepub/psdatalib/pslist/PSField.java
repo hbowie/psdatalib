@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2016 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -346,6 +346,9 @@ public class PSField {
     if (Character.isLetter (firstChar)) {
       oplc = operator.toLowerCase();
     } 
+    if (oplc.startsWith("equal")) {
+      oplc = "equals";
+    }
     boolean opFound = false;
     for (opIndex = 0; 
         ((opIndex < NUMBER_OF_LOGICAL_OPERANDS) && (! opFound));

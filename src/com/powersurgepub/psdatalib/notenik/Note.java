@@ -18,6 +18,7 @@ package com.powersurgepub.psdatalib.notenik;
 
   import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psdatalib.psdata.values.*;
+  import com.powersurgepub.psdatalib.psindex.*;
   import com.powersurgepub.psdatalib.pstags.*;
   import com.powersurgepub.psutils.*;
   import com.powersurgepub.urlvalidator.*;
@@ -40,8 +41,10 @@ public class Note
   
   private RecordDefinition recDef;
   
+  /** This is a readable file name derived from the Note's title. */
   private String        fileName = "";
   
+  /** The disk location at which this note is stored. */
   private FileName      diskLocation = null;
   
   private Date          lastModDate;
@@ -85,6 +88,10 @@ public class Note
   private Rating              ratingValue = null;
   private DataField           ratingField = null;
   private boolean             ratingAdded = false;
+  
+  private IndexPageValue      indexValue = null;
+  private DataField           indexField = null;
+  private boolean             indexAdded = false;
   
   private DataValueStringBuilder teaserValue = null;
   private DataField           teaserField;
@@ -172,6 +179,10 @@ public class Note
         setRating(fromValue.toString());
       }
       else
+      if (NoteParms.isIndex(fromCommon)) {
+        setIndex(fromValue.toString());
+      }
+      else
       if (NoteParms.isTeaser(fromCommon)) {
         setTeaser(fromValue.toString());
       }
@@ -231,6 +242,11 @@ public class Note
     ratingValue = new Rating();
     ratingField = new DataField(NoteParms.RATING_DEF, ratingValue);
     ratingAdded = false;
+    
+    // Build the Index field
+    indexValue = new IndexPageValue();
+    indexField = new DataField(NoteParms.INDEX_DEF, indexValue);
+    indexAdded = false;
     
     // Build the Teaser field
     teaserValue = new DataValueStringBuilder();
@@ -400,6 +416,11 @@ public class Note
     }
   }
   
+  /**
+   Set the note's title, and also create a readable file name from it. 
+  
+   @param title The title for the note. 
+  */
   public void setTitle(String title) {
     titleValue.set(title);
 		if (title == null) {
@@ -429,7 +450,8 @@ public class Note
 	/**
 	 Return the file name in which this item should be stored.
 	
-	 @return The file name to be used, without a file extension.
+	 @return The file name to be used, without a file extension. This is a 
+   readable file name derived from the Note's title.
 	 */
 	public String getFileName() {
     return fileName;
@@ -631,6 +653,30 @@ public class Note
     if (! ratingAdded) {
       storeField (recDef, ratingField);
       ratingAdded = true;
+    }
+  }
+  
+  public void setIndex(String index) {
+    indexValue.append(index);
+    if (! indexAdded) {
+      storeField (recDef, indexField);
+      indexAdded = true;
+    }
+  }
+  
+  public boolean hasIndex() {
+    return (indexAdded && indexValue != null && indexValue.hasData());
+  }
+  
+  public IndexPageValue getIndex() {
+    return indexValue;
+  } 
+  
+  public String getIndexAsString() {
+    if (indexAdded && indexValue != null) {
+      return indexValue.toString();
+    } else {
+      return "";
     }
   }
   
@@ -908,6 +954,19 @@ public class Note
     breadcrumbs.append("</a>");
     return breadcrumbs;
   }
+  
+  /**
+   Let us know if the current file name at which the note is stored is
+   inconsistent with the note's title. 
+  
+   @return True if the note has a title and a disk location, but they
+           are not consistent. 
+  */
+  public boolean hasInconsistentDiskLocation() {
+    return (hasTitle()
+        && hasDiskLocation()
+        && (! getFileName().equalsIgnoreCase(getDiskLocationBase())));
+  }
  
   /**
    Indicate whether the item has a disk location.
@@ -929,6 +988,14 @@ public class Note
       return "";
     } else {
       return diskLocation.toString();
+    }
+  }
+  
+  public String getDiskLocationBase() {
+    if (diskLocation == null) {
+      return "";
+    } else {
+      return diskLocation.getBase();
     }
   }
   

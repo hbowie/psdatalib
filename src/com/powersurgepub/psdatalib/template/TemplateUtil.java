@@ -16,6 +16,7 @@
 
 package com.powersurgepub.psdatalib.template;
 
+  import com.powersurgepub.psdatalib.markup.*;
   import com.powersurgepub.psdatalib.psdata.values.*;
   import com.powersurgepub.psdatalib.txbio.*;
   import com.powersurgepub.psdatalib.txbmodel.*;
@@ -26,7 +27,6 @@ package com.powersurgepub.psdatalib.template;
   import java.net.*;
   import java.text.*;
   import java.util.*;
-  import org.pegdown.*;
 
 /**
    Persistent data needed by the TemplateLine class. <p>
@@ -218,8 +218,6 @@ public class TemplateUtil {
   private             StringConverter     noBreaksConverter = null;
   
   private  CommonMarkup      htmlConverter     = new CommonMarkup ("txt", "html");
-  
-  private             PegDownProcessor    pegDown;
 
   /**
      Constructs the utility collection.
@@ -235,12 +233,6 @@ public class TemplateUtil {
    */
   public TemplateUtil (Logger log) {
     io = new TextIO ();
-    int pegDownOptions = 0;
-    // pegDownOptions = pegDownOptions + Extensions.SMARTS;
-    // pegDownOptions = pegDownOptions + Extensions.QUOTES;
-    pegDownOptions = pegDownOptions + Extensions.SMARTYPANTS;
-    pegDownOptions = pegDownOptions = Extensions.DEFINITIONS;
-    pegDown = new PegDownProcessor(pegDownOptions);
     this.log = log;
     event = new LogEvent();
     globals = new DataRecord ();
@@ -924,7 +916,7 @@ public class TemplateUtil {
               md.append(GlobalConstants.LINE_FEED);
             }
           } 
-          String html = pegDown.markdownToHtml(md.toString());
+          String html = MdToHTML.getShared().markdownToHtml(md.toString());
           TextLineReader htmlReader = new StringLineReader(html);
           includeFile = htmlReader;
         }
@@ -1213,6 +1205,7 @@ public class TemplateUtil {
 
           boolean xml = false;
           boolean html = false;
+          boolean markdown = false;
           boolean fileBaseName = false;
           boolean keepRight = false;
           boolean convertLinks = false;
@@ -1299,6 +1292,9 @@ public class TemplateUtil {
               } else
               if (workChar == 'h') {
                 html = true;
+              } else
+              if (Character.toLowerCase(workChar) == 'o') {
+                markdown = true;
               } else
               if (Character.toLowerCase (workChar) == 'b') {
                 fileBaseName = true;
@@ -1484,6 +1480,10 @@ public class TemplateUtil {
 
           if (html) {
             replaceData = htmlConverter.markup (replaceData, true);
+          }
+          
+          if (markdown) {
+            replaceData = MdToHTML.getShared().markdownToHtml(replaceData);
           }
           
           if (convertLinks) {

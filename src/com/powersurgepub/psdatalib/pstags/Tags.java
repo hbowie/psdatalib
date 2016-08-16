@@ -51,6 +51,10 @@ public class Tags
   /** Alternate separator between multiple tags. */
   public static final char     ALTERNATE_TAG_SEPARATOR = ';';
   
+  public static final String[] DERIVED_SUFFIX = {
+    
+  };
+  
   /** Should we recognize a forward slash as a level separator? */
   private boolean slashToSeparate = true;
   
@@ -1093,8 +1097,50 @@ public class Tags
   public static boolean isTagSeparator (char sepChar) {
     return (sepChar == PREFERRED_TAG_SEPARATOR
           || sepChar == ALTERNATE_TAG_SEPARATOR);
+  }  
+  
+  /**
+   Identify how many other fields can be derived from this one. 
+  
+   @return The possible number of derived fields. 
+  */
+  public int getNumberOfDerivedFields() {
+    return DERIVED_SUFFIX.length;
   }
-
-
+  
+  /**
+   Return a suffix that will uniquely identify this derivation. The suffix 
+   need not, and should not, begin with a hyphen or any other punctuation. 
+  
+   @param d An index value indicating which of the possible derived fields
+            is desired. 
+  
+   @return The suffix identifying the requested derived field, or null if 
+           the index is out of range of the possible fields. 
+  */
+  public String getDerivedSuffix(int d) {
+    if (d < 0 || d >= getNumberOfDerivedFields()) {
+      return null;
+    } else {
+      return DERIVED_SUFFIX [d];
+    }
+  }
+  
+  /**
+   Return the derived field, in String form. 
+  
+   @param d An index value indicating which of the possible derived fields
+            is desired. 
+  
+   @return The derived field requested, or null if the index is out of range
+           of the possible fields. 
+  */
+  public String getDerivedValue(int d) {
+    switch (d) {
+      case 0:
+      default:
+        return null;
+    }
+  }
   
 }

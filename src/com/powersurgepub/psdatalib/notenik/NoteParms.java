@@ -19,6 +19,7 @@ package com.powersurgepub.psdatalib.notenik;
   import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psdatalib.psdata.values.*;
   import com.powersurgepub.psdatalib.psdata.widgets.*;
+  import com.powersurgepub.psdatalib.psindex.*;
   import com.powersurgepub.psdatalib.ui.*;
   import com.powersurgepub.psutils.*;
   import java.awt.*;
@@ -39,11 +40,12 @@ public class NoteParms {
   public static final int       NOTES_ONLY_TYPE     = 1;
   public static final int       NOTES_PLUS_TYPE     = 2;
   public static final int       NOTES_GENERAL_TYPE  = 3;
-  public static final int       DEFINED_TYPE        = 4;
-  public static final int       MARKDOWN_TYPE       = 5;
-  public static final int       TAG_TYPE            = 6;
-  public static final int       QUOTE_TYPE          = 7;
-  public static final int       NOTES_EXPANDED_TYPE = 8;
+  public static final int       NOTES_INDEX_TYPE    = 4;
+  public static final int       DEFINED_TYPE        = 5;
+  public static final int       MARKDOWN_TYPE       = 6;
+  public static final int       TAG_TYPE            = 7;
+  public static final int       QUOTE_TYPE          = 8;
+  public static final int       NOTES_EXPANDED_TYPE = 9;
   
   /** The record definition used for the notes in this collection. */
   private    RecordDefinition recDef = null;
@@ -78,6 +80,8 @@ public class NoteParms {
   public static final String  TYPE_COMMON_NAME  = "type";
   public static final String  SEQ_FIELD_NAME    = "Seq";
   public static final String  SEQ_COMMON_NAME   = "seq";
+  public static final String  INDEX_FIELD_NAME  = "Index";
+  public static final String  INDEX_COMMON_NAME = "index";
   
   public static final String  COMPLETE_PATH     = "Complete Path";
   public static final String  BASE_PATH         = "Base Path";
@@ -140,6 +144,8 @@ public class NoteParms {
       = new DataFieldDefinition(TYPE_FIELD_NAME);
   public static final DataFieldDefinition SEQ_DEF
       = new DataFieldDefinition (SEQ_FIELD_NAME);
+  public static final DataFieldDefinition INDEX_DEF
+      = new DataFieldDefinition (INDEX_FIELD_NAME);
   
   public static final boolean  SLASH_TO_SEPARATE = false;
   
@@ -174,6 +180,7 @@ public class NoteParms {
     TEASER_DEF.setType (DataFieldDefinition.STRING_BUILDER_TYPE);
     TYPE_DEF.setType   (DataFieldDefinition.STRING_TYPE);
     SEQ_DEF.setType    (DataFieldDefinition.SEQ_TYPE);
+    INDEX_DEF.setType  (DataFieldDefinition.INDEX_TYPE);
   }
   
   public NoteParms () {
@@ -202,6 +209,10 @@ public class NoteParms {
   
   public boolean notesPlus() {
     return (noteType == NOTES_PLUS_TYPE);
+  }
+  
+  public boolean notesIndex() {
+    return (noteType == NOTES_INDEX_TYPE);
   }
   
   public boolean notesGeneral() {
@@ -284,13 +295,15 @@ public class NoteParms {
     }
     recDef.clear();
     if (noteType == NOTES_ONLY_TYPE 
-        || noteType == NOTES_PLUS_TYPE) {
+        || noteType == NOTES_PLUS_TYPE
+        || noteType == NOTES_INDEX_TYPE) {
       recDef.addColumn(TITLE_DEF);
       recDef.addColumn(TAGS_DEF);
       recDef.addColumn(LINK_DEF);
       recDef.addColumn(BODY_DEF);
     }
-    if (noteType == NOTES_EXPANDED_TYPE) {
+    if (noteType == NOTES_EXPANDED_TYPE
+        || noteType == NOTES_INDEX_TYPE) {
       recDef.addColumn(TITLE_DEF);
       recDef.addColumn (AUTHOR_DEF);
       recDef.addColumn(DATE_DEF);
@@ -300,6 +313,7 @@ public class NoteParms {
       recDef.addColumn(TAGS_DEF);
       recDef.addColumn(LINK_DEF);
       recDef.addColumn(RATING_DEF);
+      recDef.addColumn(INDEX_DEF);
       recDef.addColumn(TEASER_DEF);
       recDef.addColumn(BODY_DEF);
     }
@@ -390,6 +404,10 @@ public class NoteParms {
       return 8;
     }
     else
+    if (isIndex(commonName)) {
+       return 9;
+    }
+    else
     if (isTeaser(commonName)) {
       return 98;
     }
@@ -420,6 +438,7 @@ public class NoteParms {
     
     // If this is a url, then don't confuse it with a field name.
     if (commonName.getCommonForm().endsWith("http")
+         || commonName.getCommonForm().endsWith("https")
          || commonName.getCommonForm().endsWith("ftp")
          || commonName.getCommonForm().endsWith("mailto")) {
       return null;
@@ -463,6 +482,9 @@ public class NoteParms {
     }
     if (isSeq(commonName)) {
       return SEQ_DEF;
+    }
+    if (isIndex(commonName)) {
+      return INDEX_DEF;
     }
     
     if (notesExpanded()) {
@@ -530,6 +552,10 @@ public class NoteParms {
   public static boolean isRating(CommonName commonName) {
     return (commonName.getCommonForm().equals(RATING_COMMON_NAME)
         || commonName.getCommonForm().equalsIgnoreCase(PRIORITY));
+  }
+  
+  public static boolean isIndex(CommonName commonName) {
+    return (commonName.getCommonForm().equals(INDEX_COMMON_NAME));
   }
   
   public static boolean isTeaser(CommonName commonName) {
@@ -702,6 +728,7 @@ public class NoteParms {
       case DataFieldDefinition.STRING_TYPE:
       case DataFieldDefinition.TITLE_TYPE:
       case DataFieldDefinition.SEQ_TYPE:
+      case DataFieldDefinition.INDEX_TYPE:
       default:
         OneLiner oneLiner = new OneLiner();
         label.setLabelFor(oneLiner);

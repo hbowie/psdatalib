@@ -18,6 +18,7 @@ package com.powersurgepub.psdatalib.psdata;
 
   import com.powersurgepub.psdatalib.psdata.values.*;
   import com.powersurgepub.psdatalib.psdata.widgets.*;
+  import com.powersurgepub.psdatalib.psindex.*;
   import com.powersurgepub.psdatalib.pstags.*;
 
 
@@ -94,10 +95,16 @@ public class DataFactory {
         value = rating;
         break;
         
-      // Seeq
+      // Seq
       case DataFieldDefinition.SEQ_TYPE:
         DataValueSeq seq = new DataValueSeq();
         value = seq;
+        break;
+        
+      // Index
+      case DataFieldDefinition.INDEX_TYPE:
+        IndexPageValue ix = new IndexPageValue();
+        value = ix;
         break;
         
       // Simple string
@@ -157,6 +164,7 @@ public class DataFactory {
       case DataFieldDefinition.STRING_TYPE:
       case DataFieldDefinition.TITLE_TYPE:  
       case DataFieldDefinition.SEQ_TYPE:
+      case DataFieldDefinition.INDEX_TYPE:
       default:
         OneLiner oneLiner = new OneLiner();
         widget = oneLiner;

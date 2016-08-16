@@ -222,6 +222,7 @@ public class NoteLine {
               && Character.isWhitespace(line.charAt(field2Last))) {
             field2Last--;
           }
+          
           DataFieldDefinition fieldDef = noteParms.checkForFieldName(getMetaKey());
           if (fieldDef != null) {
             leadingSymbol.setTypeToMetadata();
@@ -274,6 +275,11 @@ public class NoteLine {
               note.setSeq(getMetaData());
               builder.setLastStringBuilder(null);
             } 
+            else
+            if (NoteParms.isIndex(metaKeyCommon)) {
+              note.setIndex(getMetaData());
+              builder.setLastStringBuilder(null);
+            }
             else
             if (NoteParms.isTeaser(metaKeyCommon)) {
               note.setTeaser(getMetaData());
