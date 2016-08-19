@@ -29,6 +29,7 @@ package com.powersurgepub.psdatalib.notenik;
 public class NoteIndexIO 
     implements DataSource {
   
+  public static final String INITIAL_LETTER = "Initial Letter";
   public static final String TERM = "Term";
   public static final String LOWER_CASE_TERM = "Lower Case Term";
   public static final String TERM_LINK = "Term Link";
@@ -50,6 +51,7 @@ public class NoteIndexIO
   public NoteIndexIO(File fileOrFolder, int inType) {
     noteIO = new NoteIO(fileOrFolder, inType);
     
+    recDef.addColumn(INITIAL_LETTER);
     recDef.addColumn(LOWER_CASE_TERM);
     recDef.addColumn(TERM);
     recDef.addColumn(TERM_LINK);
@@ -133,6 +135,9 @@ public class NoteIndexIO
     if (term == null) {
       return null;
     } else {
+      StringBuilder initialChar = new StringBuilder();
+      initialChar.append(term.getTerm().toUpperCase().charAt(0));
+      rec.storeField(recDef, INITIAL_LETTER, initialChar.toString());
       rec.storeField(recDef, LOWER_CASE_TERM, term.getTermLower());
       rec.storeField(recDef, TERM, term.getTerm());
       rec.storeField(recDef, TERM_LINK, term.getLink());
