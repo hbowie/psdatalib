@@ -99,6 +99,7 @@ public class IndexCollection {
     int endAnchor = -1;
     int startLink = -1;
     int endLink = -1;
+    int parenDepth = 0;
     boolean endOfTerm = false;
     char c = ' ';
     while (! endOfTerm) {
@@ -108,20 +109,26 @@ public class IndexCollection {
         c = SEP;
       }
       if (c == LINK_START) {
-        startLink = j + 1;
-        if (endTerm < 0) {
-          endTerm = j - 1;
+        if (parenDepth == 0) {
+          startLink = j + 1;
+          if (endTerm < 0) {
+            endTerm = j - 1;
+          }
+          else
+          if (startAnchor > 0 && endAnchor < 0) {
+            endAnchor = j - 1;
+          }
         }
-        else
-        if (startAnchor > 0 && endAnchor < 0) {
-          endAnchor = j - 1;
-        }
+        parenDepth++;
       }
       else
       if (c == LINK_END) {
-        if (startLink > 0) {
-          endLink = j - 1;
+        if (parenDepth == 1) {
+          if (startLink > 0) {
+            endLink = j - 1;
+          }
         }
+        parenDepth--;
       }
       else
       if (c == ANCHOR) {
