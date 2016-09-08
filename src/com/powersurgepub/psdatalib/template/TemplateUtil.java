@@ -1214,6 +1214,7 @@ public class TemplateUtil {
           boolean noBreaks = false;
           boolean noPunctuation = false;
           boolean emailPunctuation = false;
+          boolean digitToLetter = false;
           String formatString;
           
           boolean demarcation = false;
@@ -1312,6 +1313,9 @@ public class TemplateUtil {
               if (Character.toLowerCase(workChar) == 'p') {
                 noPunctuation = true;
               } else
+              if (Character.toLowerCase(workChar) == 't') {
+                digitToLetter = true;
+              } else
               if (Character.isLetter (workChar)) {
                 formatStringFound = true;
                 formatStringBuf.append (workChar);
@@ -1369,7 +1373,16 @@ public class TemplateUtil {
               && ((replaceData.length() > 0) 
                 || (variable.equals(RELATIVE_VARIABLE)))
               ) {
-            
+            if (digitToLetter) {
+              try {
+                int digit = Integer.parseInt(replaceData);
+                if (digit > 0 && digit <= 26) {
+                  replaceData = String.valueOf((char)(digit + 'A' - 1));
+                }
+              } catch (NumberFormatException e) {
+                // do nothing
+              }
+            } // end digit to letter
             if (leadingCount > 0) {
               if (leadingCount < replaceData.length()) {
                 if (keepRight) {
