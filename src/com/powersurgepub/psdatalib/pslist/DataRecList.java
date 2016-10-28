@@ -192,6 +192,15 @@ public class DataRecList
     reloadFilteredDataSet();
   }
   
+  public void loadAndExplode(DataDictionary dataDict, DataSource dataSource, Logger log) 
+      throws IOException {
+    
+    completeDataSet = new DataSet (dataDict, log);
+    completeDataSet.loadAndExplode(dataSource);
+    recDef = completeDataSet.getRecDef();
+    reloadFilteredDataSet();
+  }
+  
   public int getRecordsLoaded() {
     return completeDataSet.getRecordsLoaded();
   }
