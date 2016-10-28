@@ -109,6 +109,10 @@ public class TextMergeInput {
   private    JLabel               inputDictionaryLabel;
   private    JCheckBox            inputDictionaryCkBox;
   
+  // Explode Tags Check Box
+  private    JLabel               explodeTagsLabel;
+  private    JCheckBox            explodeTagsCkBox;
+  
   // Merge Radio Buttons
   private    JLabel               inputMergeLabel;
   private		 ButtonGroup					inputMergeGroup;
@@ -167,6 +171,9 @@ public class TextMergeInput {
   private			boolean							usingDictionary = false;
   private     String              usingDictionaryValue = "No";
   public static final String      DICTIONARY_EXT = "dic";
+  
+  // Tags Explosion Fields
+  private			boolean							explodeTags = false;
   
   // Merge Fields
   private			int							 		merge = 0;
@@ -376,6 +383,22 @@ public class TextMergeInput {
 		  } // end action listener
 		);
     
+    // Create Check Box for Tags Explosion
+    explodeTagsLabel = new JLabel ("Tags Explosion", JLabel.LEFT);
+    explodeTagsLabel.setBorder (etched);
+    
+    explodeTagsCkBox = new JCheckBox ("One row for each tag?");
+    explodeTagsCkBox.setSelected (false);
+    explodeTagsCkBox.addItemListener (new ItemListener()
+		  {
+		    public void itemStateChanged (ItemEvent event) {
+          explodeTags 
+              = (event.getStateChange() != ItemEvent.DESELECTED);
+          // setDictionaryImplications();
+		    } // end itemStateChanged method
+		  } // end action listener
+		);
+    
     // Create Radio Buttons for File Merge
     inputMergeLabel = new JLabel ("Merge into Existing Data", JLabel.LEFT);
     inputMergeLabel.setBorder (etched);
@@ -541,6 +564,12 @@ public class TextMergeInput {
     gb.add (inputMergeButton);
     gb.add (inputMergeSameColumnsButton);
     
+    gb.setRow(5);
+    gb.setTopInset(6);
+    gb.add (explodeTagsLabel);
+    gb.setAllInsets(2);
+    gb.add (explodeTagsCkBox);
+    
     // Bottom of Panel
     gb.setRow(9);
     gb.setColumn(0);
@@ -613,6 +642,11 @@ public class TextMergeInput {
             inActionValue + " is not a valid integer for a Normalization Type Value",
             true);
         }
+      }
+      else
+      if (inActionObject.equals (ScriptConstants.EXPLODE_TAGS_OBJECT)) {
+        char xplTagsChar = inActionValue.toLowerCase().charAt(0);
+        explodeTags = (xplTagsChar == 't' || xplTagsChar == 'y');
       } else {
         Logger.getShared().recordEvent (LogEvent.MEDIUM, 
           inActionObject + " is not a valid Scripting Object for an Open Set Action",
@@ -757,12 +791,21 @@ public class TextMergeInput {
      Decides whether to open the data source as a file or as a directory.
    */
   private void openFileOrDirectory() {
+    
     textMergeScript.recordScriptAction (
         ScriptConstants.INPUT_MODULE, 
         ScriptConstants.SET_ACTION,
         ScriptConstants.NO_MODIFIER, 
         ScriptConstants.NORMAL_OBJECT, 
         String.valueOf (normalType));
+    
+    textMergeScript.recordScriptAction (
+        ScriptConstants.INPUT_MODULE, 
+        ScriptConstants.SET_ACTION,
+        ScriptConstants.NO_MODIFIER, 
+        ScriptConstants.EXPLODE_TAGS_OBJECT, 
+        String.valueOf (explodeTags));
+    
     log.recordEvent (LogEvent.NORMAL,
         "Rows before open: "
             + String.valueOf(psList.totalSize()),
@@ -925,6 +968,10 @@ public class TextMergeInput {
       else
       if (merge == 2) {
         dataRecList.mergeSame (dataSource);
+      }
+      else
+      if (explodeTags) {
+        dataRecList.loadAndExplode(dataDict, dataSource, log);
       }
       else {
         dataRecList.load(dataDict, dataSource, log);
