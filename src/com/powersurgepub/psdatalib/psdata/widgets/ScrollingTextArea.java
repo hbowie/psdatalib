@@ -16,7 +16,7 @@
 
 package com.powersurgepub.psdatalib.psdata.widgets;
 
-import com.powersurgepub.psdatalib.psdata.widgets.DataWidget;
+  import com.powersurgepub.psdatalib.psdata.widgets.*;
   import javax.swing.*;
 
 /**
