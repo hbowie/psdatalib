@@ -19,6 +19,7 @@ package com.powersurgepub.psdatalib.psdata;
   import java.io.*;
   import java.util.*;
   import com.powersurgepub.psutils.*;
+  import com.powersurgepub.psdatalib.pstags.*;
   
 /**
    A set, or collection, of DataRecord objects, capable of being sorted. <p>
@@ -67,6 +68,7 @@ public class DataSet
                DataStore  {
   
   public     static final int   LOW_MEMORY_THRESHOLD = 100000;
+  public     static final String TAG = "Tag";
   
   /** Next available number to be assigned to the next data set instantiated. */
   private    static  int        dataSetNumber = 0;
@@ -219,6 +221,86 @@ public class DataSet
       throws IOException {
     inData.openForInput ();
     load (inData);
+  }
+  
+  /** 
+     Constructs a DataSet without loading from another data source.
+    
+     @param inDict Data Dictionary to be used.
+   
+     @param log Logger to be used to report significant program events.
+
+   */
+  public DataSet (DataDictionary inDict, Logger log) {
+    dict = inDict;
+    setLog (log);
+  }
+  
+  /** 
+     Loads this DataSet from another DataSource implementation.
+     The passed data source provides the record definition, as well as
+     all of its records.
+    
+     @param inData Data source that allows data records to be read.
+    
+     @throws IOException If the passed data source experiences an i/o error.
+   */
+  public void loadAndExplode (DataSource inData) 
+      throws IOException {
+    
+    inData.openForInput ();
+    dataParent = inData.getDataParent();
+    recDef = inData.getRecDef();
+    
+    // Look for Tags Field
+    int tagsColumnNumber = -1;
+    boolean hasTag = false;
+    int columnNumber = 0;
+    while (columnNumber < recDef.getNumberOfFields()) {
+      DataFieldDefinition fd = recDef.getDef(columnNumber);
+      if (fd.getCommonName().getCommonForm().equalsIgnoreCase(Tags.SIMPLE_NAME)
+          || fd.getCommonName().getCommonForm().equalsIgnoreCase
+                (Tags.ALTERNATE_SIMPLE_NAME)) {
+        tagsColumnNumber = columnNumber; 
+      } 
+      else 
+      if (fd.getCommonName().getCommonForm().equalsIgnoreCase(TAG)) {
+        hasTag = true;
+      }
+      columnNumber++;
+    }
+    if (tagsColumnNumber >= 0 && (! hasTag)) {
+      recDef.addColumn("Tag");
+    }
+    
+    initialize();
+    recordsLoaded = 0;
+    
+    while (! inData.isAtEnd()) {
+      DataRecord nextRec = inData.nextRecordIn();
+      if (nextRec != null) {
+        Tags tags = new Tags(nextRec.getField(Tags.SIMPLE_NAME).getData());
+        int tagsIndex = 0;
+        boolean endOfTags = false;
+        while (! endOfTags) {
+          String tag = tags.getTag(tagsIndex);
+          if (tagsIndex == 0 || tag.length() > 0) {
+            DataRecord outRec = new DataRecord();
+            nextRec.startWithFirstField();
+            while (nextRec.hasMoreFields()) {
+              DataField nextField = nextRec.nextField();
+              outRec.storeField(recDef, nextField);
+            } // End of fields in Next Rec
+            outRec.storeField(recDef, TAG, tag);
+            addRecord (outRec);
+            recordsLoaded++;
+          }
+          endOfTags = (tag.length() == 0);
+          tagsIndex++;
+        } // End while more tags to explode
+      } // End if next rec not null
+    } // End while more input data
+    inData.close();
   }
   
   /** 
