@@ -18,6 +18,7 @@ package com.powersurgepub.psdatalib.template;
 
   import com.powersurgepub.psdatalib.markup.*;
   import com.powersurgepub.psdatalib.psdata.values.*;
+  import com.powersurgepub.psdatalib.pstags.*;
   import com.powersurgepub.psdatalib.txbio.*;
   import com.powersurgepub.psdatalib.txbmodel.*;
   import com.powersurgepub.psdatalib.psdata.*;
@@ -1215,6 +1216,8 @@ public class TemplateUtil {
           boolean noPunctuation = false;
           boolean emailPunctuation = false;
           boolean digitToLetter = false;
+          boolean linkedTags = false;
+          boolean replaceAgain = false;
           String formatString;
           
           boolean demarcation = false;
@@ -1316,6 +1319,10 @@ public class TemplateUtil {
               if (Character.toLowerCase(workChar) == 't') {
                 digitToLetter = true;
               } else
+              if (Character.toLowerCase(workChar) == 'g') {
+                linkedTags = true;
+              }
+              else
               if (Character.isLetter (workChar)) {
                 formatStringFound = true;
                 formatStringBuf.append (workChar);
@@ -1405,6 +1412,8 @@ public class TemplateUtil {
                 } else
                 if (caseCode < 0) {
                   work.append (replaceData.substring(0,1).toLowerCase());
+                } else {
+                  work.append (replaceData.substring(0,1));
                 }
                 if (replaceData.length() > 1) {
                   work.append (replaceData.substring (1));
@@ -1441,6 +1450,11 @@ public class TemplateUtil {
             }
             if (noPunctuation) {
               replaceData = StringUtils.purifyPunctuation(replaceData);
+            }
+            if (linkedTags) {
+              Tags tags = new Tags(replaceData);
+              replaceData = tags.getLinkedTags("=$relative$=tags/");
+              replaceAgain = true;
             }
           } // end if replaceData non-blank
           
@@ -1516,7 +1530,11 @@ public class TemplateUtil {
           if (replaceData != null) {
             str.delete(startDelim, endDelim + nlEndVariable.length());
             str.insert(startDelim, replaceData);
-            varIndex = startDelim + replaceData.length();
+            if (replaceAgain) {
+              varIndex = startDelim;
+            } else {
+              varIndex = startDelim + replaceData.length();
+            }
           } else {
             varIndex = endDelim + nlEndVariable.length();
           }
