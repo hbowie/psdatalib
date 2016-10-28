@@ -35,6 +35,7 @@ public class Tags
   public final static String  SIMPLE_NAME   = "tags";
   public final static String  DISPLAY_NAME  = "Tags";
   public final static String  BRIEF_NAME    = "Tags";
+  public final static String  ALTERNATE_SIMPLE_NAME = "category";
   public final static int     COLUMN_WIDTH  = 80;
 
   // The tags string is divided up into words by separators.
