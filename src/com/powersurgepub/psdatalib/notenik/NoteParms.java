@@ -444,6 +444,12 @@ public class NoteParms {
       return null;
     }
     
+    // If the potential field name contains a comma, then ignore it
+    int commaPosition = fieldName.indexOf(",");
+    if (commaPosition >= 0) {
+      return null;
+    }
+    
     // Check for most basic note fields. 
     if (isTitle(commonName)) {
       return TITLE_DEF;
