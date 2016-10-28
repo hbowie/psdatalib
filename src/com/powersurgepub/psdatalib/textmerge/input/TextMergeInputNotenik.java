@@ -68,7 +68,8 @@ public class TextMergeInputNotenik
     if (inputType == NoteParms.NOTES_INDEX_TYPE) {
       dataSource = new NoteIndexIO(chosenFile, inputType);
     } else {
-      dataSource = new NoteIO (chosenFile, inputType);
+      NoteIO noteIO = new NoteIO (chosenFile, inputType);
+      dataSource = noteIO;
     }
     return dataSource;
   }
