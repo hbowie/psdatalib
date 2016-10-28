@@ -52,6 +52,7 @@ public class ScriptConstants {
   public  static final String MIN_NO_LOSS_OBJECT  = "minnoloss";
   public  static final String USING_DICTIONARY_OBJECT = "usedict";
   public  static final String DIR_DEPTH_OBJECT		= "dirdepth";
+  public  static final String EXPLODE_TAGS_OBJECT = "xpltags";
   public  static final String NO_OBJECT           = "";
   public  static final String NO_VALUE            = "";
           
