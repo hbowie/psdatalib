@@ -294,71 +294,8 @@ public class TextMergeOutput {
     if (fileChooserReturn 
       == JFileChooser.APPROVE_OPTION) {
       chosenOutputFile = fileChooser.getSelectedFile();
-      createOutput();
+      writeOutput();
       openOutputDataName.setText (tabNameOutput);
-    }
-  }
-  
-  /**
-     Create output file of tab-delimited records.
-   */
-  private void createOutput() {
-    textMergeScript.setCurrentDirectoryFromFile (chosenOutputFile);
-    tabFileOutput = new TabDelimFile (chosenOutputFile);
-    tabFileOutput.setLog (log);
-    tabFileOutput.setDataLogging (false);
-    boolean outputOK = true;
-    try {
-      tabFileOutput.openForOutput (dataRecList.getRecDef());
-    } catch (IOException e) {
-      outputOK = false;
-      log.recordEvent (LogEvent.MEDIUM, 
-        "Problem opening Output File",
-        false);
-    }
-    if (outputOK) {
-      dataRecList.openForInput();
-      DataRecord inRec;
-      do {
-        inRec = dataRecList.nextRecordIn ();
-        if (inRec != null) {
-          try {
-            tabFileOutput.nextRecordOut (inRec);
-          } catch (IOException e) {
-            log.recordEvent (LogEvent.MEDIUM, 
-              "Problem writing to Output File",
-              true);
-          }
-        }
-      } while (dataRecList.hasMoreRecords());
-      dataRecList.close();
-      try {
-        tabFileOutput.close();
-      } catch (IOException e) {
-      }
-      tabNameOutput = chosenOutputFile.getName();
-      openOutputDataName.setText (tabNameOutput);
-      if (usingDictionary) {
-        tabFileName = 
-          new FileName (chosenOutputFile.getAbsolutePath());
-        dictFile = 
-          new TabDelimFile (textMergeScript.getCurrentDirectory(),
-            tabFileName.replaceExt(DICTIONARY_EXT));
-        dictFile.setLog (log);
-        try {
-          dataDict.store (dictFile);
-        } catch (IOException e) {
-          log.recordEvent (LogEvent.MEDIUM, 
-              "Problem writing Output Dictionary",
-              true);
-        }
-      } 
-      textMergeScript.recordScriptAction (
-          ScriptConstants.OUTPUT_MODULE, 
-          ScriptConstants.OPEN_ACTION, 
-          ScriptConstants.NO_MODIFIER,
-          ScriptConstants.NO_OBJECT, 
-          chosenOutputFile.getAbsolutePath());
     }
   }
   
@@ -378,6 +315,106 @@ public class TextMergeOutput {
       ScriptConstants.NO_MODIFIER, 
       ScriptConstants.USING_DICTIONARY_OBJECT, 
       String.valueOf(usingDictionary));
+  }
+  
+  /**
+     Play one recorded action in the Output module.
+   */
+  public void playScript (
+      String  inActionAction,
+      String  inActionModifier,
+      String  inActionObject,
+      String  inActionValue) {
+
+    if (inActionAction.equals (ScriptConstants.OPEN_ACTION)) {
+      chosenOutputFile = new File (inActionValue);
+      writeOutput();
+    } // end if action is output
+    else {
+      Logger.getShared().recordEvent (LogEvent.MEDIUM, 
+        inActionAction + " is not a valid Scripting Action for the Output Module",
+        true);
+    } // end Action selector
+        
+  } // end playInputModule method
+  
+  /**
+   Write the output file, now matter how the request came in. 
+  
+   The variable chosenOutputFile must be set to the appropriate value
+   before calling this method. 
+  */
+  private void writeOutput() {
+ 
+    textMergeScript.setCurrentDirectoryFromFile (chosenOutputFile);
+    tabFileOutput = new TabDelimFile (chosenOutputFile);
+    tabFileOutput.setLog (log);
+    tabFileOutput.setDataLogging (false);
+    boolean outputOK = true;
+    try {
+      tabFileOutput.openForOutput (dataRecList.getRecDef());
+    } catch (IOException e) {
+      outputOK = false;
+      log.recordEvent (LogEvent.MEDIUM, 
+        "Problem opening Output File",
+        false);
+    }
+    if (outputOK) {
+      dataRecList.openForInput();
+      DataRecord inRec;
+      int count = 0;
+      do {
+        inRec = dataRecList.nextRecordIn ();
+        if (inRec != null) {
+          try {
+            tabFileOutput.nextRecordOut (inRec);
+            count++;
+          } catch (IOException e) {
+            log.recordEvent (LogEvent.MEDIUM, 
+              "Problem writing to Output File",
+              true);
+          }
+        } // end if in rec not null
+      } while (dataRecList.hasMoreRecords());
+
+      dataRecList.close();
+
+      try {
+        tabFileOutput.close();
+      } catch (IOException e) {
+      }
+
+      log.recordEvent(LogEvent.NORMAL,
+          String.valueOf(count) + " records output",
+          false);
+
+      tabNameOutput = chosenOutputFile.getName();
+      openOutputDataName.setText (tabNameOutput);
+      if (usingDictionary) {
+        tabFileName = 
+          new FileName (chosenOutputFile.getAbsolutePath());
+        dictFile = 
+          new TabDelimFile (textMergeScript.getCurrentDirectory(),
+            tabFileName.replaceExt(DICTIONARY_EXT));
+        dictFile.setLog (log);
+        try {
+          dataDict.store (dictFile);
+        } catch (IOException e) {
+          log.recordEvent (LogEvent.MEDIUM, 
+              "Problem writing Output Dictionary",
+              true);
+        }
+      } // end if using dictionary
+      
+      textMergeScript.recordScriptAction (
+          ScriptConstants.OUTPUT_MODULE, 
+          ScriptConstants.OPEN_ACTION, 
+          ScriptConstants.NO_MODIFIER,
+          ScriptConstants.NO_OBJECT, 
+          chosenOutputFile.getAbsolutePath());
+      
+    } // end if output ok
+    
   }
 
 }

@@ -1120,6 +1120,16 @@ public class TextMergeScript
      Play one recorded action in the Output module.
    */
   private void playOutputModule () {
+    if (outputModule == null) {
+      Logger.getShared().recordEvent(LogEvent.MEDIUM, 
+          "Output module not available to play scripted filter action", false);
+    } else {
+      outputModule.playScript(
+          inActionAction, 
+          inActionModifier, 
+          inActionObject,
+          inActionValue);
+    }
   /*
     if (inActionAction.equals (ScriptConstants.SET_ACTION)
       && inActionObject.equals (ScriptConstants.USING_DICTIONARY_OBJECT)) {
