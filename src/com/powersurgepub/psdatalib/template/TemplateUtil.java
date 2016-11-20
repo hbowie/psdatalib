@@ -1218,6 +1218,7 @@ public class TemplateUtil {
           boolean digitToLetter = false;
           boolean linkedTags = false;
           boolean replaceAgain = false;
+          boolean summary = false;
           String formatString;
           
           boolean demarcation = false;
@@ -1291,6 +1292,10 @@ public class TemplateUtil {
               if (Character.toLowerCase (workChar) == 'i') {
                 initialCase = true;
               } else
+              if (Character.toLowerCase(workChar) == 's') {
+                summary = true;
+              }
+              else
               if (Character.toLowerCase (workChar) == 'x') {
                 xml = true;
               } else
@@ -1390,6 +1395,39 @@ public class TemplateUtil {
                 // do nothing
               }
             } // end digit to letter
+            if (summary) {
+              int max = 250;
+              if (leadingCount > 0) {
+                max = leadingCount;
+              }
+              if (replaceData.length() > max) {
+                int sentenceCount = 0;
+                int endOfLastSentence = 0;
+                int lastSpace = 0;
+                int i = 0;
+                char c = ' ';
+                char lastChar = ' ';
+                
+                while (i < max) {
+                  lastChar = c;
+                  c = replaceData.charAt(i);
+                  if (c == ' ') {
+                    lastSpace = i;
+                    if (lastChar == '.') {
+                      endOfLastSentence = i;
+                      sentenceCount++;
+                    } // end if end of sentence
+                  } // end if space
+                  i++;
+                } // end of characters within summarization range
+                if (sentenceCount > 0) {
+                  replaceData = replaceData.substring(0, endOfLastSentence);
+                } else {
+                  replaceData = replaceData.substring(0, lastSpace) + "....";
+                }
+              } // end if we have any need to summarize at all
+            } // end if summarization requested
+            else
             if (leadingCount > 0) {
               if (leadingCount < replaceData.length()) {
                 if (keepRight) {
