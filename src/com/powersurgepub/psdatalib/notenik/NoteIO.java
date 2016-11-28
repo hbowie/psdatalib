@@ -187,6 +187,24 @@ public class NoteIO
     logEvent = new LogEvent (0, "");
   }
   
+  /**
+   Indicate whether we are reading a template file. 
+  
+   @param isTemplate True if reading a template file. 
+  */
+  public void setIsTemplate(boolean isTemplate) {
+    noteParms.setIsTemplate(isTemplate);
+  }
+  
+  /**
+   Is this Note I/O instance being used to read a template file?
+  
+   @return True if we're reading a template file; false otherwise. 
+  */
+  public boolean isTemplate() {
+    return noteParms.isTemplate();
+  }
+  
   public void setHomeFolder (File homeFolder) {
     this.homeFolder = homeFolder;
     if (homeFolder == null) {
@@ -274,6 +292,7 @@ public class NoteIO
       // Let the template fields define the record definition
       templateIO = new NoteIO(homeFolder, NoteParms.NOTES_GENERAL_TYPE);
       templateIO.buildRecordDefinition(); 
+      templateIO.setIsTemplate(true);
       try {
         Note templateNote = templateIO.getNote(templateFile, "");
         if (templateNote != null
@@ -294,6 +313,7 @@ public class NoteIO
         templateParms = new NoteParms(NoteParms.DEFINED_TYPE);
         templateParms.setRecDef(templateIO.getRecDef());
         templateParms.setPreferredFileExt(fileExt);
+        templateParms.setItemStatusConfig(templateIO.getNoteParms().getItemStatusConfig());
       }
     }
     if (! templateFound) {
@@ -662,7 +682,8 @@ public class NoteIO
       
       // For each line in the file
       while (line != null) {
-        NoteLine noteLine = new NoteLine(noteParms, builder, note, line);
+        NoteLine noteLine = new NoteLine
+          (noteParms, builder, note, line);
         line = inBuffered.readLine();
       }
       inBuffered.close();

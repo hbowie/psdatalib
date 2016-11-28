@@ -50,11 +50,15 @@ public class NoteParms {
   /** The record definition used for the notes in this collection. */
   private    RecordDefinition recDef = null;
   
+  
+  private             boolean   isTemplate          = false;
+  
   public static final String  DEFAULT_FILE_EXT = "txt";
   private    String           preferredFileExt    = DEFAULT_FILE_EXT;
   
   private    boolean          metadataAsMarkdown = true;
-
+  
+  private    ItemStatusConfig itemStatusConfig = null;
   
   public static final String  FILENAME = "notenik.parms";
   
@@ -184,10 +188,11 @@ public class NoteParms {
   }
   
   public NoteParms () {
-    
+    itemStatusConfig = ItemStatusConfig.getShared();
   }
   
   public NoteParms (int noteType) {
+    itemStatusConfig = ItemStatusConfig.getShared();
     this.noteType = noteType;
   }
   
@@ -233,6 +238,51 @@ public class NoteParms {
   
   public boolean quoteType() {
     return (noteType == QUOTE_TYPE);
+  }
+  
+  /**
+   Indicate whether we are reading a template file. 
+  
+   @param isTemplate True if reading a template file. 
+  */
+  public void setIsTemplate(boolean isTemplate) {
+    this.isTemplate = isTemplate;
+  }
+  
+  /**
+   Is this Note I/O instance being used to read a template file?
+  
+   @return True if we're reading a template file; false otherwise. 
+  */
+  public boolean isTemplate() {
+    return isTemplate;
+  }
+  
+  /**
+   Get the Item Status Values to be used. 
+  
+   @return The Item Status Values to be used. 
+  */
+  public ItemStatusConfig getItemStatusConfig() {
+    return itemStatusConfig;
+  }
+  
+  /**
+   Set the Item Status Values to be used. 
+  
+   @param itemStatusConfig The Item Status Values to be used. 
+  */
+  public void setItemStatusConfig(ItemStatusConfig itemStatusConfig) {
+    this.itemStatusConfig = itemStatusConfig;
+  }
+  
+  /**
+   Adjust the status values with the passed string. 
+  
+   @param statusValues A string consisting of one or more integer + value pairs.
+  */
+  public void setItemStatusConfig(String statusValues) {
+    itemStatusConfig.set(statusValues);
   }
   
   public void newRecordDefinition (DataDictionary dict) {
@@ -603,7 +653,7 @@ public class NoteParms {
   
    @return         The data widget that was created. 
   */
-  public static WidgetWithLabel getWidgetWithLabel(
+  public WidgetWithLabel getWidgetWithLabel(
       DataFieldDefinition fieldDef,
       JFrame frame,
       GridBagger gb) {
@@ -664,12 +714,12 @@ public class NoteParms {
         widgetWithLabel.setWidget(linkText);
         break;
         
-      // Link  
+      // Status  
       case DataFieldDefinition.STATUS_TYPE:
         ComboBoxWidget statusText = new ComboBoxWidget();
         label.setLabelFor(statusText);
         
-        ItemStatusConfig.getShared().populateComboBox(statusText);
+        itemStatusConfig.populateComboBox(statusText);
         
         setDefaultLabelConstraints(gb);
         gb.add(label);

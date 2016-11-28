@@ -268,6 +268,9 @@ public class NoteLine {
             else
             if (NoteParms.isStatus(metaKeyCommon)) {
               note.setStatus(getMetaData());
+              if (noteParms.isTemplate()) {
+                noteParms.setItemStatusConfig(getMetaData());
+              }
               builder.setLastStringBuilder(null);
             }
             else 

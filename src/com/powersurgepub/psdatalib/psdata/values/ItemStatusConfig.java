@@ -68,6 +68,94 @@ public class ItemStatusConfig {
   }
   
   /**
+   Adjust the status values with the passed string. 
+  
+   @param statusValues A string consisting of one or more integer + value pairs.
+  */
+  public void set(String statusValues) {
+    int i = 0;
+    char c = ' ';
+    int num = -1;
+    String val = "";
+    // Process all Integer + String pairs
+    while (i < statusValues.length()) {
+      // Process next Integer + String pair
+      int startNum = i;
+      int endNum = i;
+      int startVal = i;
+      int endVal = i;
+      num = -1;
+      val = "";
+      c = statusValues.charAt(i);
+      // Look for start of integer
+      while (i < statusValues.length() && (! Character.isDigit(c))) {
+        i++;
+        if (i < statusValues.length()) {
+          c = statusValues.charAt(i);
+        } else {
+          c = ' ';
+        } 
+      }
+      startNum = i;
+      
+      // Now look for end of integer
+      while (i < statusValues.length() && Character.isDigit(c)) {
+        i++;
+        if (i < statusValues.length()) {
+          c = statusValues.charAt(i);
+        } else {
+          c = ' ';
+        }
+      }
+      endNum = i;
+      
+      // Now look for start of value
+      while (i < statusValues.length() && (! Character.isLetter(c))) {
+        i++;
+        if (i < statusValues.length()) {
+          c = statusValues.charAt(i);
+        } else {
+          c = ' ';
+        }
+      }
+      startVal = i;
+      
+      // Now look for end of value
+      while (i < statusValues.length() && 
+          (Character.isLetter(c) || Character.isWhitespace(c))) {
+        i++;
+        if (i < statusValues.length()) {
+          c = statusValues.charAt(i);
+        } else {
+          c = ' ';
+        }
+      }
+      endVal = i;
+      
+      // If everything looks good, then update our list of status values
+      if (endNum > startNum && endVal > startVal) {
+        val = statusValues.substring(startVal, endVal);
+        try {
+          num = Integer.parseInt(statusValues.substring(startNum, endNum));
+          if (num < 0 || num > 9) {
+            System.out.println(
+                "ItemStatusConfig.set " +
+                statusValues.substring(startNum, endNum) + 
+                " is not in the range 0 - 9");
+          } else {
+            values[num] = new ItemStatusValue(val);
+          }
+        } catch (NumberFormatException ex) {
+          System.out.println (
+              "ItemStatusConfig.set " + 
+              statusValues.substring(startNum, endNum) + 
+              " is not a valid integer");
+        }
+      } // End if we have both a number and a string
+    } // End while processing status values
+  } // End of set methiod
+  
+  /**
    Look for an Item Status Value that matches the passed label, using only
    the first two letters to match on, and ignoring case. 
   
@@ -198,6 +286,11 @@ public class ItemStatusConfig {
     return str.toString();
   }
   
+  /**
+   Get the highest status value that is available. 
+  
+   @return The integer, followed by a dash, followed by the label. 
+  */
   public String getClosedString() {
     int closed = statusHigh;
     while (closed > 0 && (! values[closed].isAvailable())) {

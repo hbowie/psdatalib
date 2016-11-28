@@ -1538,6 +1538,10 @@ public class TemplateUtil {
             }
           }
           
+          if (markdown) {
+            replaceData = MdToHTML.getShared().markdownToHtml(replaceData);
+          }
+          
           if (xml) {
             StringConverter xmlConverter = StringConverter.getXML();
             replaceData = xmlConverter.convert (replaceData);
@@ -1545,10 +1549,6 @@ public class TemplateUtil {
 
           if (html) {
             replaceData = htmlConverter.markup (replaceData, true);
-          }
-          
-          if (markdown) {
-            replaceData = MdToHTML.getShared().markdownToHtml(replaceData);
           }
           
           if (convertLinks) {
