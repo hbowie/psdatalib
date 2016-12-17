@@ -494,11 +494,11 @@ public class AboutWindow
   }//GEN-LAST:event_aboutPanel1formComponentShown
 
 private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
-    WindowMenuManager.getShared().hide(this);
+    WindowMenuManager.getShared().hideAndRemove(this);
 }//GEN-LAST:event_formWindowClosed
 
 private void formComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentHidden
-  WindowMenuManager.getShared().hide(this);
+  WindowMenuManager.getShared().hideAndRemove(this);
 }//GEN-LAST:event_formComponentHidden
   
   
