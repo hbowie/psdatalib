@@ -221,6 +221,10 @@ public class TextMergeHarness
     textMergeScript.playScript(sFile);
   }
   
+  public void resetOutputFileName() {
+    textMergeTemplate.resetOutputFileName();
+  }
+  
   public String getOutputFileName() {
     return textMergeTemplate.getOutputFileName();
   }
@@ -261,7 +265,9 @@ public class TextMergeHarness
    @param operand
    */
   public void scriptCallback(String operand) {
-
+    if (executor != null) {
+      executor.scriptCallback(operand);
+    }
   }
   
   /**

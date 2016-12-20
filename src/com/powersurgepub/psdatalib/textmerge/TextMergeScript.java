@@ -1181,6 +1181,8 @@ public class TextMergeScript
           "Script callback executor not available", false);
     }
     if (scriptExecutor != null) {
+      Logger.getShared().recordEvent(LogEvent.NORMAL, 
+          "Callback executor is " + scriptExecutor.getClass().getName(), false);
       scriptExecutor.scriptCallback(inActionAction);
     }
    

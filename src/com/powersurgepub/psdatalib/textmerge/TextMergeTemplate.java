@@ -758,6 +758,10 @@ public class TextMergeTemplate {
     }
   }
   
+  public void resetOutputFileName() {
+    outputFileName = "";
+  }
+  
   public String getOutputFileName() {
     return outputFileName;
   }
