@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2015 Herb Bowie
+ * Copyright 1999 - 2017 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,6 +126,18 @@ public class RecordDefinition {
    */
   public DataDictionary getDict () {
     return dict;
+  }
+  
+  /**
+   Does this record definition contain a field with the passed name?
+  
+   @param inName The name of the field in question. 
+  
+   @return True if found, false otherwise.
+  */
+  public boolean contains(String inName) {
+    int ix = getColumnNumber(inName);
+    return (ix >= 0);
   }
   
   /**

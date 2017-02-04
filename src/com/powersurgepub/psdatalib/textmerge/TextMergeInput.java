@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2016 Herb Bowie
+ * Copyright 1999 - 2017 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ package com.powersurgepub.psdatalib.textmerge;
   import com.powersurgepub.psdatalib.ui.*;
   import com.powersurgepub.psfiles.*;
   import com.powersurgepub.psutils.*;
+  import com.powersurgepub.xos2.*;
   import java.awt.*;
   import java.awt.event.*;
   import java.io.*;
@@ -80,6 +81,7 @@ public class TextMergeInput {
   // private     TextMergeInputYAML    inYAML = new TextMergeInputYAML();
   private     TextMergeInputMetaMarkdown inMarkdown = new TextMergeInputMetaMarkdown();
   private     TextMergeInputNotenik inNotenik = new TextMergeInputNotenik();
+  private     TextMergeInputMacApps inMacApps = new TextMergeInputMacApps();
   
   private     int                   inputModuleIndex = 0;
   
@@ -219,6 +221,7 @@ public class TextMergeInput {
     insertAt = addInputModule(inGrid, insertAt);
     insertAt = addInputModule(inHTML, insertAt);
     insertAt = addInputModule(inTunes, insertAt);
+    insertAt = addInputModule(inMacApps, insertAt);
     insertAt = addInputModule(inMarkdown, insertAt);
     insertAt = addInputModule(inNotenik, insertAt);
     // insertAt = addInputModule(inOutline, insertAt);
@@ -764,7 +767,18 @@ public class TextMergeInput {
    */
   private void openInputFile() {
     JFileChooser fileChooser = new JFileChooser();
-    fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+    if (inputModule != null && inputModule instanceof TextMergeInputMacApps) {
+      fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    } else {
+      fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+    }
+    if (XOS.getShared().isRunningOnMacOS()
+        && inputModule != null
+        && inputModule instanceof TextMergeInputMacApps) {
+      File top = new File ("/");
+      fileChooser.setCurrentDirectory (top);
+    }
+    else
     if (textMergeScript.hasCurrentDirectory()) {
       fileChooser.setCurrentDirectory (textMergeScript.getCurrentDirectory());
     } 

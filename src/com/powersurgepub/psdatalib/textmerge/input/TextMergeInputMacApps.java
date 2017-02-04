@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2017 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,25 +17,52 @@
 package com.powersurgepub.psdatalib.textmerge.input;
 
   import com.powersurgepub.psdatalib.psdata.*;
-  import com.powersurgepub.psdatalib.txbio.strtext.*;
   import java.io.*;
 
 /**
- A PSTextMerge input module for reading all the files within a directory.
+ A PSTextMerge input module for reading a folder full of Mac Applications.
 
  @author Herb Bowie
  */
-public class TextMergeInputDirectory 
+public class TextMergeInputMacApps 
     extends TextMergeInputModule {
   
-  public TextMergeInputDirectory () {
+  public TextMergeInputMacApps () {
     
     modifiers.add("");
-    modifiers.add("dir");
+    modifiers.add("macapps");
     
-    labels.add("No File Directory");
-    labels.add("File Directory Entries");
+    labels.add("No Mac Apps Folder");
+    labels.add("Mac Apps Folder");
 
+  }
+ 
+  /**
+   Is this input module interested in processing the specified file?
+  
+   @param candidate The file being considered. 
+  
+   @return True if the input module thinks this file is worth processing,
+           otherwise false. 
+  */
+  public boolean isInterestedIn(File candidate) {
+    if (candidate.isHidden()) {
+      return false;
+    }
+    else
+    if (candidate.isFile()) {
+      return false;
+    }
+    else
+    if (! candidate.canRead()) {
+      return false;
+    }
+    else
+    if (! candidate.getName().endsWith(".app")) {
+      return false;
+    } else {
+      return true;
+    }
   }
   
   /**
@@ -46,7 +73,7 @@ public class TextMergeInputDirectory
    @return The desired data source.
   */
   public DataSource getDataSource(File chosenFile) {
-    DataSource dataSource = new TextIOStrText (chosenFile);
+    DataSource dataSource = new TextMergeMacAppReader (chosenFile);
     return dataSource;
   }
 

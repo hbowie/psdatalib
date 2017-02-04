@@ -39,7 +39,7 @@ public class AboutWindow
         WindowToManage
   {
   
-  public  static final String COPYRIGHT_YEAR_THRU = "2016";
+  public  static final String COPYRIGHT_YEAR_THRU = "2017";
   
   private String    copyRightYears = "";
   private String    fontBegin = "<font face=\"Arial\" size=\"4\">";

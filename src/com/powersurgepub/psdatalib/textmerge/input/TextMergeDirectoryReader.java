@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2017 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package com.powersurgepub.psdatalib.textmerge.input;
 
-import com.powersurgepub.psdatalib.txbio.MetaMarkdownReader;
   import com.powersurgepub.psdatalib.psdata.*;
   import com.powersurgepub.psdatalib.txbio.*;
   import com.powersurgepub.psutils.*;

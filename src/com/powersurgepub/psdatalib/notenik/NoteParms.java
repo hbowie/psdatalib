@@ -86,6 +86,7 @@ public class NoteParms {
   public static final String  SEQ_COMMON_NAME   = "seq";
   public static final String  INDEX_FIELD_NAME  = "Index";
   public static final String  INDEX_COMMON_NAME = "index";
+  public static final String  MIN_SYS_VERSION_FIELD_NAME = "Minimum System Version";
   
   public static final String  COMPLETE_PATH     = "Complete Path";
   public static final String  BASE_PATH         = "Base Path";
