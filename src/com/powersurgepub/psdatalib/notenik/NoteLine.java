@@ -296,7 +296,7 @@ public class NoteLine {
             } 
             else
             {
-              fieldDef.setType(DataFieldDefinition.STRING_BUILDER_TYPE);
+              fieldDef.setTypeFromName();
               DataValueStringBuilder dataValue = new DataValueStringBuilder(getMetaData());
               DataField dataField = new DataField (fieldDef, dataValue);
               note.storeField(note.getRecDef(), dataField);

@@ -135,11 +135,15 @@ public class DataFieldDefinition {
    */
   public DataFieldDefinition 
       (String properName, DataFormatRule rule, boolean combineByAppendingOK) {
+
     this.properName = properName;
     commonName =  new CommonName (properName);
     this.rule  = rule;
     this.combineByAppendingOK = combineByAppendingOK;
-    
+    setTypeFromName();
+  }
+      
+  public void setTypeFromName() {
     if (commonName.equals("link")) {
       setType (LINK_TYPE);
     }
@@ -160,12 +164,34 @@ public class DataFieldDefinition {
       setType (STRING_BUILDER_TYPE);
     }
     else
-    if (commonName.equals("seq") || commonName.equals("sequence")) {
+    if (commonName.equals("seq") 
+        || commonName.equals("sequence")
+        || commonName.contains("version")) {
       setType (SEQ_TYPE);
     }
     else
     if (commonName.equals("index")) {
       setType (INDEX_TYPE);
+    }
+    else
+    if (commonName.equals("author")
+        || commonName.equals("by")) {
+      setType(AUTHOR_TYPE);
+    } 
+    else
+    if (commonName.equals("date")
+        || commonName.contains("date")) {
+      setType(DATE_TYPE);
+    }
+    else
+    if (commonName.equals("rating")) {
+      setType(RATING_TYPE);
+    }
+    else
+    if (commonName.equals("status")) {
+      setType(STATUS_TYPE);
+    } else {
+      setType(DEFAULT_TYPE);
     }
   }
   

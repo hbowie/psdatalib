@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 - 2016 Herb Bowie
+ * Copyright 2014 - 2017 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -612,6 +612,12 @@ public class Note
     }
   }
   
+  /**
+   Do we have any tags?
+  
+   @return True if we have a tags field, and the field is not null, 
+           and the tags aren't blank; false otherwise. 
+  */
   public boolean hasTags() {
     if (tagsAdded && tagsValue != null) {
       return (! tagsValue.areBlank());
@@ -716,6 +722,27 @@ public class Note
       return linkValue.getURLasString();
     } else {
       return "";
+    }
+  }
+  
+  public boolean isLinkToMacApp() {
+    if (! linkAdded) {
+      return false;
+    }
+    else
+    if (linkValue == null) {
+      return false;
+    } else {
+      String link = linkValue.getURLasString();
+      if (link.endsWith(".app")) {
+        return true;
+      }
+      else
+      if (link.endsWith(".app/")) {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
   

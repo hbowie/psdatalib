@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Herb Bowie
+ * Copyright 2012 - 2017 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -308,7 +308,10 @@ public class NoteIO
         RecordDefinition recDef = templateIO.getRecDef();
         for (int i = 0; i < recDef.getNumberOfFields(); i++) {
           DataFieldDefinition fieldDef = recDef.getDef(i);
-          logNormal("  " + String.valueOf(i + 1) + ". " + fieldDef.getProperName());
+          logNormal("  " + String.valueOf(i + 1) + ". " 
+              + fieldDef.getProperName() + " ("
+              + fieldDef.getCommonName() + ") type = " 
+              + String.valueOf(fieldDef.getType()));
         }
         templateParms = new NoteParms(NoteParms.DEFINED_TYPE);
         templateParms.setRecDef(templateIO.getRecDef());
@@ -328,22 +331,36 @@ public class NoteIO
    *
    * ======================================================================= */
   
-  public void load (NoteList list) 
+  /**
+   Load the notes from disk to memory. 
+  
+   @param list The list to contain the loaded notes. 
+   @param loadUnTagged Should untagged notes be loaded? If not, they will
+                       be suppressed. 
+   @throws IOException If there's a problem reading the notes from disk. 
+  */
+  public void load (NoteList list, boolean loadUnTagged) 
       throws IOException {
     
     notesLoaded = 0;
+    String taggedMsg = "";
+    if (! loadUnTagged) {
+      taggedMsg = " Tagged";
+    }
     this.list = list;
     openForInput();
     Note note = readNextNote();
     while (note != null) {
-      list.add(note);
-      notesLoaded++;
+      if (note.hasTags() || loadUnTagged) {
+        list.add(note);
+        notesLoaded++;
+      }
       note = readNextNote();
     }
     close();
 
     Logger.getShared().recordEvent(LogEvent.NORMAL, 
-        String.valueOf(notesLoaded) + " Notes loaded", false);
+        String.valueOf(notesLoaded) + taggedMsg + " Notes loaded", false);
   }
   
   public int getNotesLoaded() {
