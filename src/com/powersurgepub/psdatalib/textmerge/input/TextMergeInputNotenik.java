@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2017 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,12 +36,14 @@ public class TextMergeInputNotenik
     modifiers.add("notenik+");
     modifiers.add("notenik-general");
     modifiers.add("notenik-index");
+    modifiers.add("notenik-defined");
     
     labels.add("No Notenik");
     labels.add("Notenik Notes");
     labels.add("Notenik Notes Plus");
     labels.add("Notenik General");
     labels.add("Notenik Index");
+    labels.add("Notenik Defined");
   }
   
   /**

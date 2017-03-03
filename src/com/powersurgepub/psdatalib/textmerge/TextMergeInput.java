@@ -853,11 +853,20 @@ public class TextMergeInput {
       inputModule = inYAML;
     } */
     
+    log.recordEvent (LogEvent.NORMAL,
+        "Input Module Found? " + String.valueOf(inputModuleFound),
+        false);
+    
     if (! inputModuleFound) {
       inTDF.setInputType(1);
       inputModuleFound = true;
       inputModule = inTDF;
     }
+    
+    log.recordEvent (LogEvent.NORMAL,
+        "Using Input Module " + inputModule.getClass().getName(), false);
+    log.recordEvent (LogEvent.NORMAL,
+        "With Input Type of " + String.valueOf(inputModule.getInputType()), false);
     
     if (inputModuleFound) {
       fileNameToDisplay = chosenFile.getName();

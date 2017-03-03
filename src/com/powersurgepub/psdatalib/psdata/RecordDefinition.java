@@ -436,7 +436,10 @@ public class RecordDefinition {
     System.out.println("RecordDefinition.display");
     for (int i = 0; i < getNumberOfFields(); i++) {
       DataFieldDefinition fieldDef = getDef(i);
-      System.out.println(String.valueOf(i) + ". " + fieldDef.getProperName());
+      System.out.println(String.valueOf(i) + ". " 
+          + fieldDef.getProperName() + " ("
+          + fieldDef.getCommonName().toString() + ") type = "
+          + String.valueOf(fieldDef.getType()));
     }
   }
   

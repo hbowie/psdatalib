@@ -287,7 +287,9 @@ public class NoteParms {
   }
   
   public void newRecordDefinition (DataDictionary dict) {
-    recDef = new RecordDefinition(dict);
+    if (noteType != DEFINED_TYPE) {
+      recDef = new RecordDefinition(dict);
+    }
   }
   
   public void setRecDef(RecordDefinition recDef) {
@@ -316,6 +318,7 @@ public class NoteParms {
   */
   public RecordDefinition getRecordDefinition() {
     if (recDef == null) {
+      // System.out.println("NoteParms.getRecordDefinition with null recDef");
       buildRecordDefinition();
     }
     return recDef;
@@ -344,75 +347,79 @@ public class NoteParms {
     if (recDef == null) {
       recDef = new RecordDefinition();
     }
-    recDef.clear();
-    if (noteType == NOTES_ONLY_TYPE 
-        || noteType == NOTES_PLUS_TYPE
-        || noteType == NOTES_INDEX_TYPE) {
-      recDef.addColumn(TITLE_DEF);
-      recDef.addColumn(TAGS_DEF);
-      recDef.addColumn(LINK_DEF);
-      recDef.addColumn(BODY_DEF);
-    }
-    if (noteType == NOTES_EXPANDED_TYPE
-        || noteType == NOTES_INDEX_TYPE) {
-      recDef.addColumn(TITLE_DEF);
-      recDef.addColumn (AUTHOR_DEF);
-      recDef.addColumn(DATE_DEF);
-      recDef.addColumn(STATUS_DEF);
-      recDef.addColumn(TYPE_DEF);
-      recDef.addColumn(SEQ_DEF);
-      recDef.addColumn(TAGS_DEF);
-      recDef.addColumn(LINK_DEF);
-      recDef.addColumn(RATING_DEF);
-      recDef.addColumn(INDEX_DEF);
-      recDef.addColumn(TEASER_DEF);
-      recDef.addColumn(BODY_DEF);
-    }
-    if (noteType == MARKDOWN_TYPE 
-        || noteType == TAG_TYPE) {
-      recDef.addColumn(TITLE_DEF);
-      recDef.addColumn (COMPLETE_PATH);
-      recDef.addColumn (BASE_PATH);
-      recDef.addColumn (LOCAL_PATH);
-      recDef.addColumn (PATH_TO_TOP);
-      recDef.addColumn (DEPTH);
-      recDef.addColumn (FILE_NAME);
-      recDef.addColumn (FILE_NAME_BASE);
-      recDef.addColumn (FILE_EXT);
-      recDef.addColumn (LAST_MOD_DATE);
-      recDef.addColumn (FILE_SIZE);
-      recDef.addColumn (AUTHOR_DEF);
-      recDef.addColumn (DATE_DEF);
-      recDef.addColumn (STATUS_DEF);
-      recDef.addColumn (BREADCRUMBS);
-      switch (noteType) {
-        case MARKDOWN_TYPE:
-          recDef.addColumn(TAGS_DEF);
-          recDef.addColumn (LINKED_TAGS);
-          break;
-        case TAG_TYPE:
-          recDef.addColumn (SINGLE_TAG);
-          break;
+    if (noteType == DEFINED_TYPE) {
+      // Leave it alone
+    } else {
+      recDef.clear();
+      if (noteType == NOTES_ONLY_TYPE 
+          || noteType == NOTES_PLUS_TYPE
+          || noteType == NOTES_INDEX_TYPE) {
+        recDef.addColumn(TITLE_DEF);
+        recDef.addColumn(TAGS_DEF);
+        recDef.addColumn(LINK_DEF);
+        recDef.addColumn(BODY_DEF);
       }
-    }
-    if (noteType == QUOTE_TYPE) {
-      recDef.addColumn(TITLE_DEF);
-      recDef.addColumn(TAGS_DEF);
-      recDef.addColumn(AUTHOR_DEF);
-      recDef.addColumn(AUTHOR_INFO);
-      recDef.addColumn(AUTHOR_LINK);
-      recDef.addColumn(WORK_TITLE);
-      recDef.addColumn(WORK_TYPE);
-      recDef.addColumn(DATE_DEF);
-      recDef.addColumn(WORK_MINOR_TITLE);
-      recDef.addColumn(LINK_DEF);
-      recDef.addColumn(WORK_IDENTIFIER);
-      recDef.addColumn(WORK_PAGE_NUMBERS);
-      recDef.addColumn(WORK_RIGHTS);
-      recDef.addColumn(WORK_RIGHTS_HOLDER);
-      recDef.addColumn(PUBLISHER);
-      recDef.addColumn(PUBLISHER_CITY);
-      recDef.addColumn(BODY_DEF);
+      if (noteType == NOTES_EXPANDED_TYPE
+          || noteType == NOTES_INDEX_TYPE) {
+        recDef.addColumn(TITLE_DEF);
+        recDef.addColumn (AUTHOR_DEF);
+        recDef.addColumn(DATE_DEF);
+        recDef.addColumn(STATUS_DEF);
+        recDef.addColumn(TYPE_DEF);
+        recDef.addColumn(SEQ_DEF);
+        recDef.addColumn(TAGS_DEF);
+        recDef.addColumn(LINK_DEF);
+        recDef.addColumn(RATING_DEF);
+        recDef.addColumn(INDEX_DEF);
+        recDef.addColumn(TEASER_DEF);
+        recDef.addColumn(BODY_DEF);
+      }
+      if (noteType == MARKDOWN_TYPE 
+          || noteType == TAG_TYPE) {
+        recDef.addColumn(TITLE_DEF);
+        recDef.addColumn (COMPLETE_PATH);
+        recDef.addColumn (BASE_PATH);
+        recDef.addColumn (LOCAL_PATH);
+        recDef.addColumn (PATH_TO_TOP);
+        recDef.addColumn (DEPTH);
+        recDef.addColumn (FILE_NAME);
+        recDef.addColumn (FILE_NAME_BASE);
+        recDef.addColumn (FILE_EXT);
+        recDef.addColumn (LAST_MOD_DATE);
+        recDef.addColumn (FILE_SIZE);
+        recDef.addColumn (AUTHOR_DEF);
+        recDef.addColumn (DATE_DEF);
+        recDef.addColumn (STATUS_DEF);
+        recDef.addColumn (BREADCRUMBS);
+        switch (noteType) {
+          case MARKDOWN_TYPE:
+            recDef.addColumn(TAGS_DEF);
+            recDef.addColumn (LINKED_TAGS);
+            break;
+          case TAG_TYPE:
+            recDef.addColumn (SINGLE_TAG);
+            break;
+        }
+      }
+      if (noteType == QUOTE_TYPE) {
+        recDef.addColumn(TITLE_DEF);
+        recDef.addColumn(TAGS_DEF);
+        recDef.addColumn(AUTHOR_DEF);
+        recDef.addColumn(AUTHOR_INFO);
+        recDef.addColumn(AUTHOR_LINK);
+        recDef.addColumn(WORK_TITLE);
+        recDef.addColumn(WORK_TYPE);
+        recDef.addColumn(DATE_DEF);
+        recDef.addColumn(WORK_MINOR_TITLE);
+        recDef.addColumn(LINK_DEF);
+        recDef.addColumn(WORK_IDENTIFIER);
+        recDef.addColumn(WORK_PAGE_NUMBERS);
+        recDef.addColumn(WORK_RIGHTS);
+        recDef.addColumn(WORK_RIGHTS_HOLDER);
+        recDef.addColumn(PUBLISHER);
+        recDef.addColumn(PUBLISHER_CITY);
+        recDef.addColumn(BODY_DEF);
+      }
     }
 
     return recDef;
@@ -818,6 +825,13 @@ public class NoteParms {
     gb.setColumnWeight(0.0);
     gb.setRowWeight(0.0);
     return gb;
+  }
+  
+  public void display() {
+    System.out.println(" ");
+    System.out.println("NoteParms.display");
+    System.out.println("Note Type = " + String.valueOf(noteType));
+    recDef.display();
   }
 
 }
