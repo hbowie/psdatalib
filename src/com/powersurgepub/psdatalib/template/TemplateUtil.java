@@ -1511,7 +1511,10 @@ public class TemplateUtil {
             setListItemPending (true);
           }
           
-          if (formatStringFound || date != null) {
+          if (date != null || 
+              (formatStringFound
+              && replaceData != null
+              && replaceData.length() > 0)) {
             if (date == null) {
               StringDate dateString = new StringDate();
               dateString.parse(replaceData);

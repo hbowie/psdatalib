@@ -972,6 +972,7 @@ public class TextMergeScript
     if (! quietMode && recentScripts != null) {
       recentScripts.addRecentFile (inScriptFile);
     }
+    filterModule.initItemFilter();
     while (! inScript.isAtEnd()) {
       try {
         inAction = inScript.nextRecordIn();

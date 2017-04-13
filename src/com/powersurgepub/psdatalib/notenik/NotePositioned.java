@@ -22,7 +22,7 @@ package com.powersurgepub.psdatalib.notenik;
 /**
 
  Consists of a Note object and information to position it within the
- URLCollection.
+ Note Collection.
 
  */
 public class NotePositioned {
@@ -51,7 +51,7 @@ public class NotePositioned {
 
   public void setNote (Note note) {
     this.note = note;
-    if (note != null && note.hasKey()) {
+    if (note != null && note.hasUniqueKey()) {
       newNote = false;
     }
   }

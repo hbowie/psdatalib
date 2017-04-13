@@ -278,7 +278,7 @@ public class Note
     boolean eq = false;
     if (obj2.getClass().getSimpleName().equals ("Note")) {
       Note note2 = (Note)obj2;
-      eq = (this.getKey().equalsIgnoreCase (note2.getKey()));
+      eq = (this.getUniqueKey().equalsIgnoreCase (note2.getUniqueKey()));
     }
     return eq;
   }
@@ -296,7 +296,7 @@ public class Note
     int comparison = -1;
     if (obj2.getClass().getSimpleName().equals ("Note")) {
       Note note2 = (Note)obj2;
-      comparison = this.getKey().compareToIgnoreCase(note2.getKey());
+      comparison = this.getUniqueKey().compareToIgnoreCase(note2.getUniqueKey());
     }
     return comparison;
   }
@@ -312,18 +312,41 @@ public class Note
    */
   public int compareTo (Note note2) {
     int comparison = -1;
-      comparison = this.getKey().compareToIgnoreCase(note2.getKey());
+      comparison = this.getUniqueKey().compareToIgnoreCase(note2.getUniqueKey());
 
     return comparison;
   }
   
-  public boolean hasKey() {
-    return (getKey() != null
-        && getKey().length() > 0);
+  public boolean hasUniqueKey() {
+    return (getUniqueKey() != null
+        && getUniqueKey().length() > 0);
   }
   
-  public String getKey() {
+  public String getUniqueKey() {
     return titleValue.getLowerHyphens();
+  }
+  
+  public String getSortKey (NoteSortParm parm) {
+
+    switch (parm.getParm()) {
+      case 1:
+        return (seqValue.toPaddedString('0', 8, '0', 4) + titleValue.getLowerHyphens());
+      default:
+        return titleValue.getLowerHyphens();
+    }
+  }
+  
+  public String getSortKeyToDisplay (NoteSortParm parm) {
+
+    switch (parm.getParm()) {
+      case 1:
+        return (seqValue.toPaddedString
+          (' ', parm.getMaxPositionsToLeftOfDecimal(), 
+           ' ', parm.getMaxPositionsToRightOfDecimal()) 
+            + "  " + titleValue.toString());
+      default:
+        return titleValue.toString();
+    }
   }
   
   public void merge (Note note2) {
@@ -519,6 +542,10 @@ public class Note
   }
   
   public boolean hasSeq() {
+    // System.out.println ("Note.hasSeq");
+    // System.out.println ("  " + titleValue.toString());
+    // System.out.println ("  seq Added? " + String.valueOf(seqAdded));
+    // System.out.println ("  seq Value: " + String.valueOf(seqValue));
     return (seqAdded && seqValue != null && seqValue.hasData());
   }
   
@@ -528,6 +555,23 @@ public class Note
   
   public String getSeqAsString() {
     return seqValue.toString();
+  }
+  
+  public DataValueSeq getSeqValue() {
+    return seqValue;
+  }
+  
+  /**
+   Increment the sequence value (whether numeric or alphabetic) by one.
+  
+   @param onLeft Are we incrementing the integer (to the left of the decimal, 
+                 if any?). 
+  */
+  public void incrementSeq(boolean onLeft) {
+    if (! this.hasSeq()) {
+      this.setSeq("0");
+    }
+    seqValue.increment(onLeft);
   }
   
   public void setStatus(String status) {

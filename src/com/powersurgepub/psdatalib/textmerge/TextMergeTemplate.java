@@ -99,6 +99,10 @@ public class TextMergeTemplate {
   
   private     File                webRootFile = null;
   
+  private     File                templateFolder = null;
+  
+  
+  
   public TextMergeTemplate (PSList psList, TextMergeScript scriptRecorder) {
     this.psList = psList;
     this.scriptRecorder = scriptRecorder;
@@ -108,6 +112,7 @@ public class TextMergeTemplate {
     templateLibraryUserPref = new File (UserPrefs.getShared().getPref (TEMPLATE_LIBRARY_KEY));
     templateLibraryAppFolder = new File 
           (Home.getShared().getAppFolder().getPath(),  "templates");
+    templateFolder = Home.getShared().getUserHome();
     
     setListOptions();
   }
@@ -437,6 +442,7 @@ public class TextMergeTemplate {
           + " for a Template Open Action", true);
       }
       else {
+        templateFolder = templateFile.getParentFile();
         templateOpen();
       } // end file existence selector
     }
@@ -469,6 +475,13 @@ public class TextMergeTemplate {
     templateFileOK = false;
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    if (templateFolder != null
+        && templateFolder.exists()
+        && templateFolder.isDirectory()
+        && templateFolder.canRead()) {
+      fileChooser.setCurrentDirectory(templateFolder);
+    }
+    else
     if (validTemplateLibrary()) {
       fileChooser.setCurrentDirectory(getTemplateLibrary());
     }
@@ -477,6 +490,7 @@ public class TextMergeTemplate {
     if (fileChooserReturn 
       == JFileChooser.APPROVE_OPTION) {
       templateFile = fileChooser.getSelectedFile();
+      templateFolder = templateFile.getParentFile();
       templateOpen();
       if (! templateFileOK) {
         JOptionPane.showMessageDialog (templatePanel, 

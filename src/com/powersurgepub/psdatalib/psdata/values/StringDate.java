@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 - 2016 Herb Bowie
+ * Copyright 2010 - 2017 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -324,6 +324,11 @@ public class StringDate
         yyyy = zeroPad(year, 4);
       }
     }
+    
+    // System.out.println(when + " parsed as" +
+    //     " mm: " + mm +
+    //     " dd: " + dd +
+    //     " yyyy: " + yyyy);
   } // end parse method
   
   /**
@@ -348,7 +353,8 @@ public class StringDate
       }
     } 
     else
-    if (mm.length() > 0) {
+    if (mm.length() > 0
+        && dd.length() > 0) {
       // Don't overlay the first month, if a range was supplied
     } else {
       boolean found = false;
@@ -361,6 +367,10 @@ public class StringDate
         }
       }
       if (found) {
+        if (mm.length() > 0) {
+          StringBuilder temp = new StringBuilder(mm);
+          dd = temp.toString();
+        }
         mm = zeroPad(m + 1, 2);
       }
     } // end if word might be a month

@@ -369,7 +369,10 @@ public class TextMergeFilter {
         ScriptConstants.NO_VALUE);
 	}
   
-  private void initItemFilter () {
+  /**
+   Initialize the item filter. 
+  */
+  public void initItemFilter () {
     itemFilter = new PSItemFilter (currentAndLogic);
     psList.setInputFilter (itemFilter);
     filterText.setText ("");

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2016 Herb Bowie
+ * Copyright 1999 - 2017 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 package com.powersurgepub.psdatalib.psdata.values;
 
 /**
- A data value interpreted as a sequence number. 
+ A data value interpreted as a sequence number. Such a value may contain letters
+ and digits and one or more periods. 
 
  @author Herb Bowie
  */
@@ -30,14 +31,116 @@ public class DataValueSeq
     
   };
   
-  private String          value = null;
+  public static final String DIGITS = "0123456789";
+  public static final String LETTERS = " abcdefghijklmnopqrstuvwxyz";
   
-  // Pad the value on the left for compare purposes
-  private StringBuilder   seq   = new StringBuilder();
+  private StringBuilder   value = new StringBuilder();
+  private int             positionOfFirstDecimal = -1;
+  private int             positionOfLastDecimal = -1;
+  private char            padChar = ' '; 
+  private int             positionsToLeftOfDecimal = 0;
+  private int             positionsToRightOfDecimal = 0;
+  private boolean         digits = false;
+  private boolean         uppercase = true;
   
+  /**
+   Constructor with no passed value. 
+  */
   public DataValueSeq() {
     
   }
+  
+  /**
+   Constructor with a passed value. 
+  
+   @param value A sequence value. 
+  */
+  public DataValueSeq(String value) {
+    set(value);
+  }
+  
+  /**
+   Increment the sequence value (whether numeric or alphabetic) by one.
+  
+   @param onLeft Are we incrementing the integer (to the left of the decimal, 
+                 if any?). 
+  */
+  public void increment(boolean onLeft) {
+
+    int i = value.length() - 1;
+    if (onLeft && positionOfFirstDecimal >= 0) {
+      i = positionOfFirstDecimal - 1;
+    }
+    boolean carryon = true;
+    char c = ' ';
+    while (carryon) {
+      
+      if (i < 0) {
+        if (digits) {
+          c = '0';
+        } else {
+          c = ' ';
+        }
+        value.insert(0, c);
+        i = 0;
+        positionsToLeftOfDecimal++;
+        if (positionOfFirstDecimal >= 0) {
+          positionOfFirstDecimal++;
+        }
+        if (positionOfLastDecimal >= 0) {
+          positionOfLastDecimal++;
+        }
+      } else {
+        c = value.charAt(i);
+      }
+      int j = 0;
+      boolean found = false;
+      if (Character.isDigit(c)) {
+        while ((! found) && j < DIGITS.length()) {
+          if (c == DIGITS.charAt(j)) {
+            found = true;
+            j++;
+            if (j < DIGITS.length()) {
+              c = DIGITS.charAt(j);
+              value.setCharAt(i, c);
+              carryon = false;
+            } else {
+              j = 0;
+              c = DIGITS.charAt(0);
+              value.setCharAt(i, c);
+            } // end if we're carrying 
+          } else {
+            j++;
+          } // end of examining this possible match
+        } // end while looking for a matching character
+      }
+      else
+      if (Character.isAlphabetic(c)) {
+        if (Character.isUpperCase(c)) {
+          c = Character.toLowerCase(c);
+        }
+        while ((! found) && j < LETTERS.length()) {
+          if (c == LETTERS.charAt(j)) {
+            found = true;
+            j++;
+            if (j < LETTERS.length()) {
+              c = LETTERS.charAt(j);
+              value.setCharAt(i, c);
+              carryon = false;
+            } else {
+              j = 1;
+              c = LETTERS.charAt(1);
+              value.setCharAt(i, c);
+            } // end if we're carrying 
+          } else {
+            j++;
+          } // end of examining this possible match
+        } // end while looking for a matching character
+      } // end of alpha character
+      i--;
+    } // End of incrementing and carrying
+    
+  } // end of increment method
   
   /**
    Set the value from a String. 
@@ -45,47 +148,56 @@ public class DataValueSeq
    @param value The value as a string. 
   */
   public void set(String value) {
-    this.value = value;
-    seq = new StringBuilder (value);
+    
+    positionOfFirstDecimal = -1;
+    positionOfLastDecimal = -1;
+    padChar = ' ';
+    positionsToLeftOfDecimal = 0;
+    positionsToRightOfDecimal = 0;
+    digits = false;
+    uppercase = true;
+    this.value = new StringBuilder();
+    
     int i = 0;
-    boolean numeric = true;
-    boolean periodFound = false;
-    int leftCount = 0;
-    char c = ' ';
-    while (i < seq.length()) {
-      c = seq.charAt(i);
-      if (c == '$' || c == ',' || Character.isWhitespace(c)) {
-        // ignore non-significant characters
-        seq.deleteCharAt(i);
+    while (i < value.length()) {
+      char c = value.charAt(i);
+      if (c != '.' && positionOfFirstDecimal < 0) {
+        positionsToLeftOfDecimal++;
+      }
+      if (c == '0' && this.value.length() == 0) {
+        padChar = c;
       }
       else
-      if (c == '.') {
-        periodFound = true;
-        i++;
+      if (Character.isWhitespace(c)) {
+        // drop spaces and other white space
+      }
+      else
+      if (Character.isAlphabetic(c)) {
+        this.value.append(c);
+        if (Character.isLowerCase(c)) {
+          uppercase = false;
+        }
       }
       else
       if (Character.isDigit(c)) {
-        if (! periodFound) {
-          leftCount++;
+        this.value.append(c);
+        digits = true;
+        if (positionOfLastDecimal >= 0) {
+          positionsToRightOfDecimal++;
         }
-        i++;
       }
-      else {
-        numeric = false;
-        if (! periodFound) {
-          leftCount++;
+      else
+      if (c == '.') {
+        if (positionOfFirstDecimal < 0) {
+          positionOfFirstDecimal = this.value.length();
         }
-        i++;
-      } // end logic based on char type
-    } // end of seq string
-    char pad = ' ';
-    if (numeric) {
-      pad = '0';
+        positionOfLastDecimal = this.value.length();
+        positionsToRightOfDecimal = 0;
+        this.value.append(c);
+      }
+      i++;
     }
-    while (leftCount < 8) {
-      seq.insert(0, pad);
-      leftCount++;
-    }
+    
   } // end of set method
   
   public int length() {
@@ -114,8 +226,27 @@ public class DataValueSeq
     if (value == null) {
       return "";
     } else {
-      return value;
+      return value.toString();
     }
+  }
+  
+  public String getLeft() {
+    if (positionOfFirstDecimal < 0) {
+      positionOfFirstDecimal = value.length();
+    }
+    if (positionOfFirstDecimal == 0) {
+      return "";
+    } else {
+      return value.substring(0, positionOfFirstDecimal);
+    }
+  }
+  
+  public int getPositionsToLeftOfDecimal() {
+    return positionsToLeftOfDecimal;
+  }
+  
+  public int getPositionsToRightOfDecimal() {
+    return positionsToRightOfDecimal;
   }
   
   /**
@@ -124,7 +255,37 @@ public class DataValueSeq
    @return Padded on the left. 
   */
   public String toPaddedString() {
-    return seq.toString();
+    char padChar = ' ';
+    if (digits) {
+      padChar = '0';
+    }
+    return toPaddedString(padChar, 8, padChar, 4);
+  }
+  
+  public String toPaddedString(char leftChar, int left, char rightChar, int right) {
+    StringBuilder padded = new StringBuilder(value);
+    int positionsToLeft = value.length();
+    if (positionOfFirstDecimal >= 0) {
+      positionsToLeft = positionOfFirstDecimal;
+    }
+    while (positionsToLeft < left) {
+      padded.insert(0, padChar);
+      positionsToLeft++;
+    }
+    int positionsToRight = 0;
+    if (positionOfLastDecimal >= 0) {
+      positionsToRight = value.length() - positionOfLastDecimal - 1;
+    }
+    if (right > 0) {
+      if (positionOfLastDecimal < 0) {
+        padded.append('.');
+      }
+      while (positionsToRight < right) {
+        padded.append(padChar);
+        positionsToRight++;
+      }
+    }
+    return padded.toString();
   }
   
   /**
