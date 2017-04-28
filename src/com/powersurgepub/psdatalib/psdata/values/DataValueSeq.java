@@ -18,7 +18,7 @@ package com.powersurgepub.psdatalib.psdata.values;
 
 /**
  A data value interpreted as a sequence number. Such a value may contain letters
- and digits and one or more periods. 
+ and digits and one or more periods or hyphens. 
 
  @author Herb Bowie
  */
@@ -41,7 +41,9 @@ public class DataValueSeq
   private int             positionsToLeftOfDecimal = 0;
   private int             positionsToRightOfDecimal = 0;
   private boolean         digits = false;
+  private boolean         letters = false;
   private boolean         uppercase = true;
+  private char            punctuation = '.';
   
   /**
    Constructor with no passed value. 
@@ -58,6 +60,71 @@ public class DataValueSeq
   public DataValueSeq(String value) {
     set(value);
   }
+  
+  /**
+   Set the value from a String. 
+  
+   @param value The value as a string. 
+  */
+  public void set(String value) {
+    
+    positionOfFirstDecimal = -1;
+    positionOfLastDecimal = -1;
+    padChar = ' ';
+    punctuation = ' ';
+    positionsToLeftOfDecimal = 0;
+    positionsToRightOfDecimal = 0;
+    digits = false;
+    letters = false;
+    uppercase = true;
+    this.value = new StringBuilder();
+    
+    int i = 0;
+    while (i < value.length()) {
+      char c = value.charAt(i);
+      if (c != '.' && c != '-' && positionOfFirstDecimal < 0) {
+        positionsToLeftOfDecimal++;
+      }
+      if (c == '0' && this.value.length() == 0) {
+        padChar = c;
+      }
+      else
+      if (Character.isWhitespace(c)) {
+        // drop spaces and other white space
+      }
+      else
+      if (Character.isAlphabetic(c)) {
+        this.value.append(c);
+        letters = true;
+        if (Character.isLowerCase(c)) {
+          uppercase = false;
+        }
+      }
+      else
+      if (Character.isDigit(c)) {
+        this.value.append(c);
+        digits = true;
+        if (positionOfLastDecimal >= 0) {
+          positionsToRightOfDecimal++;
+        }
+      }
+      else
+      if (c == '.' || c == '-') {
+        if (positionOfFirstDecimal < 0) {
+          if (this.value.length() == 0) {
+            this.value.append('0');
+          }
+          positionOfFirstDecimal = this.value.length();
+          punctuation = c;
+        }
+        positionOfLastDecimal = this.value.length();
+        positionsToRightOfDecimal = 0;
+        this.value.append(c);
+      }
+      i++;
+    }
+    
+  } // end of set method
   
   /**
    Increment the sequence value (whether numeric or alphabetic) by one.
@@ -125,11 +192,17 @@ public class DataValueSeq
             j++;
             if (j < LETTERS.length()) {
               c = LETTERS.charAt(j);
+              if (uppercase) {
+                c = Character.toUpperCase(c);
+              }
               value.setCharAt(i, c);
               carryon = false;
             } else {
               j = 1;
               c = LETTERS.charAt(1);
+              if (uppercase) {
+                c = Character.toUpperCase(c);
+              }
               value.setCharAt(i, c);
             } // end if we're carrying 
           } else {
@@ -141,64 +214,6 @@ public class DataValueSeq
     } // End of incrementing and carrying
     
   } // end of increment method
-  
-  /**
-   Set the value from a String. 
-  
-   @param value The value as a string. 
-  */
-  public void set(String value) {
-    
-    positionOfFirstDecimal = -1;
-    positionOfLastDecimal = -1;
-    padChar = ' ';
-    positionsToLeftOfDecimal = 0;
-    positionsToRightOfDecimal = 0;
-    digits = false;
-    uppercase = true;
-    this.value = new StringBuilder();
-    
-    int i = 0;
-    while (i < value.length()) {
-      char c = value.charAt(i);
-      if (c != '.' && positionOfFirstDecimal < 0) {
-        positionsToLeftOfDecimal++;
-      }
-      if (c == '0' && this.value.length() == 0) {
-        padChar = c;
-      }
-      else
-      if (Character.isWhitespace(c)) {
-        // drop spaces and other white space
-      }
-      else
-      if (Character.isAlphabetic(c)) {
-        this.value.append(c);
-        if (Character.isLowerCase(c)) {
-          uppercase = false;
-        }
-      }
-      else
-      if (Character.isDigit(c)) {
-        this.value.append(c);
-        digits = true;
-        if (positionOfLastDecimal >= 0) {
-          positionsToRightOfDecimal++;
-        }
-      }
-      else
-      if (c == '.') {
-        if (positionOfFirstDecimal < 0) {
-          positionOfFirstDecimal = this.value.length();
-        }
-        positionOfLastDecimal = this.value.length();
-        positionsToRightOfDecimal = 0;
-        this.value.append(c);
-      }
-      i++;
-    }
-    
-  } // end of set method
   
   public int length() {
     if (hasData()) {
