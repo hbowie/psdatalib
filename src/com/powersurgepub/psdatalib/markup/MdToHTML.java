@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 - 2016 Herb Bowie
+ * Copyright 2016 - 2017 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ public class MdToHTML {
     int pegDownOptions = 0;
     pegDownOptions = pegDownOptions + Extensions.SMARTYPANTS;
     pegDownOptions = pegDownOptions + Extensions.DEFINITIONS;
+    pegDownOptions = pegDownOptions + Extensions.TABLES;
     pegDown = new PegDownProcessor(pegDownOptions);
   }
   
