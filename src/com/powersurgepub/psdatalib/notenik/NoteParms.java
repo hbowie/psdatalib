@@ -78,6 +78,8 @@ public class NoteParms {
   public static final String  STATUS_COMMON_NAME = "status";
   public static final String  RATING_FIELD_NAME = "Rating";
   public static final String  RATING_COMMON_NAME = "rating";
+  public static final String  RECURS_FIELD_NAME = "Recurs";
+  public static final String  RECURS_COMMON_NAME = "recurs";
   public static final String  TEASER_FIELD_NAME = "Teaser";
   public static final String  TEASER_COMMON_NAME = "teaser";
   public static final String  TYPE_FIELD_NAME   = "Type";
@@ -104,6 +106,7 @@ public class NoteParms {
   
   public static final String  BY                = "By";
   public static final String  CREATOR           = "Creator";
+  public static final String  EVERY             = "Every";
   public static final String  KEYWORDS          = "Keywords";
   public static final String  CATEGORY          = "Category";
   public static final String  CATEGORIES        = "Categories";
@@ -151,6 +154,8 @@ public class NoteParms {
       = new DataFieldDefinition (SEQ_FIELD_NAME);
   public static final DataFieldDefinition INDEX_DEF
       = new DataFieldDefinition (INDEX_FIELD_NAME);
+  public static final DataFieldDefinition RECURS_DEF
+      = new DataFieldDefinition (RECURS_FIELD_NAME);
   
   public static final boolean  SLASH_TO_SEPARATE = false;
   
@@ -179,13 +184,14 @@ public class NoteParms {
     TAGS_DEF.setType   (DataFieldDefinition.TAGS_TYPE);
     BODY_DEF.setType   (DataFieldDefinition.STRING_BUILDER_TYPE);
     AUTHOR_DEF.setType (DataFieldDefinition.STRING_TYPE);
-    DATE_DEF.setType   (DataFieldDefinition.STRING_TYPE);
+    DATE_DEF.setType   (DataFieldDefinition.DATE_TYPE);
     STATUS_DEF.setType (DataFieldDefinition.STATUS_TYPE);
     RATING_DEF.setType (DataFieldDefinition.RATING_TYPE);
     TEASER_DEF.setType (DataFieldDefinition.STRING_BUILDER_TYPE);
     TYPE_DEF.setType   (DataFieldDefinition.STRING_TYPE);
     SEQ_DEF.setType    (DataFieldDefinition.SEQ_TYPE);
     INDEX_DEF.setType  (DataFieldDefinition.INDEX_TYPE);
+    RECURS_DEF.setType (DataFieldDefinition.RECURS_TYPE);
   }
   
   public NoteParms () {
@@ -318,7 +324,6 @@ public class NoteParms {
   */
   public RecordDefinition getRecordDefinition() {
     if (recDef == null) {
-      // System.out.println("NoteParms.getRecordDefinition with null recDef");
       buildRecordDefinition();
     }
     return recDef;
@@ -364,6 +369,7 @@ public class NoteParms {
         recDef.addColumn(TITLE_DEF);
         recDef.addColumn (AUTHOR_DEF);
         recDef.addColumn(DATE_DEF);
+        recDef.addColumn(RECURS_DEF);
         recDef.addColumn(STATUS_DEF);
         recDef.addColumn(TYPE_DEF);
         recDef.addColumn(SEQ_DEF);
@@ -438,32 +444,36 @@ public class NoteParms {
       return 2;
     }
     else
-    if (isStatus(commonName)) {
+    if (isRecurs(commonName)) {
       return 3;
     }
     else
-    if (isType(commonName)) {
+    if (isStatus(commonName)) {
       return 4;
     }
     else
-    if (isSeq(commonName)) {
+    if (isType(commonName)) {
       return 5;
     }
     else
-    if (isTags(commonName)) {
+    if (isSeq(commonName)) {
       return 6;
     }
     else
-    if (isLink(commonName)) {
+    if (isTags(commonName)) {
       return 7;
+    }
+    else
+    if (isLink(commonName)) {
+      return 8;
     } 
     else
     if (isRating(commonName)) {
-      return 8;
+      return 9;
     }
     else
     if (isIndex(commonName)) {
-       return 9;
+       return 10;
     }
     else
     if (isTeaser(commonName)) {
@@ -531,6 +541,9 @@ public class NoteParms {
     }
     if (isDate(commonName)) {
       return DATE_DEF;
+    }
+    if (isRecurs(commonName)) {
+      return RECURS_DEF;
     }
     if (isStatus(commonName)) {
       return STATUS_DEF;
@@ -608,9 +621,15 @@ public class NoteParms {
     return (commonName.getCommonForm().equals(DATE_COMMON_NAME));
   }
   
+  public static boolean isRecurs(CommonName commonName) {
+    return (commonName.getCommonForm().equals(RECURS_COMMON_NAME)
+        || commonName.getCommonForm().equalsIgnoreCase(EVERY)
+        || (commonName.getCommonForm().startsWith(RECURS_COMMON_NAME)
+            && commonName.getCommonForm().endsWith(EVERY.toLowerCase())));
+  }
+  
   public static boolean isStatus(CommonName commonName) {
-    return (commonName.getCommonForm().equals(STATUS_COMMON_NAME)
-        || commonName.getCommonForm().equalsIgnoreCase(STATE));
+    return (commonName.getCommonForm().equals(STATUS_COMMON_NAME));
   }
   
   public static boolean isRating(CommonName commonName) {
@@ -787,12 +806,33 @@ public class NoteParms {
         widgetWithLabel.setWidget(labelWidget);
         break;
         
+      // Date field
+      case DataFieldDefinition.DATE_TYPE:
+        DateWidget dateWidget = new DateWidget();
+        label.setLabelFor(dateWidget);
+        
+        setDefaultLabelConstraints(gb);
+        gb.add(label);
+        
+        gb.setAllInsets(8);
+        gb.setIpady(0);
+        gb.setAnchor(GridBagConstraints.WEST);
+        gb.setFill(GridBagConstraints.HORIZONTAL);
+        gb.setColumnWeight(1.0);
+        gb.setRowWeight(0.0);
+        gb.add(dateWidget);
+        
+        widgetWithLabel.setLabel(label);
+        widgetWithLabel.setWidget(dateWidget);
+        break;
+        
       // Single-line Text Field  
       case DataFieldDefinition.DEFAULT_TYPE:
       case DataFieldDefinition.STRING_TYPE:
       case DataFieldDefinition.TITLE_TYPE:
       case DataFieldDefinition.SEQ_TYPE:
       case DataFieldDefinition.INDEX_TYPE:
+      case DataFieldDefinition.RECURS_TYPE:
       default:
         OneLiner oneLiner = new OneLiner();
         label.setLabelFor(oneLiner);

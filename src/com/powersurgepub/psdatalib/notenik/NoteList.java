@@ -23,6 +23,7 @@ package com.powersurgepub.psdatalib.notenik;
   import com.powersurgepub.psutils.*;
   import java.io.*;
   import java.util.*;
+  import javax.swing.*;
   import javax.swing.table.*;
 
 /**
@@ -74,6 +75,8 @@ public class NoteList
   private int             sortIndex = -1;
   private boolean         sortMatch = false;
   
+  private JTable          noteTable = null;
+  
 
   /**
    Construct a new Note List. 
@@ -85,6 +88,10 @@ public class NoteList
     tagsList.registerValue("");
   }
   
+  public void setTable(JTable noteTable) {
+    this.noteTable = noteTable;
+  }
+  
   /**
    Pass in the Sort Parameter which will control how the key used for the 
    sorted list. 
@@ -94,7 +101,7 @@ public class NoteList
   public void setSortParm(NoteSortParm sortParm) {
     this.sortParm = sortParm;
     sortParm.setList(this);
-    fireTableStructureChanged();
+    adjustTableStructure();
     // fireTableDataChanged();
   }
   
@@ -130,7 +137,7 @@ public class NoteList
     for (int i = 0; i < notes2.size(); i++) {
       addSortKey(i);
     }
-    fireTableStructureChanged();
+    adjustTableStructure();
     // fireTableDataChanged();
   }
   
@@ -906,7 +913,16 @@ public class NoteList
    @return The number of columns in the table. 
    */
   public int getColumnCount () {
-    return 1;
+    switch (sortParm.getParm()) {
+      case NoteSortParm.SORT_TASKS_BY_DATE:
+      case NoteSortParm.SORT_TASKS_BY_SEQ:
+        return 4;
+      case NoteSortParm.SORT_BY_SEQ_AND_TITLE:
+        return 2;
+      case NoteSortParm.SORT_BY_TITLE:
+      default:
+        return 1;
+    }
   }
   
   public Class getColumnClass (int columnIndex) {
@@ -914,8 +930,78 @@ public class NoteList
   }
   
   public String getColumnName (int columnIndex) {
-    return sortParm.getParmLabel();
+    switch (sortParm.getParm()) {
+      case NoteSortParm.SORT_TASKS_BY_DATE:
+        switch (columnIndex) {
+          case 0: return "X";
+          case 1: return "Date";
+          case 2: return "Seq";
+          case 3: return "Title";
+          default: return "";
+        }
+      case NoteSortParm.SORT_TASKS_BY_SEQ:
+        switch (columnIndex) {
+          case 0: return "X";
+          case 1: return "Seq";
+          case 2: return "Date";
+          case 3: return "Title";
+          default: return "";
+        }
+      case NoteSortParm.SORT_BY_SEQ_AND_TITLE:
+        switch (columnIndex) {
+          case 0: return "Seq";
+          case 1: return "Title";
+          default: return "";
+        }
+      case NoteSortParm.SORT_BY_TITLE:
+        switch (columnIndex) {
+          case 0: return "Title";
+          default: return "";
+        }
+      default:
+        return "";
+    }
   }
+  
+  private void adjustTableStructure() {
+    fireTableStructureChanged();
+    adjustColumnWidths();
+  }
+  
+  private void adjustColumnWidths() {
+    if (noteTable != null) {
+      TableColumnModel columnModel = noteTable.getColumnModel();
+      int col = 0;
+      for (int i = columnModel.getColumnCount() - 1; i >= 0; i--) {
+        TableColumn column = columnModel.getColumn(i);
+        if (col == 0) { 
+            // Title
+            column.setPreferredWidth(400);
+        }
+        else
+        if (col == 1 && sortParm.getParm() != NoteSortParm.SORT_TASKS_BY_SEQ) {
+            // Sequence Field
+            column.setPreferredWidth(60);
+            column.setMaxWidth(120);
+        }
+        else
+        if ((col == 1 && sortParm.getParm() == NoteSortParm.SORT_TASKS_BY_SEQ)
+            || (col == 2 && sortParm.getParm() != NoteSortParm.SORT_TASKS_BY_SEQ)) {
+            // Date
+            column.setPreferredWidth(120);
+            column.setMaxWidth(160);
+        }
+        else
+        if (col == 3) {
+            // X for Done
+            column.setPreferredWidth(20);
+            column.setMaxWidth(30);
+        } // end of column switch
+        col++;
+      } // End of for each column
+      noteTable.doLayout();
+    } // End if we have a note table
+  } // end of method
 
   /**
   Returns the number of rows in the table. 
@@ -939,11 +1025,37 @@ public class NoteList
     if (row == null) {
       return "";
     } else {
-      switch (columnIndex) {
-        case 0:
+      switch (sortParm.getParm()) {
+        case NoteSortParm.SORT_TASKS_BY_SEQ:
+          switch (columnIndex) {
+            case 0: return row.getDone();
+            case 1: return row.getSeq();
+            case 2: return row.getDateCommon();
+            case 3: return row.getTitle();
+            default: return "";
+          }
+        case NoteSortParm.SORT_TASKS_BY_DATE:
+          switch (columnIndex) {
+            case 0: return row.getDone();
+            case 1: return row.getDateCommon();
+            case 2: return row.getSeq();
+            case 3: return row.getTitle();
+            default: return "";
+          }
+        case NoteSortParm.SORT_BY_SEQ_AND_TITLE:
+          switch (columnIndex) {
+            case 0: return row.getSeq();
+            case 1: return row.getTitle();
+            default: return "";
+          }
+        case NoteSortParm.SORT_BY_TITLE:
+          switch (columnIndex) {
+            case 0: return row.getTitle();
+            default: return "";
+          }
         default:
-          return row.getSortKeyToDisplay(sortParm);
-      } // end switch
+          return "";
+      }
     } // end if good row
   } // end method getValueAt
 

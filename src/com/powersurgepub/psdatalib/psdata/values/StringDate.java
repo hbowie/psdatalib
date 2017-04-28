@@ -48,12 +48,26 @@ public class StringDate
     "December"
   };
   
-  private    static final     SimpleDateFormat  SHORT_FORMAT 
+  public static final     String[] DAY_OF_WEEK_NAMES = {
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+  };
+  
+  public     static final     SimpleDateFormat  SHORT_FORMAT 
       = new SimpleDateFormat("EEE MMM dd");
-  private    static final     SimpleDateFormat  YMD_FORMAT   
+  public     static final     SimpleDateFormat  YMD_FORMAT   
       = new SimpleDateFormat("yyyy-MM-dd");
-  private    static final     SimpleDateFormat  YM_FORMAT    
-      = new SimpleDateFormat("yyyy-MM");  
+  public     static final     SimpleDateFormat  YM_FORMAT    
+      = new SimpleDateFormat("yyyy-MM");
+  public     static final     SimpleDateFormat  READABLE_FORMAT
+      = new SimpleDateFormat("EEE dd-MMM-yyyy");
+  public     static final     SimpleDateFormat  COMMON_FORMAT
+      = new SimpleDateFormat("dd MMM yyyy");
   public     static final     String            NEXT_YEAR = "next year";
   private    static final     Calendar          TODAY = Calendar.getInstance();
   private    static final     String            TODAY_YMD;
@@ -105,6 +119,41 @@ public class StringDate
   */
   public static String getTodayYM() {
     return TODAY_YM;
+  }
+  
+  /**
+   Return today's date in a format such as "13 Apr 2017". 
+  
+   @return Today's date, formatted. 
+  */
+  public static String getTodayCommon() {
+    return COMMON_FORMAT.format(TODAY.getTime());
+  }
+  
+  /**
+   See if the passed string matches the name of one of the days of the week.
+  
+   @param str A complete or partial name of a day of week, in either upper or 
+              lower case. 
+  
+   @return 1 - 7 to represent Sunday through Saturday, if a match was found; 
+           otherwise something less than 1. 
+  
+  */
+  public static int matchDayOfWeek(String str) {
+    int result = -1;
+    int i = 0;
+    int len = str.length();
+    String match = str.toLowerCase();
+    while (i < 7 && result < 0) {
+      String dayOfWeekName = DAY_OF_WEEK_NAMES[i];
+      if (len <= dayOfWeekName.length()
+          && match.equalsIgnoreCase(dayOfWeekName.substring(0, len))) {
+        result = i + 1;
+      } // end if match
+      i++;
+    } // end while looking for match
+    return result;
   }
   
   public StringDate() {
@@ -215,6 +264,10 @@ public class StringDate
   */
   public void set(String value) {
     parse(value);
+  }
+  
+  public void set(Date date) {
+    parse(COMMON_FORMAT.format(date));
   }
   
   /**
@@ -335,6 +388,13 @@ public class StringDate
    End of a string of letters -- process it now. 
    */
   private void processWhenLetters() {
+    if (word.toString().equalsIgnoreCase("today")) {
+      strDate = TODAY_YMD;
+      yyyy = TODAY_YMD.substring(0, 4);
+      mm = TODAY_YMD.substring(5, 7);
+      dd = TODAY_YMD.substring(8, 10);
+    }
+    else
     if (word.toString().equalsIgnoreCase("at")
         || word.toString().equalsIgnoreCase("from")) {
       lookingForTime = true;
@@ -581,6 +641,57 @@ public class StringDate
       } catch (NumberFormatException e) {
         return "";
       }
+    }
+  }
+  
+  public String getReadable() {
+    Calendar cal = getCalendar();
+    if (cal == null) {
+      return getYMD();
+    } else {
+      return READABLE_FORMAT.format(cal.getTime());
+    }
+  } 
+  
+  public String getCommon() {
+    StringBuilder str = new StringBuilder();
+    
+    if (dd.length() > 1) {
+      str.append(dd);
+      str.append(" ");
+    } 
+    else
+    if (dd.length() == 1) {
+      str.append("0");
+      str.append(dd);
+      str.append(" ");
+    }
+    
+    if (mm.length() > 0) {
+      try {
+        int mmIndex = Integer.parseInt(mm);
+        if (mmIndex >= 0 && mmIndex < 12) {
+          String mmName = MONTH_NAMES[mmIndex - 1];
+          if (mmName.length() >= 3) {
+            str.append(mmName.substring(0, 3));
+            str.append(" ");
+          }
+        }
+      } catch (NumberFormatException e) {
+        // leave month out
+      }
+    }
+    
+    str.append(yyyy);
+    return str.toString();
+  }
+  
+  public Date getDate() {
+    Calendar cal = getCalendar();
+    if (cal == null) {
+      return null;
+    } else {
+      return cal.getTime();
     }
   }
   

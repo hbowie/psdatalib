@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 - 2015 Herb Bowie
+ * Copyright 2014 - 2017 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,6 +107,11 @@ public class DataFactory {
         value = ix;
         break;
         
+      // Recurs
+      case DataFieldDefinition.RECURS_TYPE:
+        RecursValue recurs = new RecursValue();
+        value = recurs;
+        break;
       // Simple string
       case DataFieldDefinition.LABEL_TYPE: 
       case DataFieldDefinition.DEFAULT_TYPE:
@@ -159,12 +164,19 @@ public class DataFactory {
         widget = labelWidget;
         break;
         
+      // Date Editor
+      case DataFieldDefinition.DATE_TYPE:
+        DateWidget dateWidget = new DateWidget();
+        widget = dateWidget;
+        break;
+        
       // Single-line Text Field  
       case DataFieldDefinition.DEFAULT_TYPE:
       case DataFieldDefinition.STRING_TYPE:
       case DataFieldDefinition.TITLE_TYPE:  
       case DataFieldDefinition.SEQ_TYPE:
       case DataFieldDefinition.INDEX_TYPE:
+      case DataFieldDefinition.RECURS_TYPE:
       default:
         OneLiner oneLiner = new OneLiner();
         widget = oneLiner;

@@ -249,6 +249,11 @@ public class NoteLine {
               builder.setLastStringBuilder(null);
             }
             else
+            if (NoteParms.isRecurs(metaKeyCommon)) {
+              note.setRecurs(getMetaData());
+              builder.setLastStringBuilder(null);
+            }
+            else
             if (NoteParms.isLink(metaKeyCommon)) {
               note.setLink(getMetaData());
               builder.setLastStringBuilder(null);

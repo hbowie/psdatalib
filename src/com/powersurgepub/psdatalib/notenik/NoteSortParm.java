@@ -18,6 +18,7 @@ package com.powersurgepub.psdatalib.notenik;
   import java.awt.event.*;
   import javax.swing.*;
   import com.powersurgepub.psdatalib.psdata.values.*;
+import java.awt.*;
 
 /**
  A parameter to indicate how the user would like to see the notes sorted. 
@@ -28,8 +29,10 @@ public class NoteSortParm
     implements
         ActionListener {
   
-  public static final int SORT_BY_TITLE = 0;
+  public static final int SORT_BY_TITLE         = 0;
   public static final int SORT_BY_SEQ_AND_TITLE = 1;
+  public static final int SORT_TASKS_BY_DATE    = 2;
+  public static final int SORT_TASKS_BY_SEQ     = 3;
   
   private int parm = 0;
   
@@ -37,7 +40,9 @@ public class NoteSortParm
   
   private String[] labels = {
     "Title",
-    "Seq + Title"
+    "Seq + Title",
+    "Tasks by Date",
+    "Tasks by Seq"
   };
   
   private NoteList noteList = null;
@@ -127,6 +132,25 @@ public class NoteSortParm
     sortMenu.removeAll();
     for (int i = 0; i < labels.length; i++) {
       JCheckBoxMenuItem sortOption = new JCheckBoxMenuItem(labels[i]);
+      switch (i) {
+        case 0:
+          sortOption.setAccelerator (KeyStroke.getKeyStroke (KeyEvent.VK_1,
+            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+          break;
+        case 1:
+          sortOption.setAccelerator (KeyStroke.getKeyStroke (KeyEvent.VK_2,
+            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+          break;
+        case 2:
+          sortOption.setAccelerator (KeyStroke.getKeyStroke (KeyEvent.VK_3,
+            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+          break;
+        case 3:
+          sortOption.setAccelerator (KeyStroke.getKeyStroke (KeyEvent.VK_4,
+            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+          break;
+        
+      }
       sortOption.setActionCommand(labels[i]);
       sortOption.addActionListener(this);
       if (i == 0) {

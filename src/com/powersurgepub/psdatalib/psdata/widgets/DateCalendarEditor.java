@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2017 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package com.powersurgepub.psdatalib.ui;
+package com.powersurgepub.psdatalib.psdata.widgets;
 
+  import com.powersurgepub.psdatalib.psdata.values.*;
+  import com.powersurgepub.psdatalib.ui.*;
   import com.powersurgepub.xos2.*;
   import java.text.*;
   import java.util.*;
   import javax.swing.*;
 
-public class DateEditor 
+public class DateCalendarEditor 
     extends JDialog {
   
   /** Dates with a year at or after this one are considered null. */
@@ -40,7 +42,7 @@ public class DateEditor
   
   private XOS                           xos = XOS.getShared();
   
-  private DateOwner                     dateOwner;
+  private DateWidgetOwner               dateWidgetOwner;
   
   private GridBagger                    gb = new GridBagger();
   
@@ -86,9 +88,9 @@ public class DateEditor
   private ArrayList                     dayButton = new ArrayList ();
   
   /** Creates new form DateEditor */
-  public DateEditor(JFrame frame, DateOwner dateOwner) {
+  public DateCalendarEditor(JFrame frame, DateWidgetOwner dateWidgetOwner) {
     super (frame, "Date Editor", true);
-    this.dateOwner = dateOwner;
+    this.dateWidgetOwner = dateWidgetOwner;
     gb.startLayout (this.getContentPane(), 1, 3);
     
     yearDecrementButton = new javax.swing.JButton();
@@ -282,7 +284,7 @@ public class DateEditor
     okButton.setFocusable(false);
     okButton.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        setVisible(false);
+        ok();
       }
     });
     gb3.add(okButton);
@@ -292,7 +294,12 @@ public class DateEditor
     yearTextField.requestFocus();
     
     pack();
-  }     
+  }
+  
+  public void ok() {
+    dateWidgetOwner.dateModified(StringDate.COMMON_FORMAT.format(date.getTime()));
+    setVisible(false);
+  }
   
   public static String formatLong (Date date) {
 
@@ -520,8 +527,10 @@ public class DateEditor
   }
   
   private void recurDate() {
-    if (dateOwner.canRecur()) {
-      dateOwner.recur(date);
+    if (dateWidgetOwner.canRecur()) {
+      StringDate str = new StringDate();
+      str.set(date.getTime());
+      String inc = dateWidgetOwner.recur(str);
       dateModified();
       displayDate();
     }
@@ -596,9 +605,9 @@ public class DateEditor
         db.setActionCommand (actionFormatter.format(calendarDay.getTime()));
         calendarDay.add (Calendar.DATE, 1);
       } // end for each Calendar Day displayed
-      if (dateOwner.canRecur()) {
+      if (dateWidgetOwner.canRecur()) {
         recurButton.setEnabled (true);
-        recurButton.setToolTipText (dateOwner.getRecurrenceRule());
+        recurButton.setToolTipText (dateWidgetOwner.getRecurrenceRule());
       } else {
         recurButton.setEnabled (false);
         recurButton.setToolTipText ("");
@@ -608,7 +617,7 @@ public class DateEditor
   
   private void dateModified() {
     modified = true;
-    // dateOwner.dateModified (date.getTime());
+    // dateWidgetOwner.dateModified (date.getTime());
   }
   
   public boolean isModified () {

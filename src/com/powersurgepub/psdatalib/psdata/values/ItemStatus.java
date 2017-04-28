@@ -42,6 +42,8 @@ public class ItemStatus
     
   };
 
+  public static final String DONE = "X";
+  public static final String NOT_DONE_YET = " ";
   private ItemStatusConfig config;
   
   /** Status of item. */
@@ -340,6 +342,18 @@ public class ItemStatus
   *
   **********************************************************************/
 
+  /**
+   Return an "X" to mark items that are done. 
+   
+   @return an X if item is completed or canceled, or a space if not done. 
+  */
+  public String getDone() {
+    if (isDone()) {
+      return DONE;
+    } else {
+      return NOT_DONE_YET;
+    }
+  }
   /**
      Indicates whether item is still pending.
 

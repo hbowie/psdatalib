@@ -77,6 +77,10 @@ public class Note
   private DataField           dateField = null;
   private boolean             dateAdded = false;
   
+  private RecursValue         recursValue = null;
+  private DataField           recursField = null;
+  private boolean             recursAdded = false;
+
   private Link                linkValue = null;
   private DataField           linkField = null;
   private boolean             linkAdded = false;
@@ -163,6 +167,10 @@ public class Note
         setDate(fromValue.toString());
       }
       else
+      if (NoteParms.isRecurs(fromCommon)) {
+        setRecurs(fromValue.toString());
+      }
+      else
       if (NoteParms.isStatus(fromCommon)) {
         setStatus(fromValue.toString());
       }
@@ -227,6 +235,11 @@ public class Note
     dateValue = new StringDate();
     dateField = new DataField(NoteParms.DATE_DEF, dateValue);
     dateAdded = false;
+    
+    // Build the Recurs field
+    recursValue = new RecursValue();
+    recursField = new DataField(NoteParms.RECURS_DEF, recursValue);
+    recursAdded = false;
     
     // Build the Link field
     linkValue = new Link();
@@ -329,17 +342,48 @@ public class Note
   public String getSortKey (NoteSortParm parm) {
 
     switch (parm.getParm()) {
-      case 1:
-        return (seqValue.toPaddedString('0', 8, '0', 4) + titleValue.getLowerHyphens());
+      case NoteSortParm.SORT_TASKS_BY_DATE:
+        return (
+            getDone() +
+            getDateYMDforSort() + 
+            seqValue.toPaddedString('0', 8, '0', 4) + 
+            titleValue.getLowerHyphens());
+      case NoteSortParm.SORT_TASKS_BY_SEQ:
+        return (
+            getDone() +
+            seqValue.toPaddedString('0', 8, '0', 4) + 
+            getDateYMDforSort() + 
+            titleValue.getLowerHyphens());
+      case NoteSortParm.SORT_BY_SEQ_AND_TITLE:
+        return (
+            seqValue.toPaddedString('0', 8, '0', 4) + 
+            titleValue.getLowerHyphens());
       default:
-        return titleValue.getLowerHyphens();
+        return 
+            titleValue.getLowerHyphens();
     }
   }
   
   public String getSortKeyToDisplay (NoteSortParm parm) {
 
     switch (parm.getParm()) {
-      case 1:
+      case NoteSortParm.SORT_TASKS_BY_DATE:
+        return (
+            getDone() + " " +
+            getDateYMD() + " " +
+            seqValue.toPaddedString
+               (' ', parm.getMaxPositionsToLeftOfDecimal(), 
+                ' ', parm.getMaxPositionsToRightOfDecimal()) + "  " +  
+            titleValue.toString());
+      case NoteSortParm.SORT_TASKS_BY_SEQ:
+        return (
+            getDone() + " " +
+              seqValue.toPaddedString
+               (' ', parm.getMaxPositionsToLeftOfDecimal(), 
+                ' ', parm.getMaxPositionsToRightOfDecimal()) + "  " + 
+            getDateYMD() + " " + 
+            titleValue.toString());
+      case NoteSortParm.SORT_BY_SEQ_AND_TITLE:
         return (seqValue.toPaddedString
           (' ', parm.getMaxPositionsToLeftOfDecimal(), 
            ' ', parm.getMaxPositionsToRightOfDecimal()) 
@@ -415,6 +459,10 @@ public class Note
     else
     if (commonName.equals(NoteParms.DATE_COMMON_NAME)) {
       setDate(data);
+    }
+    else
+    if (commonName.equals(NoteParms.RECURS_COMMON_NAME)) {
+      setRecurs(data);
     }
     else
     if (commonName.equals(NoteParms.LINK_COMMON_NAME)) {
@@ -542,10 +590,6 @@ public class Note
   }
   
   public boolean hasSeq() {
-    // System.out.println ("Note.hasSeq");
-    // System.out.println ("  " + titleValue.toString());
-    // System.out.println ("  seq Added? " + String.valueOf(seqAdded));
-    // System.out.println ("  seq Value: " + String.valueOf(seqValue));
     return (seqAdded && seqValue != null && seqValue.hasData());
   }
   
@@ -614,6 +658,19 @@ public class Note
     }
   }
   
+  /**
+   Return an "X" to mark items that are done. 
+   
+   @return an X if item is completed or canceled, or a space if not done. 
+  */
+  public String getDone() {
+    if (hasStatus()) {
+      return statusValue.getDone();
+    } else {
+      return ItemStatus.NOT_DONE_YET;
+    }
+  }
+  
   public void setDate(String date) {
 
     dateValue.set(date);
@@ -642,6 +699,78 @@ public class Note
   public String getDateAsString() {
     if (dateAdded && dateValue != null) {
       return dateValue.toString();
+    } else {
+      return "";
+    }
+  }
+  
+  public String getDateYMD() {
+    if (dateAdded && dateValue != null && dateValue.hasData()) {
+      return dateValue.getYMD();
+    } else {
+      return "          ";
+    }
+  }
+  
+  public String getDateYMDforSort() {
+    if (dateAdded && dateValue != null && dateValue.hasData()) {
+      return dateValue.getYMD();
+    } else {
+      return "9999-12-31";
+    }
+  }
+  
+  /**
+   Return date in dd MMM yyyy format.
+  
+   @return date in dd MMM yyyy format. 
+  */
+  public String getDateCommon() {
+    if (dateAdded && dateValue != null && dateValue.hasData()) {
+      return dateValue.getCommon();
+    } else {
+      return "";
+    }
+  }
+  
+  public String getReadableDate() {
+    if (dateAdded && dateValue != null && dateValue.hasData()) {
+      return dateValue.getReadable();
+    } else {
+      return "";
+    }
+  }
+  
+  public void setRecurs(String recurs) {
+
+    recursValue.set(recurs);
+    if (! recursAdded) {
+      storeField (recDef, recursField);
+      recursAdded = true;
+    }
+  }
+  
+  public void setRecurs(RecursValue recurs) {
+    
+    recursValue.set(recurs.toString());
+    if (! recursAdded) {
+      storeField (recDef, recursField);
+      recursAdded = true;
+    }
+ 
+  }
+  
+  public boolean hasRecurs() {
+    return (recursAdded && recursValue != null && recursValue.hasData());
+  }
+  
+  public RecursValue getRecurs() {
+    return recursValue;
+  }
+  
+  public String getRecursAsString() {
+    if (recursAdded && recursValue != null) {
+      return recursValue.toString();
     } else {
       return "";
     }
