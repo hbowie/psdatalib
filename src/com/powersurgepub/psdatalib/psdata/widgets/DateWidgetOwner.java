@@ -1,13 +1,5 @@
 /*
- * DateOwner.java
- *
- * Created on September 21, 2005, 4:58 AM
- *
- * An interface for using DatePanel. 
- */
-
-/*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2017 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.powersurgepub.psdatalib.ui;
+package com.powersurgepub.psdatalib.psdata.widgets;
 
-  import java.text.*;
-  import java.util.*;
+  import com.powersurgepub.psdatalib.psdata.values.*;
 
 /**
- *
- * @author hbowie
+ * An interface for using the Date Widget. 
+
+ * @author Herb Bowie
  */
-public interface DateOwner {
+public interface DateWidgetOwner {
   
   /**
-   To be called whenever the date is modified by DatePanel.
+   To be called whenever the date is modified by DateWidget.
    */
-  public void dateModified (Date date);
+  public void dateModified (String date);
   
   /**
    Does this date have an associated rule for recurrence?
@@ -51,9 +43,20 @@ public interface DateOwner {
   
   /**
    Apply the recurrence rule to the date.
-   
-   @param date Date that will be incremented. 
+  
+   @param date Starting date.
+  
+   @return New date. 
    */
-  public void recur (GregorianCalendar date);
+  public String recur (StringDate date);
+  
+  /**
+   Apply the recurrence rule to the date.
+  
+   @param date Starting date.
+  
+   @return New date. 
+   */
+  public String recur (String date);
   
 }

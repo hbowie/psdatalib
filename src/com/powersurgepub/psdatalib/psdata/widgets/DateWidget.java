@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2013 Herb Bowie
+ * Copyright 1999 - 2017 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.powersurgepub.psdatalib.ui;
+package com.powersurgepub.psdatalib.psdata.widgets;
 
-import com.powersurgepub.psdatalib.psdata.values.StringDate;
+  import com.powersurgepub.psdatalib.psdata.values.*;
+  import com.powersurgepub.psdatalib.ui.*;
   import com.powersurgepub.psutils.*;
   import java.awt.*;
   import java.awt.event.*;
@@ -32,37 +33,49 @@ import com.powersurgepub.psdatalib.psdata.values.StringDate;
 
   @author  Herb Bowie. 
  */
-public class DatePanel 
-    extends javax.swing.JPanel {
+public class DateWidget 
+    extends javax.swing.JPanel 
+    implements
+        DataWidget,
+        DateWidgetOwner {
   
   private GridBagger              gb = new GridBagger();
-  private JFrame                  frame;
-  private DateOwner               dateOwner;
-  private GregorianCalendar       date = new GregorianCalendar();
+  
+  private JFrame                  frame = null;
+  private DateWidgetOwner         dateWidgetOwner = null;
+  
   private boolean                 modified = false;
+  private JTextField              dateField;
+  private JButton                 calendarButton;
   private JButton                 recurButton;
   private JButton                 todayButton;
   
-  /** Creates new form DatePanel */
-  public DatePanel(JFrame frame, DateOwner dateOwner) {
-    this.frame = frame;
-    this.dateOwner = dateOwner;
-    dateButton = new javax.swing.JButton();
-    gb.startLayout (this, 3, 1);
+  /** 
+    Creates new panel DateWidget 
+   */
+  public DateWidget() {
+    
+    gb.startLayout (this, 4, 1);
     gb.setAllInsets (2);
-    dateButton.setText("N/A");
-    dateButton.addActionListener(new java.awt.event.ActionListener() {
+    
+    dateField = new JTextField();
+    
+    gb.setColumnWeight (0.4);
+    gb.add(dateField);
+    
+    calendarButton = new JButton();
+    calendarButton.setText("Calendar");
+    calendarButton.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         dateButtonActionPerformed(evt);
       }
     });
-
-    gb.setColumnWeight (0.6);
-    gb.add(dateButton);
+    
+    gb.setColumnWeight (0.2);
+    gb.add(calendarButton);
     
     recurButton = new javax.swing.JButton();
     recurButton.setText("Recur");
-    recurButton.setEnabled(dateOwner.canRecur());
     recurButton.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         recurButtonActionPerformed(evt);
@@ -87,17 +100,90 @@ public class DatePanel
     // setBorder (BorderFactory.createLineBorder(Color.black));
   }
   
+  public void setOwner(DateWidgetOwner dateWidgetOwner) {
+    this.dateWidgetOwner = dateWidgetOwner;
+    recurButton.setEnabled(dateWidgetOwner.canRecur());
+  }
+  
+  public void setFrame(JFrame frame) {
+    this.frame = frame;
+  }
+  
+    /**
+   To be called whenever the date is modified by DateWidget.
+   */
+  public void dateModified (String date) {
+    dateField.setText(date);
+    if (dateWidgetOwner != null) {
+      dateWidgetOwner.dateModified(date);
+    }
+  }
+  
+  /**
+   Does this date have an associated rule for recurrence?
+   */
+  public boolean canRecur() {
+    if (dateWidgetOwner != null) {
+      return dateWidgetOwner.canRecur();
+    } else {
+      return false;
+    }
+  }
+  
+  /**
+   Provide a text string describing the recurrence rule, that can
+   be used as a tool tip.
+   */
+  public String getRecurrenceRule() {
+    if (dateWidgetOwner != null) {
+      return dateWidgetOwner.getRecurrenceRule();
+    } else {
+      return "";
+    }
+  }
+  
+  /**
+   Apply the recurrence rule to the date.
+  
+   @param date Starting date.
+  
+   @return New date. 
+   */
+  public String recur (StringDate date) {
+    if (dateWidgetOwner != null) {
+      return dateWidgetOwner.recur(date);
+    } else {
+      return date.toString();
+    }
+  }
+  
+  /**
+   Apply the recurrence rule to the date.
+  
+   @param date Starting date.
+  
+   @return New date. 
+   */
+  public String recur (String date) {
+    if (dateWidgetOwner != null) {
+      return dateWidgetOwner.recur(date);
+    } else {
+      return date;
+    }
+  }
+  
   public void setText (String date) {
-    StringDate strDate = new StringDate();
-    strDate.parse(date);
-    setDate(strDate.getCalendar().getTime());
+    dateField.setText(date);
   }
   
   public void setDate (Date date) {
-    this.date.setTime (date);
-    displayDate();
+    setText(StringDate.COMMON_FORMAT.format(date));
     modified = false;
-    recurButton.setEnabled(dateOwner.canRecur());
+    if (dateWidgetOwner != null) {
+      recurButton.setEnabled(dateWidgetOwner.canRecur());
+    } else {
+      recurButton.setEnabled(false);
+    }
   }
   
   public boolean isModified() {
@@ -105,84 +191,61 @@ public class DatePanel
   }
   
   public Date getDate() {
-    return date.getTime();
+    StringDate str = new StringDate();
+    str.set(dateField.getText());
+    return str.getDate();
   }
   
   public String getText() {
-    return dateButton.getText();
+    return dateField.getText();
   }
   
-  private void displayDate () {
-    dateButton.setText (DateEditor.formatLong (this.date.getTime()));
-  }
-  
+  /**
+   Edit the date using the Calendar editor. 
+  */
   public void editDate() {
-    DateEditor editor = new DateEditor(frame, dateOwner);
-    editor.setDate (date.getTime());
-    if (editor.isNullDate()) {
-      editor.setDateToToday();
-    }
-    editor.setLocationRelativeTo (frame);
-    // editor.setBounds (40, 40, 150, 150);
-    editor.setVisible(true);
-    // System.out.println ("ui DatePanel modified = " + String.valueOf (editor.isModified()));
-    // System.out.println ("ui DatePanel date     = " + editor.getDate().toString());
-    if (editor.isModified()) {
-      modified = true;
-      date.setTime(editor.getDate());
-      displayDate();
-      dateOwner.dateModified(date.getTime());
-    }   
-  }
+    if (frame != null && dateWidgetOwner != null) {
+      DateCalendarEditor editor = new DateCalendarEditor(frame, this);
+      StringDate str = new StringDate();
+      str.set(dateField.getText());
+      Date date = str.getDate();
+      if (date == null) {
+        editor.setDateToToday();
+      } else {
+        editor.setDate (date);
+      }
+      if (editor.isNullDate()) {
+        editor.setDateToToday();
+      }
+      editor.setLocationRelativeTo (frame);
+      editor.setVisible(true);
+      // if (editor.isModified()) {
+      //   modified = true;
+      //   date.setTime(editor.getDate().getTime());
+      //   displayDate();
+      //   dateWidgetOwner.dateModified(StringDate.COMMON_FORMAT.format(date));
+      // }  // End if we have a valid date
+    } // end if we have a date owner and frame
+  } // end editDate method
   
   private void recurButtonActionPerformed (java.awt.event.ActionEvent evt) {
-    if (dateOwner.canRecur()) {
-      dateOwner.recur (date);
-      modified = true;
-      displayDate();
-      dateOwner.dateModified(date.getTime());
+    if (dateWidgetOwner != null && dateWidgetOwner.canRecur()) {
+      String oldDate = dateField.getText();
+      String newDate = dateWidgetOwner.recur (oldDate);
+      if (newDate != null && newDate.length() > 0) {
+        modified = true;
+        setText(newDate);
+        dateWidgetOwner.dateModified(newDate);
+      }
     }  
   }
   
   private void todayButtonActionPerformed (java.awt.event.ActionEvent evt) {
-    GregorianCalendar today = new GregorianCalendar();
-    date.set (Calendar.YEAR, today.get (Calendar.YEAR));
-    date.set (Calendar.MONTH, today.get (Calendar.MONTH));
-    date.set (Calendar.DATE, today.get (Calendar.DATE));
-    displayDate();
-    dateOwner.dateModified(date.getTime());
+    setText(StringDate.getTodayCommon());
   }
-  
-  /** This method is called from within the constructor to
-   * initialize the form.
-   * WARNING: Do NOT modify this code. The content of this method is
-   * always regenerated by the Form Editor.
-   */
-  // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
-  private void initComponents() {
-    dateButton = new javax.swing.JButton();
 
-    setLayout(new java.awt.BorderLayout());
-
-    dateButton.setText("N/A");
-    dateButton.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        dateButtonActionPerformed(evt);
-      }
-    });
-
-    add(dateButton, java.awt.BorderLayout.CENTER);
-
-  }
-  // </editor-fold>//GEN-END:initComponents
-
-  private void dateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateButtonActionPerformed
+  private void dateButtonActionPerformed(java.awt.event.ActionEvent evt) {
     editDate();
-  }//GEN-LAST:event_dateButtonActionPerformed
-  
-  
-  // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JButton dateButton;
-  // End of variables declaration//GEN-END:variables
+  }
   
 }
