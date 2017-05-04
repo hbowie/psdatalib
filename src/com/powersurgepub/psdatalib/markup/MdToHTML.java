@@ -16,7 +16,14 @@
 
 package com.powersurgepub.psdatalib.markup;
 
-  import org.pegdown.*;
+  import com.vladsch.flexmark.ast.*;
+  import com.vladsch.flexmark.ext.definition.*;
+  import com.vladsch.flexmark.ext.tables.*;
+  import com.vladsch.flexmark.ext.typographic.*;
+  import com.vladsch.flexmark.html.*;
+  import com.vladsch.flexmark.parser.*;
+  import com.vladsch.flexmark.util.options.*;
+  import java.util.*;
 
 /**
  Converts markdown text to HTML. 
@@ -26,9 +33,16 @@ package com.powersurgepub.psdatalib.markup;
 public class MdToHTML {
   
   private static MdToHTML mdToHTML = null;
+  private MutableDataSet options = null;
+  private Parser parser = null;
+  private HtmlRenderer renderer = null;
   
-  private    PegDownProcessor   pegDown;
+  /**
+   Return a standard, shared instance for converting Markdown to HTML, using 
+   standard options. 
   
+   @return A standard, shared instance. 
+  */
   public static MdToHTML getShared() {
     if (mdToHTML == null) {
       mdToHTML = new MdToHTML();
@@ -36,16 +50,32 @@ public class MdToHTML {
     return mdToHTML;
   }
   
+  /** 
+   Construct an instance with the standard options. 
+  
+   Options include definitions, tables, and typographic conversions. 
+  */
   public MdToHTML() {
-    int pegDownOptions = 0;
-    pegDownOptions = pegDownOptions + Extensions.SMARTYPANTS;
-    pegDownOptions = pegDownOptions + Extensions.DEFINITIONS;
-    pegDownOptions = pegDownOptions + Extensions.TABLES;
-    pegDown = new PegDownProcessor(pegDownOptions);
+    options = new MutableDataSet();
+    options.set(Parser.EXTENSIONS, Arrays.asList(
+        DefinitionExtension.create(),
+        TablesExtension.create(), 
+        TypographicExtension.create()));
+    parser = Parser.builder(options).build();
+    renderer = HtmlRenderer.builder(options).build();
   }
   
+  /**
+   Convert Markdown source to HTML. 
+  
+   @param md Source written in Markdown. 
+  
+   @return A string containing the equivalent HTML. 
+   */
   public String markdownToHtml(String md) {
-    return pegDown.markdownToHtml(md);
+    Node document = parser.parse(md);
+    String html = renderer.render(document); 
+    return html;
   }
 
 }

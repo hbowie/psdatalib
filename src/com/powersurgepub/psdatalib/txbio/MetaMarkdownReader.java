@@ -16,6 +16,7 @@
 
 package com.powersurgepub.psdatalib.txbio;
 
+  import com.powersurgepub.psdatalib.markup.*;
   import com.powersurgepub.pstextio.*;
   import com.powersurgepub.psmkdown.*;
   import com.powersurgepub.psdatalib.elements.*;
@@ -26,7 +27,6 @@ package com.powersurgepub.psdatalib.txbio;
   import java.net.*;
   import java.text.*;
   import java.util.*;
-  import org.pegdown.*;
 
 /**
  Reads a markdown file, extracts its metadata, and converts its content to
@@ -87,7 +87,7 @@ public class MetaMarkdownReader
   private    SimpleDateFormat   dateFormat 
       = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss zzz");
   
-  private    PegDownProcessor   pegDown;
+  private    MdToHTML           mdToHTML = MdToHTML.getShared();
   
   private    MarkdownDoc        mdDoc;
   private    MarkdownLine       mdLine;
@@ -179,11 +179,6 @@ public class MetaMarkdownReader
      By default, fileId is set to "directory".
    */
   private void initialize () {
-    
-    int pegDownOptions = 0;
-    pegDownOptions = pegDownOptions + Extensions.SMARTYPANTS;
-    pegDownOptions = pegDownOptions + Extensions.TABLES;
-    pegDown = new PegDownProcessor(pegDownOptions);
     
     fileId = "MetaMarkdownReader";
     logData = new LogData ("", fileId, 0);
@@ -700,7 +695,7 @@ public class MetaMarkdownReader
   }
   
   public String getHTML () {
-    return pegDown.markdownToHtml(md.toString());
+    return mdToHTML.markdownToHtml(md.toString());
   }
 
 }

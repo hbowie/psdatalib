@@ -1,5 +1,5 @@
 /*
- * Copyright 1999 - 2016 Herb Bowie
+ * Copyright 1999 - 2017 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ public class AboutWindow
   private boolean   loadFromDisk = true;
   
   private boolean   jxlUsed              = true;
-  private boolean   pegdownUsed          = true;
+  private boolean   markdownUsed          = true;
   private boolean   xercesUsed           = false;
   private boolean   saxonUsed            = false;
   
@@ -76,7 +76,7 @@ public class AboutWindow
   
    @param loadFromDisk Should the about file be loaded from disk?
    @param jxlUsed              Does this app use jxl?
-   @param pegdownUsed          Does this app use pegdown?
+   @param markdownUsed         Does this app use a markdown converter?
    @param xercesUsed           Does this app use xerces for xml parsing?
    @param saxonUsed            Does this app use saxon for xslt processing?
    @param copyRightYearFrom    Specify the year first published. 
@@ -84,13 +84,13 @@ public class AboutWindow
   public AboutWindow (
       boolean loadFromDisk, 
       boolean jxlUsed,
-      boolean pegdownUsed,
+      boolean markdownUsed,
       boolean xercesUsed,
       boolean saxonUsed,
       String  copyRightYearFrom) {
     this.loadFromDisk = loadFromDisk;
     this.jxlUsed = jxlUsed;
-    this.pegdownUsed = pegdownUsed;
+    this.markdownUsed = markdownUsed;
     this.xercesUsed = xercesUsed;
     this.saxonUsed = saxonUsed;
     home.setCopyrightYearFrom(copyRightYearFrom);
@@ -102,8 +102,8 @@ public class AboutWindow
     setupWindow();
   }
   
-  public void setPegdownUsed (boolean pegdownUsed) {
-    this.pegdownUsed = pegdownUsed;
+  public void setMarkdownUsed (boolean markdownUsed) {
+    this.markdownUsed = markdownUsed;
     setupWindow();
   }
   
@@ -193,7 +193,7 @@ public class AboutWindow
       t.append(home.getProgramName());
       t.append(" is written in Java. It may be run on Windows, Macintosh and other Unix platforms. ");
       t.append(home.getProgramName());
-      t.append(" requires a Java Virtual Machine (JVM/JRE) of version 6 or later. ");
+      t.append(" requires a Java Virtual Machine (JVM/JRE) of version 7 or later. ");
       t.append("You may wish to visit www.Java.com to download a compatible JVM. ");
       t.append(fontEnd);
       t.append("</p>");
@@ -258,30 +258,7 @@ public class AboutWindow
         t.append("</td></tr>");
       }
       
-      if (pegdownUsed) {
-        t.append("<tr><td columns=2>&nbsp;</td></tr>");
-        t.append("<tr><td width=70 align=left valign=top>");
-        t.append(fontBegin);
-        if (firstCredit) {
-          t.append("Credits:");
-          firstCredit = false;
-        } else {
-          t.append("&nbsp;");
-        }
-        t.append(fontEnd);
-        t.append("</td>");
-        t.append("<td>");
-        t.append(fontBegin);
-        t.append("<a href=\"https://github.com/sirthias/parboiled\">");
-        t.append("parboiled");
-        t.append("</a>");
-        t.append(" Copyright 2009-2011 Mathias Doenitz, ");
-        t.append("used under the terms of the ");
-        t.append("<a href=\"http://www.apache.org/licenses/LICENSE-2.0\">");
-        t.append("Apache License, Version 2.0");
-        t.append("</a>");
-        t.append(fontEnd);
-        t.append("</td></tr>");
+      if (markdownUsed) {
         
         t.append("<tr><td columns=2>&nbsp;</td></tr>");
         t.append("<tr><td width=70 align=left valign=top>");
@@ -296,13 +273,13 @@ public class AboutWindow
         t.append("</td>");
         t.append("<td>");
         t.append(fontBegin);
-        t.append("<a href=\"https://github.com/sirthias/pegdown\">");
-        t.append("pegdown");
+        t.append("<a href=\"https://github.com/vsch/flexmark-java\">");
+        t.append("flexmark-java");
         t.append("</a>");
-        t.append(" Copyright 2010-2011 Mathias Doenitz, ");
+        t.append(" Copyright (c) 2016, Vladimir Schneider, ");
         t.append("used under the terms of the ");
-        t.append("<a href=\"http://www.apache.org/licenses/LICENSE-2.0\">");
-        t.append("Apache License, Version 2.0");
+        t.append("<a href=\"https://opensource.org/licenses/BSD-2-Clause\">");
+        t.append("BSD 2-Clause Simplified License");
         t.append("</a>");
         t.append(fontEnd);
         t.append("</td></tr>");

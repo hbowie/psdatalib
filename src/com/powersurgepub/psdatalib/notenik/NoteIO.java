@@ -22,7 +22,6 @@ package com.powersurgepub.psdatalib.notenik;
   import com.powersurgepub.psutils.*;
   import java.io.*;
   import java.util.*;
-  import org.pegdown.*;
 
 /**
  A class to perform input and output for note files. 
@@ -73,8 +72,6 @@ public class NoteIO
   public static final int IO_IMPLICIT             = 1;
   public static final int IO_IMPLICIT_UNDERLINES  = 2;
   public static final int IO_IMPLICIT_FILENAME    = 3;
-  
-  private             PegDownProcessor   pegDown;
   
   private             NoteBuilder builder;
   
@@ -176,11 +173,6 @@ public class NoteIO
      By default, fileId is set to "directory".
    */
   private void initialize () {
-    
-    int pegDownOptions = 0;
-    pegDownOptions = pegDownOptions + Extensions.SMARTYPANTS;
-    pegDownOptions = pegDownOptions + Extensions.TABLES;
-    pegDown = new PegDownProcessor(pegDownOptions);
         
     fileId = "NoteIO";
     logData = new LogData ("", fileId, 0);

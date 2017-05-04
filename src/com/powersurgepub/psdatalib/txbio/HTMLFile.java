@@ -168,7 +168,6 @@ public class HTMLFile
   private  BufferedReader     reader = null;
   private  boolean            atEnd = false;
   
-  // private  PegDownProcessor   pegDown;
   private  MetaMarkdownReader mdReader = null;
 	  
   /**

@@ -15,10 +15,11 @@
  */
 package com.powersurgepub.psdatalib.notenik;
 
+  import com.powersurgepub.psdatalib.psdata.values.*;
+  import java.awt.*;
   import java.awt.event.*;
   import javax.swing.*;
-  import com.powersurgepub.psdatalib.psdata.values.*;
-import java.awt.*;
+  
 
 /**
  A parameter to indicate how the user would like to see the notes sorted. 

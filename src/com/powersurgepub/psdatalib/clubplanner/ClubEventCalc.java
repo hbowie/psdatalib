@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Herb Bowie
+ * Copyright 2012 - 2017 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.powersurgepub.psdatalib.clubplanner;
 
+  import com.powersurgepub.psdatalib.markup.*;
   import com.powersurgepub.psdatalib.psdata.values.*;
   import com.powersurgepub.pstextio.TextLineReader;
   import com.powersurgepub.pstextio.StringLineReader;
@@ -24,7 +25,6 @@ package com.powersurgepub.psdatalib.clubplanner;
   import java.math.*;
   import java.text.*;
   import java.util.*;
-  import org.pegdown.*;
 
 /**
  Performs various calculations and transformations on club event data. 
@@ -44,7 +44,7 @@ public class ClubEventCalc {
   private ArrayList categoryList = new ArrayList();
   
   private    StringDate         strDate = new StringDate();
-  private    PegDownProcessor   pegDown;
+  private    MdToHTML           mdToHTML = MdToHTML.getShared();
   
   private    String             flags = "";
   private    String             category = "";
@@ -82,10 +82,6 @@ public class ClubEventCalc {
   private    String           lastNoteYmd = "";
   
   public ClubEventCalc () {
-    
-    int pegDownOptions = 0;
-    pegDownOptions = pegDownOptions + Extensions.SMARTYPANTS;
-    pegDown = new PegDownProcessor(pegDownOptions);
     
     flagsResource = new ResourceList(getClass(), "flags");
     flagsResource.load(flagsList);
@@ -398,7 +394,7 @@ public class ClubEventCalc {
     if (clubEvent.getDiscuss() != null
         && clubEvent.getDiscuss().length() > 0) {
       clubEvent.setDiscussAsHtml
-          (pegDown.markdownToHtml(clubEvent.getDiscuss()));
+          (mdToHTML.markdownToHtml(clubEvent.getDiscuss()));
     }
   }
   
@@ -407,7 +403,7 @@ public class ClubEventCalc {
     if (clubEvent.getActions() != null
         && clubEvent.getActions().length() > 0) {
       clubEvent.setActionsAsHtml
-          (pegDown.markdownToHtml(clubEvent.getActions()));
+          (mdToHTML.markdownToHtml(clubEvent.getActions()));
     }
   }
   
@@ -415,7 +411,7 @@ public class ClubEventCalc {
 
     if (clubEvent.getTeaser() != null
         && clubEvent.getTeaser().length() > 0) {
-      clubEvent.setTeaserAsHtml(pegDown.markdownToHtml(clubEvent.getTeaser()));
+      clubEvent.setTeaserAsHtml(mdToHTML.markdownToHtml(clubEvent.getTeaser()));
     }
   }
   
@@ -423,7 +419,7 @@ public class ClubEventCalc {
 
     if (clubEvent.getBlurb() != null
         && clubEvent.getBlurb().length() > 0) {
-      clubEvent.setBlurbAsHtml(pegDown.markdownToHtml(clubEvent.getBlurb()));
+      clubEvent.setBlurbAsHtml(mdToHTML.markdownToHtml(clubEvent.getBlurb()));
     }
   }
   
@@ -431,14 +427,14 @@ public class ClubEventCalc {
 
     if (clubEvent.getRecap() != null
         && clubEvent.getRecap().length() > 0) {
-      clubEvent.setRecapAsHtml(pegDown.markdownToHtml(clubEvent.getRecap()));
+      clubEvent.setRecapAsHtml(mdToHTML.markdownToHtml(clubEvent.getRecap()));
     }
   }
   
   public void calcNotesAsHtml (ClubEvent clubEvent) {
     if (clubEvent.getNotes() != null
         && clubEvent.getNotes().length() > 0) {
-      clubEvent.setNotesAsHtml(pegDown.markdownToHtml(clubEvent.getNotes()));
+      clubEvent.setNotesAsHtml(mdToHTML.markdownToHtml(clubEvent.getNotes()));
     }
   }
   
@@ -1051,7 +1047,7 @@ public class ClubEventCalc {
   public void calcNoteAsHtml (EventNote eventNote) {
     if (eventNote.getNote() != null
         && eventNote.getNote().length() > 0) {
-      eventNote.setNoteAsHtml(pegDown.markdownToHtml(eventNote.getNote()));
+      eventNote.setNoteAsHtml(mdToHTML.markdownToHtml(eventNote.getNote()));
     }
   }
   
