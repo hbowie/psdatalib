@@ -360,7 +360,7 @@ public class ItemStatus
      @return True if item is canceled or closed.
    */
   public boolean isDone () {
-    return (status >= ItemStatusConfig.CANCELED);
+    return (status >= ItemStatusConfig.COMPLETED);
   }
 
   /**
@@ -369,7 +369,7 @@ public class ItemStatus
      @return True if item is open or in-work.
    */
   public boolean isNotDone () {
-    return (status < ItemStatusConfig.CANCELED);
+    return (status < ItemStatusConfig.COMPLETED);
   }
 
   public String getSimpleName() {
