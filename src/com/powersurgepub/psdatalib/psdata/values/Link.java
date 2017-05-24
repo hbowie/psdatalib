@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 - 2014 Herb Bowie
+ * Copyright 2009 - 2017 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
  */
 
 package com.powersurgepub.psdatalib.psdata.values;
+
+  import com.powersurgepub.psutils.*;
+  import java.io.*;
 
 /**
  A Link (aka URL).
@@ -49,6 +52,15 @@ public class Link
   
   public Link() {
     
+  }
+  
+  /**
+   Set this link to a URL pointing to the given file. 
+  
+   @param file The file to be linked to. 
+  */
+  public void set(File file) {
+    set(StringUtils.fileToLink(file));
   }
   
   public void set(String urlString) {
@@ -148,6 +160,20 @@ public class Link
    */
   public int compareTo(DataValue value2) {
     return toString().compareTo(value2.toString());
+  }
+  
+  public File getLinkAsFile() {
+    String linkStr = StringUtils.tweakAnyLink(getLink(), true, false, false, "");
+    StringBuilder fileStr = new StringBuilder(linkStr);
+    if (linkStr.startsWith("file:")) {
+      fileStr.delete(0, 5);
+    }
+    while (fileStr.length() > 1
+        && fileStr.charAt(1) == '/') {
+      fileStr.deleteCharAt(0);
+    }
+    File file = new File(fileStr.toString());
+    return file;
   }
   
   public String getURLasString () {
