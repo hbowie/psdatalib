@@ -35,6 +35,12 @@ public class NotePositioned {
   private   TagsNode tagsNode;
   private   int      navigator = NAVIGATE_USING_LIST;
   private   boolean  newNote = true;
+  
+  public NotePositioned (NoteParms noteParms) {
+    this.note = noteParms.createNewNote();
+    this.index = -1;
+    this.tagsNode = null;
+  }
 
   public NotePositioned (RecordDefinition recDef) {
     this.note = new Note(recDef);
