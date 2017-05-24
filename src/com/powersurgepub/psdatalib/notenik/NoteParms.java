@@ -24,6 +24,7 @@ package com.powersurgepub.psdatalib.notenik;
   import com.powersurgepub.psutils.*;
   import java.awt.*;
   import java.text.*;
+  import java.util.*;
   import javax.swing.*;
 
 /**
@@ -304,6 +305,21 @@ public class NoteParms {
   
   public void setRecordDefinition(RecordDefinition recDef) {
     this.recDef = recDef;
+  }
+  
+  public Note createNewNote() {
+    if (recDef == null) {
+      buildRecordDefinition();
+    }
+    Note note = new Note(recDef);
+    
+    for (int i = 0; i < recDef.getNumberOfFields(); i++) {
+      DataFieldDefinition fieldDef = recDef.getDef(i);
+      String commonName = fieldDef.getCommonName().toString();
+      note.setField(commonName, "");
+    }
+    
+    return note;
   }
   
   /**
