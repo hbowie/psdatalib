@@ -34,6 +34,8 @@ public class NoteIO
   
   public static final String              PARMS_TITLE         = "Collection Parms";
   
+  public static final String              README_FILE_NAME    = "- README.txt";
+  
   private static final TemplateFilter     templateFilter      = new TemplateFilter();
   
   private             NoteParms           noteParms 
@@ -206,6 +208,19 @@ public class NoteIO
         homePath = homeFolder.getCanonicalPath();
       } catch (IOException e) {
         homePath = homeFolder.getAbsolutePath();
+      }
+      File readMe = new File(homeFolder, README_FILE_NAME);
+      if (! readMe.exists()) {
+        FileMaker readMeWriter = new FileMaker(readMe);
+        readMeWriter.openForOutput();
+        readMeWriter.writeLine
+          ("This folder contains a collection of notes created by the Notenik application.");
+        readMeWriter.writeLine (" ");
+        readMeWriter.writeLine
+          ("Learn more at Notenik.net.");
+        readMeWriter.close();
+        Logger.getShared().recordEvent(LogEvent.NORMAL, 
+            "README file created at " + readMe.toString(), false);
       }
     }
   }
@@ -621,6 +636,10 @@ public class NoteIO
     }
     else
     if (templateFilter.accept(parent, name)) {
+      return false;
+    }
+    else
+    if (candidate.getName().equalsIgnoreCase(README_FILE_NAME)) {
       return false;
     }
     else
