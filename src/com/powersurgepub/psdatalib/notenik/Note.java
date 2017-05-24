@@ -671,6 +671,10 @@ public class Note
     }
   }
   
+  public void setDate(Date date) {
+    setDate(dateFormat.format(date));
+  }
+  
   public void setDate(String date) {
 
     dateValue.set(date);
@@ -859,6 +863,10 @@ public class Note
     }
   }
   
+  public void setLink(File file) {
+    setLink(StringUtils.fileToLink(file));
+  }
+  
   public void setLink(String link) {
 
     linkValue.set(link);
@@ -888,6 +896,14 @@ public class Note
   
   public Link getLink() {
     return linkValue;
+  }
+  
+  public File getLinkAsFile() {
+    if (linkAdded && linkValue != null) {
+      return linkValue.getLinkAsFile();
+    } else {
+      return null;
+    }
   }
   
   public String getLinkAsString() {
