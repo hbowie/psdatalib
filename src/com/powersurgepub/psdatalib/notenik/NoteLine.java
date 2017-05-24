@@ -304,7 +304,24 @@ public class NoteLine {
             } 
             else
             {
-              fieldDef.setTypeFromName();
+              // fieldDef.setTypeFromName();
+              if (noteParms.isTemplate()) {
+                String data = getMetaData();
+                int typeDelimLeft = data.indexOf('<');
+                if (typeDelimLeft >= 0) {
+                  int typeDelimRight = data.indexOf('>', typeDelimLeft + 1);
+                  if (typeDelimRight > typeDelimLeft) {
+                    String type = data.substring
+                        (typeDelimLeft + 1, typeDelimRight).trim();
+                    String typeCommon = StringUtils.commonName(type);
+                    if (typeCommon.equals("3")
+                        || typeCommon.equals("builder")
+                        || typeCommon.equals("longtext")) {
+                      fieldDef.setType(DataFieldDefinition.STRING_BUILDER_TYPE);
+                    }
+                  }
+                }
+              }
               DataValueStringBuilder dataValue = new DataValueStringBuilder(getMetaData());
               DataField dataField = new DataField (fieldDef, dataValue);
               note.storeField(note.getRecDef(), dataField);
@@ -385,6 +402,11 @@ public class NoteLine {
     return (getFirstNoteLineLeadingSymbol().isMetadata());
   }
   
+  /**
+   Return the key portion of the line, preceding the colon. 
+  
+   @return The key portion of the line, preceding the colon. 
+  */
   public String getMetaKey() {
     if (field1Last >= field1First) {
       return line.substring(field1First, field1Last + 1);
@@ -393,6 +415,11 @@ public class NoteLine {
     }
   }
   
+  /**
+   Return the data portion of the line, following the colon. 
+  
+   @return The data portion of the line, following the colon.
+  */
   public String getMetaData() {
     if (field2Last >= field2First) {
       return line.substring(field2First, field2Last + 1);
