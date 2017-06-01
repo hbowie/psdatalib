@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 - 2015 Herb Bowie
+ * Copyright 2014 - 2017 Herb Bowie
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,8 +87,8 @@ public class AddToCtoMarkdown
     mdParser = new MarkdownInitialParser (this);
     MarkupWriter writer 
         = new MarkupWriter(lineWriter, MarkupWriter.HTML_FRAGMENT_FORMAT);
-    writer.setIndenting(true);
-    writer.setIndentPerLevel(2);
+    writer.setIndenting(false);
+    writer.setIndentPerLevel(0);
     writer.openForOutput();
     
     firstHeadingLevel = 0;
